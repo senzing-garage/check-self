@@ -1,4 +1,4 @@
-package examplepackage
+package checkself
 
 import (
 	"context"
@@ -9,8 +9,8 @@ import (
 // ----------------------------------------------------------------------------
 
 // The ExamplePackage interface is an example interface.
-type ExamplePackage interface {
-	SaySomething(ctx context.Context) error
+type CheckSelf interface {
+	CheckSelf(ctx context.Context) error
 }
 
 // ----------------------------------------------------------------------------

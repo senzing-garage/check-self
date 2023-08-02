@@ -1,4 +1,4 @@
-package examplepackage
+package checkself
 
 import (
 	"context"

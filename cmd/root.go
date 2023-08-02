@@ -6,16 +6,15 @@ import (
 	"context"
 	"os"
 
-	"github.com/senzing/check-self/examplepackage"
+	"github.com/senzing/check-self/checkself"
 	"github.com/senzing/go-cmdhelping/cmdhelper"
 	"github.com/senzing/go-cmdhelping/option"
-	"github.com/senzing/go-cmdhelping/option/optiontype"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 const (
-	Short string = "check-self short description"
+	Short string = "Check the environment in which senzing-tool runs"
 	Use   string = "check-self"
 	Long  string = `
 check-self long description.
@@ -26,19 +25,20 @@ check-self long description.
 // Context variables
 // ----------------------------------------------------------------------------
 
-var SomethingToSay = option.ContextVariable{
-	Arg:     "something-to-say",
-	Default: option.OsLookupEnvString("SENZING_TOOLS_SOMETHING_TO_SAY", "Main says 'Hi!'"),
-	Envar:   "SENZING_TOOLS_SOMETHING_TO_SAY",
-	Help:    "Just a phrase to say [%s]",
-	Type:    optiontype.String,
-}
-
 var ContextVariablesForMultiPlatform = []option.ContextVariable{
+	option.ConfigPath,
 	option.Configuration,
+	option.DatabaseUrl,
 	option.EngineConfigurationJson,
+	option.EngineLogLevel,
+	option.GrpcUrl,
+	option.InputUrl,
+	option.LicenseStringBase64,
 	option.LogLevel,
-	SomethingToSay,
+	option.ObserverUrl,
+	option.ResourcePath,
+	option.SenzingDirectory,
+	option.SupportPath,
 }
 
 var ContextVariables = append(ContextVariablesForMultiPlatform, ContextVariablesForOsArch...)
@@ -72,13 +72,22 @@ func PreRun(cobraCommand *cobra.Command, args []string) {
 
 // Used in construction of cobra.Command
 func RunE(_ *cobra.Command, _ []string) error {
-	var err error = nil
 	ctx := context.Background()
-	examplePackage := &examplepackage.ExamplePackageImpl{
-		Something: viper.GetString(SomethingToSay.Arg),
+	checkSelf := &checkself.CheckSelfImpl{
+		ConfigPath:              viper.GetString(option.ConfigPath.Arg),
+		DatabaseUrl:             viper.GetString(option.DatabaseUrl.Arg),
+		EngineConfigurationJson: viper.GetString(option.EngineConfigurationJson.Arg),
+		EngineLogLevel:          viper.GetString(option.EngineLogLevel.Arg),
+		GrpcUrl:                 viper.GetString(option.GrpcUrl.Arg),
+		InputUrl:                viper.GetString(option.InputUrl.Arg),
+		LicenseStringBase64:     viper.GetString(option.LicenseStringBase64.Arg),
+		LogLevel:                viper.GetString(option.LogLevel.Arg),
+		ObserverUrl:             viper.GetString(option.ObserverUrl.Arg),
+		ResourcePath:            viper.GetString(option.ResourcePath.Arg),
+		SenzingDirectory:        viper.GetString(option.SenzingDirectory.Arg),
+		SupportPath:             viper.GetString(option.SupportPath.Arg),
 	}
-	err = examplePackage.SaySomething(ctx)
-	return err
+	return checkSelf.CheckSelf(ctx)
 }
 
 // Used in construction of cobra.Command
