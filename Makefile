@@ -1,6 +1,6 @@
 # Makefile for check-self.
 
-# Detect the operating system and architecture
+# Detect the operating system and architecture.
 
 include Makefile.osdetect
 
@@ -24,13 +24,13 @@ BUILD_ITERATION := $(shell git log $(BUILD_TAG)..HEAD --oneline | wc -l | sed 's
 GIT_REMOTE_URL := $(shell git config --get remote.origin.url)
 GO_PACKAGE_NAME := $(shell echo $(GIT_REMOTE_URL) | sed -e 's|^git@github.com:|github.com/|' -e 's|\.git$$||' -e 's|Senzing|senzing|')
 PATH := $(MAKEFILE_DIRECTORY)/bin:$(PATH)
-GO_OSARCH = $(subst /, ,$@)
-GO_OS = $(word 1, $(GO_OSARCH))
-GO_ARCH = $(word 2, $(GO_OSARCH))
 
 # Recursive assignment ('=')
 
 CC = gcc
+GO_OSARCH = $(subst /, ,$@)
+GO_OS = $(word 1, $(GO_OSARCH))
+GO_ARCH = $(word 2, $(GO_OSARCH))
 
 # Conditional assignment. ('?=')
 # Can be overridden with "export"
@@ -42,9 +42,6 @@ LD_LIBRARY_PATH ?= /opt/senzing/g2/lib
 
 .EXPORT_ALL_VARIABLES:
 
--include Makefile.$(OSTYPE)
--include Makefile.$(OSTYPE)_$(OSARCH)
-
 # -----------------------------------------------------------------------------
 # The first "make" target runs as default.
 # -----------------------------------------------------------------------------
@@ -53,8 +50,14 @@ LD_LIBRARY_PATH ?= /opt/senzing/g2/lib
 default: help
 
 # -----------------------------------------------------------------------------
-# Build
-#  - The "build" target is implemented in Makefile.OS.ARCH files.
+# Operating System / Architecture targets
+# -----------------------------------------------------------------------------
+
+-include Makefile.$(OSTYPE)
+-include Makefile.$(OSTYPE)_$(OSARCH)
+
+# -----------------------------------------------------------------------------
+# Dependency management
 # -----------------------------------------------------------------------------
 
 .PHONY: dependencies
@@ -63,6 +66,11 @@ dependencies:
 	@go get -t -u ./...
 	@go mod tidy
 
+# -----------------------------------------------------------------------------
+# Build
+#  - The "build" target is implemented in Makefile.OS.ARCH files.
+#  - docker-build: https://docs.docker.com/engine/reference/commandline/build/
+# -----------------------------------------------------------------------------
 
 PLATFORMS := darwin/amd64 linux/amd64 windows/amd64
 $(PLATFORMS):
@@ -89,15 +97,6 @@ build-scratch:
 	@mkdir -p $(TARGET_DIRECTORY)/scratch || true
 	@mv $(GO_PACKAGE_NAME) $(TARGET_DIRECTORY)/scratch
 
-# -----------------------------------------------------------------------------
-# Test
-#  - The "test" target is implemented in Makefile.OS.ARCH files.
-# -----------------------------------------------------------------------------
-
-# -----------------------------------------------------------------------------
-# docker-build
-#  - https://docs.docker.com/engine/reference/commandline/build/
-# -----------------------------------------------------------------------------
 
 .PHONY: docker-build
 docker-build:
@@ -111,32 +110,16 @@ docker-build:
 		--tag $(DOCKER_IMAGE_NAME):$(BUILD_VERSION) \
 		.
 
-
-.PHONY: docker-build-package
-docker-build-package:
-	@docker build \
-		--build-arg BUILD_ITERATION=$(BUILD_ITERATION) \
-		--build-arg BUILD_VERSION=$(BUILD_VERSION) \
-		--build-arg GO_PACKAGE_NAME=$(GO_PACKAGE_NAME) \
-		--build-arg PROGRAM_NAME=$(PROGRAM_NAME) \
-		--no-cache \
-		--file package.Dockerfile \
-		--tag $(DOCKER_BUILD_IMAGE_NAME) \
-		.
-
 # -----------------------------------------------------------------------------
-# Package
-#  - The "package" target is implemented in Makefile.OS.ARCH files.
+# Test
+#  - The "test" target is implemented in Makefile.OS.ARCH files.
 # -----------------------------------------------------------------------------
+
 
 # -----------------------------------------------------------------------------
 # Run
+#  - The "run" target is implemented in Makefile.OS.ARCH files.
 # -----------------------------------------------------------------------------
-
-.PHONY: run
-run:
-	@go run main.go
-
 
 .PHONY: docker-run
 docker-run:
@@ -147,14 +130,14 @@ docker-run:
 		$(DOCKER_IMAGE_NAME)
 
 # -----------------------------------------------------------------------------
-# Utility targets
+# Package
+#  - The "package" target is implemented in Makefile.OS.ARCH files.
 # -----------------------------------------------------------------------------
 
-.PHONY: update-pkg-cache
-update-pkg-cache:
-	@GOPROXY=https://proxy.golang.org GO111MODULE=on \
-		go get $(GO_PACKAGE_NAME)@$(BUILD_TAG)
 
+# -----------------------------------------------------------------------------
+# Utility targets
+# -----------------------------------------------------------------------------
 
 .PHONY: clean
 clean:
@@ -166,26 +149,26 @@ clean:
 	@rm -f $(GOPATH)/bin/$(PROGRAM_NAME) || true
 
 
-.PHONY: print-make-variables
-print-make-variables:
-	@$(foreach V,$(sort $(.VARIABLES)), \
-		$(if $(filter-out environment% default automatic, \
-		$(origin $V)),$(warning $V=$($V) ($(value $V)))))
-
-# -----------------------------------------------------------------------------
-# Help
-# -----------------------------------------------------------------------------
-
 .PHONY: help
 help:
 	@echo "Build $(PROGRAM_NAME) version $(BUILD_VERSION)-$(BUILD_ITERATION)".
 	@echo "Makefile targets:"
 	@$(MAKE) -pRrq -f $(firstword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$' | xargs
 
-# -----------------------------------------------------------------------------
-# Optionally include platform-specific settings and targets.
-#  - Note: This is last because the "last one wins" when over-writing targets.
-# -----------------------------------------------------------------------------
 
-# -include Makefile.$(OSTYPE)
-# -include Makefile.$(OSTYPE)_$(OSARCH)
+.PHONY: print-make-variables
+print-make-variables:
+	@$(foreach V,$(sort $(.VARIABLES)), \
+		$(if $(filter-out environment% default automatic, \
+		$(origin $V)),$(warning $V=$($V) ($(value $V)))))
+
+
+.PHONY: setup
+setup:
+	@echo "No setup required."
+
+
+.PHONY: update-pkg-cache
+update-pkg-cache:
+	@GOPROXY=https://proxy.golang.org GO111MODULE=on \
+		go get $(GO_PACKAGE_NAME)@$(BUILD_TAG)
