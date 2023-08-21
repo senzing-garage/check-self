@@ -1,9 +1,11 @@
 module github.com/senzing/check-self
 
-go 1.20
+go 1.21
+
+toolchain go1.21.0
 
 require (
-	github.com/senzing/go-cmdhelping v0.1.6
+	github.com/senzing/go-cmdhelping v0.1.7
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
 	github.com/stretchr/testify v1.8.4
