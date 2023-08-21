@@ -166,7 +166,9 @@ print-make-variables:
 
 .PHONY: setup
 setup:
-	@echo "No setup required."
+	@rm -rf /tmp/sqlite
+	@mkdir  /tmp/sqlite
+	@cp testdata/sqlite/G2C.db /tmp/sqlite/G2C.db
 
 
 .PHONY: update-pkg-cache

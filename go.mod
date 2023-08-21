@@ -6,6 +6,7 @@ toolchain go1.21.0
 
 require (
 	github.com/senzing/go-cmdhelping v0.1.7
+	github.com/senzing/go-common v0.2.13
 	github.com/senzing/go-databasing v0.2.7
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0

@@ -48,27 +48,49 @@ func (checkself *CheckSelfImpl) CheckSelf(ctx context.Context) error {
 	reportChecks := []string{}
 	reportErrors := []string{}
 
+	// List tests.
+
+	testFunctions := []func(ctx context.Context, reportChecks []string, reportErrors []string) ([]string, []string, error){
+		checkself.CheckConfigPath,
+		checkself.CheckResourcePath,
+		checkself.CheckSupportPath,
+		checkself.CheckDatabaseUrl,
+		checkself.CheckEngineConfigurationJson,
+	}
+
 	// Perform tests.
 
-	reportChecks, reportErrors, err = checkself.CheckConfigPath(ctx, reportChecks, reportErrors)
-	if err != nil {
-		return err
+	for _, testFunction := range testFunctions {
+		reportChecks, reportErrors, err = testFunction(ctx, reportChecks, reportErrors)
+		if err != nil {
+			return err
+		}
 	}
 
-	reportChecks, reportErrors, err = checkself.CheckResourcePath(ctx, reportChecks, reportErrors)
-	if err != nil {
-		return err
-	}
+	// reportChecks, reportErrors, err = checkself.CheckConfigPath(ctx, reportChecks, reportErrors)
+	// if err != nil {
+	// 	return err
+	// }
 
-	reportChecks, reportErrors, err = checkself.CheckSupportPath(ctx, reportChecks, reportErrors)
-	if err != nil {
-		return err
-	}
+	// reportChecks, reportErrors, err = checkself.CheckResourcePath(ctx, reportChecks, reportErrors)
+	// if err != nil {
+	// 	return err
+	// }
 
-	reportChecks, reportErrors, err = checkself.CheckDatabaseUrl(ctx, reportChecks, reportErrors)
-	if err != nil {
-		return err
-	}
+	// reportChecks, reportErrors, err = checkself.CheckSupportPath(ctx, reportChecks, reportErrors)
+	// if err != nil {
+	// 	return err
+	// }
+
+	// reportChecks, reportErrors, err = checkself.CheckDatabaseUrl(ctx, reportChecks, reportErrors)
+	// if err != nil {
+	// 	return err
+	// }
+
+	// reportChecks, reportErrors, err = checkself.CheckEngineConfigurationJson(ctx, reportChecks, reportErrors)
+	// if err != nil {
+	// 	return err
+	// }
 
 	// Output reports.
 
