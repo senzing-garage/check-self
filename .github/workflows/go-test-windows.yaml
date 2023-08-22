@@ -25,9 +25,9 @@ jobs:
         run: curl --output senzingapi.zip https://public-read-access.s3.amazonaws.com/staging/SenzingAPI_3.7.0.zip
       - run: pwd
       - run: dir
-      - run: dir "c:\"
+      - run: dir "C:\"
       - name: Extract SenzingApi
         run: 7z e -y -o"C:\" senzingapi.zip
-      - run: dir "C:\" /s
+      - run: dir /s "C:\"
       - name: Run go test
         run: go test -v -p 1 ./...
