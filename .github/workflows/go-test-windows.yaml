@@ -5,6 +5,12 @@ name: go-test-windows.yaml
 
 on: [push]
 
+env:
+  DYLD_LIBRARY_PATH: /opt/senzing/g2/lib:/opt/senzing/g2/lib/macos
+  LD_LIBRARY_PATH: /opt/senzing/g2/lib:/opt/senzing/g2/lib/macos
+  SENZING_TOOLS_DATABASE_URL: "sqlite3://na:na@/Temp/sqlite/G2C.db"
+  SENZING_TOOLS_SENZING_DIRECTORY: 'C:\senzing\g2'
+
 jobs:
   build:
     runs-on: windows-latest
@@ -23,11 +29,12 @@ jobs:
           go-version: ${{ matrix.go }}
       - name: Download SenzingApi
         run: curl --output senzingapi.zip https://public-read-access.s3.amazonaws.com/staging/SenzingAPI_3.7.0.zip
-      - run: pwd
-      - run: dir
-      - run: dir "C:\"
       - name: Extract SenzingApi
         run: 7z e -y -o"C:\" senzingapi.zip
+      - name: Copy /etc files
+        run: copy testdata/senzing-license/g2.lic "C:\senzing\g2\etc\g2.lic"
+      - name: Copy test database files
+        run: mkdir "C:\Temp\sqlite" && copy testdata/sqlite/G2C.db "C:\Temp\sqlite\G2C.db"
       - run: dir "C:\"
       - name: Run go test
         run: go test -v -p 1 ./...
