@@ -30,7 +30,7 @@ jobs:
       - name: Download SenzingApi
         run: curl --output senzingapi.zip https://public-read-access.s3.amazonaws.com/staging/SenzingAPI_3.7.0.zip
       - name: Extract SenzingApi
-        run: 7z e -y -o"C:\" senzingapi.zip
+        run: 7z x -y -o"C:\" senzingapi.zip
       - run: dir "C:\"
       - run: dir "C:\senzing"
       - run: dir "C:\senzing\g2"
