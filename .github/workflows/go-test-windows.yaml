@@ -28,6 +28,6 @@ jobs:
       - run: dir "C:\"
       - name: Extract SenzingApi
         run: 7z e -y -o"C:\" senzingapi.zip
-      - run: dir /s "C:\"
+      - run: dir /S "C:\"
       - name: Run go test
         run: go test -v -p 1 ./...
