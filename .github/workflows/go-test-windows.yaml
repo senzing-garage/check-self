@@ -33,7 +33,7 @@ jobs:
         run: 7z x -y -o"C:\Program Files" senzingapi.zip
       - run: dir "C:\Program Files"
       - name: Rename directory
-        run: rename "C:\Program Files\senzing" "C:\Program Files\Senzing"
+        run: ren "C:\Program Files\senzing" "C:\Program Files\Senzing"
       - run: dir "C:\Program Files"
       - run: dir "C:\Program Files\Senzing"
       - run: dir "C:\Program Files\Senzing\g2"
