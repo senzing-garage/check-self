@@ -31,6 +31,10 @@ jobs:
         run: curl --output senzingapi.zip https://public-read-access.s3.amazonaws.com/staging/SenzingAPI_3.7.0.zip
       - name: Extract SenzingApi
         run: 7z e -y -o"C:\" senzingapi.zip
+      - run: dir "C:\"
+      - run: dir "C:\senzing"
+      - run: dir "C:\senzing\g2"
+      - run: dir "C:\senzing\g2\etc"
       - name: Copy /etc files
         run: copy testdata/senzing-license/g2.lic "C:\senzing\g2\etc\g2.lic"
       - name: Copy test database files
