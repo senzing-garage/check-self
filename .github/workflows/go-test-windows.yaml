@@ -22,10 +22,11 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
       - name: Download SenzingApi
-        run: curl https://public-read-access.s3.amazonaws.com/staging/SenzingAPI_3.7.0.zip
+        run: curl --output senzingapi.zip https://public-read-access.s3.amazonaws.com/staging/SenzingAPI_3.7.0.zip
       - run: pwd
+      - run: dir
       - name: Extract SenzingApi
-        run: 7z e -y SenzingAPI_3.7.0.zip -o c:\
+        run: 7z e -y senzingapi.zip -o c:\
       - run: dir c:\ /s
       - name: Run go test
         run: go test -v -p 1 ./...
