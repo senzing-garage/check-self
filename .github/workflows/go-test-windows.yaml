@@ -8,7 +8,7 @@ on: [push]
 env:
   DYLD_LIBRARY_PATH: /opt/senzing/g2/lib:/opt/senzing/g2/lib/macos
   LD_LIBRARY_PATH: /opt/senzing/g2/lib:/opt/senzing/g2/lib/macos
-  SENZING_TOOLS_DATABASE_URL: "sqlite3://na:na@/Temp/sqlite/G2C.db"
+  SENZING_TOOLS_DATABASE_URL: 'sqlite3://na:na@/C:\Temp\sqlite\G2C.db'
   SENZING_TOOLS_SENZING_DIRECTORY: 'C:\senzing\g2'
 
 jobs:
@@ -31,10 +31,6 @@ jobs:
         run: curl --output senzingapi.zip https://public-read-access.s3.amazonaws.com/staging/SenzingAPI_3.7.0.zip
       - name: Extract SenzingApi
         run: 7z x -y -o"C:\" senzingapi.zip
-      - run: dir "C:\"
-      - run: dir "C:\senzing"
-      - run: dir "C:\senzing\g2"
-      - run: dir "C:\senzing\g2\etc"
       - name: Copy /etc files
         run: copy testdata/senzing-license/g2.lic "C:\senzing\g2\etc\g2.lic"
       - name: Copy test database files

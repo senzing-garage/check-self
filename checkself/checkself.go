@@ -94,7 +94,8 @@ func (checkself *CheckSelfImpl) CheckSelf(ctx context.Context) error {
 	}
 
 	if len(reportErrors) > 0 {
-		fmt.Printf("\nErrors: %d errors detected:\n\n", len(reportErrors))
+		err = fmt.Errorf("%d errors detected", len(reportErrors))
+		fmt.Printf("\nErrors: %s:\n\n", err.Error())
 		for index, message := range reportErrors {
 			fmt.Printf("  %4d - %s\n\n", index+1, message)
 		}
@@ -102,5 +103,5 @@ func (checkself *CheckSelfImpl) CheckSelf(ctx context.Context) error {
 		fmt.Printf("\n\nDone. No errors detected.\n")
 	}
 
-	return nil
+	return err
 }
