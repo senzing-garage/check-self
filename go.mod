@@ -2,8 +2,6 @@ module github.com/senzing/check-self
 
 go 1.21
 
-toolchain go1.21.0
-
 require (
 	github.com/senzing/go-cmdhelping v0.1.7
 	github.com/senzing/go-common v0.2.13
