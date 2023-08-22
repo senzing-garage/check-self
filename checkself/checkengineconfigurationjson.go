@@ -3,7 +3,7 @@ package checkself
 import (
 	"context"
 	"fmt"
-	"os"
+	"strings"
 
 	"github.com/senzing/go-cmdhelping/option"
 	"github.com/senzing/go-common/engineconfigurationjsonparser"
@@ -20,28 +20,53 @@ func (checkself *CheckSelfImpl) CheckEngineConfigurationJson(ctx context.Context
 
 	// Check Config path.
 
-	reportChecks = append(reportChecks, fmt.Sprintf("%s=%s", option.EngineConfigurationJson.Envar, checkself.EngineConfigurationJson))
+	normalizedValue := strings.ReplaceAll(strings.ReplaceAll(checkself.EngineConfigurationJson, "\n", " "), "  ", "")
+	reportChecks = append(reportChecks, fmt.Sprintf("%s = %s", option.EngineConfigurationJson.Envar, normalizedValue))
 
 	parsedEngineConfigurationJson := &engineconfigurationjsonparser.EngineConfigurationJsonParserImpl{
 		EngineConfigurationJson: checkself.EngineConfigurationJson,
 	}
 
-	// Test ConfigPath
+	// Test SENZING_TOOLS_ENGINE_CONFIGURATION_JSON.PIPELINE.CONFIGPATH.
 
-	configPath, err := parsedEngineConfigurationJson.GetConfigPath(ctx)
+	configVariable := "SENZING_TOOLS_ENGINE_CONFIGURATION_JSON.PIPELINE.CONFIGPATH"
+	configValue, err := parsedEngineConfigurationJson.GetConfigPath(ctx)
 	if err != nil {
 		return reportChecks, reportErrors, err
 	}
+	errorList := statFiles(configVariable, configValue, RequiredConfigFiles)
+	reportErrors = append(reportErrors, errorList...)
 
-	requiredFiles := []string{
-		"cfgVariant.json",
-		"defaultGNRCP.config",
+	// Test SENZING_TOOLS_ENGINE_CONFIGURATION_JSON.PIPELINE.RESOURCEPATH.
+
+	resourceVariable := "SENZING_TOOLS_ENGINE_CONFIGURATION_JSON.PIPELINE.RESOURCEPATH"
+	resourceValue, err := parsedEngineConfigurationJson.GetResourcePath(ctx)
+	if err != nil {
+		return reportChecks, reportErrors, err
 	}
-	for _, requiredFile := range requiredFiles {
-		targetFile := fmt.Sprintf("%s/%s", configPath, requiredFile)
-		if _, err := os.Stat(targetFile); err != nil {
-			reportErrors = append(reportErrors, fmt.Sprintf("%s=%s is misconfigured. Could not find %s. For more information, visit https://hub.senzing.com/...", option.ConfigPath.Envar, checkself.ConfigPath, targetFile))
-		}
+	errorList = statFiles(resourceVariable, resourceValue, RequiredResourceFiles)
+	reportErrors = append(reportErrors, errorList...)
+
+	// Test SENZING_TOOLS_ENGINE_CONFIGURATION_JSON.PIPELINE.SUPPORTPATH.
+
+	supportVariable := "SENZING_TOOLS_ENGINE_CONFIGURATION_JSON.PIPELINE.SUPPORTPATH"
+	supportValue, err := parsedEngineConfigurationJson.GetSupportPath(ctx)
+	if err != nil {
+		return reportChecks, reportErrors, err
+	}
+	errorList = statFiles(supportVariable, supportValue, RequiredSupportFiles)
+	reportErrors = append(reportErrors, errorList...)
+
+	// Test SENZING_TOOLS_ENGINE_CONFIGURATION_JSON.SQL.CONNECTION.
+
+	connectionVariable := "SENZING_TOOLS_ENGINE_CONFIGURATION_JSON.SQL.CONNECTION"
+	connectionValues, err := parsedEngineConfigurationJson.GetDatabaseUrls(ctx)
+	if err != nil {
+		return reportChecks, reportErrors, err
+	}
+	for _, connectionValue := range connectionValues {
+		errorList = checkDatabaseUrl(ctx, connectionVariable, connectionValue)
+		reportErrors = append(reportErrors, errorList...)
 	}
 
 	return reportChecks, reportErrors, err

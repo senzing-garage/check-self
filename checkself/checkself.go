@@ -3,6 +3,7 @@ package checkself
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"google.golang.org/grpc"
 )
@@ -29,6 +30,21 @@ type CheckSelfImpl struct {
 }
 
 // ----------------------------------------------------------------------------
+// Internal methods
+// ----------------------------------------------------------------------------
+
+func statFiles(variableName string, path string, requiredFiles []string) []string {
+	reportErrors := []string{}
+	for _, requiredFile := range requiredFiles {
+		targetFile := fmt.Sprintf("%s/%s", path, requiredFile)
+		if _, err := os.Stat(targetFile); err != nil {
+			reportErrors = append(reportErrors, fmt.Sprintf("%s = %s is misconfigured. Could not find %s. For more information, visit https://hub.senzing.com/...", variableName, path, targetFile))
+		}
+	}
+	return reportErrors
+}
+
+// ----------------------------------------------------------------------------
 // Interface methods
 // ----------------------------------------------------------------------------
 
@@ -48,7 +64,7 @@ func (checkself *CheckSelfImpl) CheckSelf(ctx context.Context) error {
 	reportChecks := []string{}
 	reportErrors := []string{}
 
-	// List tests.
+	// List tests.  Order is important.
 
 	testFunctions := []func(ctx context.Context, reportChecks []string, reportErrors []string) ([]string, []string, error){
 		checkself.CheckConfigPath,
@@ -65,32 +81,10 @@ func (checkself *CheckSelfImpl) CheckSelf(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
+		if len(reportErrors) > 0 {
+			break
+		}
 	}
-
-	// reportChecks, reportErrors, err = checkself.CheckConfigPath(ctx, reportChecks, reportErrors)
-	// if err != nil {
-	// 	return err
-	// }
-
-	// reportChecks, reportErrors, err = checkself.CheckResourcePath(ctx, reportChecks, reportErrors)
-	// if err != nil {
-	// 	return err
-	// }
-
-	// reportChecks, reportErrors, err = checkself.CheckSupportPath(ctx, reportChecks, reportErrors)
-	// if err != nil {
-	// 	return err
-	// }
-
-	// reportChecks, reportErrors, err = checkself.CheckDatabaseUrl(ctx, reportChecks, reportErrors)
-	// if err != nil {
-	// 	return err
-	// }
-
-	// reportChecks, reportErrors, err = checkself.CheckEngineConfigurationJson(ctx, reportChecks, reportErrors)
-	// if err != nil {
-	// 	return err
-	// }
 
 	// Output reports.
 
