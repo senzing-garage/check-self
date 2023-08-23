@@ -103,5 +103,5 @@ func (checkself *CheckSelfImpl) CheckSelf(ctx context.Context) error {
 		fmt.Printf("\n\nDone. No errors detected.\n")
 	}
 
-	return nil
+	return err
 }
