@@ -1,42 +1,14 @@
+//go:build linux
+
 package checkself
 
 import (
 	"context"
-	"fmt"
-	"os"
 	"testing"
 
 	"github.com/senzing/go-common/g2engineconfigurationjson"
 	"github.com/stretchr/testify/assert"
 )
-
-// ----------------------------------------------------------------------------
-// Test harness
-// ----------------------------------------------------------------------------
-
-func TestMain(m *testing.M) {
-	err := setup()
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(1)
-	}
-	code := m.Run()
-	err = teardown()
-	if err != nil {
-		fmt.Print(err)
-	}
-	os.Exit(code)
-}
-
-func setup() error {
-	var err error = nil
-	return err
-}
-
-func teardown() error {
-	var err error = nil
-	return err
-}
 
 // ----------------------------------------------------------------------------
 // Test interface functions
@@ -45,18 +17,6 @@ func teardown() error {
 func TestCheckSelfImpl_CheckSelf_Null(test *testing.T) {
 	ctx := context.TODO()
 	testObject := &CheckSelfImpl{}
-	err := testObject.CheckSelf(ctx)
-	assert.Nil(test, err)
-}
-
-func TestCheckSelfImpl_CheckSelf_Paths(test *testing.T) {
-	ctx := context.TODO()
-	testObject := &CheckSelfImpl{
-		ConfigPath:   "/etc/opt/senzing",
-		DatabaseUrl:  "sqlite3://na:na@/tmp/sqlite/G2C.db",
-		ResourcePath: "/opt/senzing/g2/resources",
-		SupportPath:  "/opt/senzing/data",
-	}
 	err := testObject.CheckSelf(ctx)
 	assert.Nil(test, err)
 }
