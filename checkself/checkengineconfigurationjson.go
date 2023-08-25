@@ -17,14 +17,14 @@ import (
 func (checkself *CheckSelfImpl) buildAndCheckEngineConfigurationJson(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
 	engineConfigurationJson, err := g2engineconfigurationjson.BuildSimpleSystemConfigurationJsonUsingEnvVars()
 	if err != nil {
-		return reportChecks, reportInfo, reportErrors, err
+		reportErrors = append(reportErrors, fmt.Sprintf("Could not build engine configuration json. %s", err.Error()))
+		return reportChecks, reportInfo, reportErrors, nil
 	}
 	reportInfo = append(reportInfo, fmt.Sprintf("\nexport SENZING_TOOLS_ENGINE_CONFIGURATION_JSON='%s'\n", engineConfigurationJson))
 	return checkself.checkEngineConfigurationJson(ctx, engineConfigurationJson, reportChecks, reportInfo, reportErrors)
 }
 
 func (checkself *CheckSelfImpl) checkEngineConfigurationJson(ctx context.Context, engineConfigurationJson string, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
-	var err error = nil
 
 	parsedEngineConfigurationJson := &engineconfigurationjsonparser.EngineConfigurationJsonParserImpl{
 		EngineConfigurationJson: engineConfigurationJson,
@@ -35,7 +35,8 @@ func (checkself *CheckSelfImpl) checkEngineConfigurationJson(ctx context.Context
 	configVariable := "SENZING_TOOLS_ENGINE_CONFIGURATION_JSON.PIPELINE.CONFIGPATH"
 	configValue, err := parsedEngineConfigurationJson.GetConfigPath(ctx)
 	if err != nil {
-		return reportChecks, reportInfo, reportErrors, err
+		reportErrors = append(reportErrors, fmt.Sprintf("Could not parse %s. Error: %s", configVariable, err.Error()))
+		return reportChecks, reportInfo, reportErrors, nil
 	}
 	errorList := statFiles(configVariable, configValue, RequiredConfigFiles)
 	reportErrors = append(reportErrors, errorList...)
@@ -45,7 +46,8 @@ func (checkself *CheckSelfImpl) checkEngineConfigurationJson(ctx context.Context
 	resourceVariable := "SENZING_TOOLS_ENGINE_CONFIGURATION_JSON.PIPELINE.RESOURCEPATH"
 	resourceValue, err := parsedEngineConfigurationJson.GetResourcePath(ctx)
 	if err != nil {
-		return reportChecks, reportInfo, reportErrors, err
+		reportErrors = append(reportErrors, fmt.Sprintf("Could not parse %s. Error: %s", resourceVariable, err.Error()))
+		return reportChecks, reportInfo, reportErrors, nil
 	}
 	errorList = statFiles(resourceVariable, resourceValue, RequiredResourceFiles)
 	reportErrors = append(reportErrors, errorList...)
@@ -55,7 +57,8 @@ func (checkself *CheckSelfImpl) checkEngineConfigurationJson(ctx context.Context
 	supportVariable := "SENZING_TOOLS_ENGINE_CONFIGURATION_JSON.PIPELINE.SUPPORTPATH"
 	supportValue, err := parsedEngineConfigurationJson.GetSupportPath(ctx)
 	if err != nil {
-		return reportChecks, reportInfo, reportErrors, err
+		reportErrors = append(reportErrors, fmt.Sprintf("Could not parse %s. Error: %s", supportVariable, err.Error()))
+		return reportChecks, reportInfo, reportErrors, nil
 	}
 	errorList = statFiles(supportVariable, supportValue, RequiredSupportFiles)
 	reportErrors = append(reportErrors, errorList...)
@@ -65,14 +68,15 @@ func (checkself *CheckSelfImpl) checkEngineConfigurationJson(ctx context.Context
 	connectionVariable := "SENZING_TOOLS_ENGINE_CONFIGURATION_JSON.SQL.CONNECTION"
 	connectionValues, err := parsedEngineConfigurationJson.GetDatabaseUrls(ctx)
 	if err != nil {
-		return reportChecks, reportInfo, reportErrors, err
+		reportErrors = append(reportErrors, fmt.Sprintf("Could not parse %s. Error: %s", connectionVariable, err.Error()))
+		return reportChecks, reportInfo, reportErrors, nil
 	}
 	for _, connectionValue := range connectionValues {
 		errorList = checkDatabaseUrl(ctx, connectionVariable, connectionValue)
 		reportErrors = append(reportErrors, errorList...)
 	}
 
-	return reportChecks, reportInfo, reportErrors, err
+	return reportChecks, reportInfo, reportErrors, nil
 
 }
 
@@ -92,7 +96,7 @@ func (checkself *CheckSelfImpl) CheckEngineConfigurationJson(ctx context.Context
 		normalizedValue := strings.ReplaceAll(strings.ReplaceAll(checkself.EngineConfigurationJson, "\n", " "), "  ", "")
 		reportChecks = append(reportChecks, fmt.Sprintf("%s = %s", option.EngineConfigurationJson.Envar, normalizedValue))
 		reportErrors = append(reportErrors, fmt.Sprintf("%s - %s", option.EngineConfigurationJson.Envar, err.Error()))
-		return reportChecks, reportInfo, reportErrors, err
+		return reportChecks, reportInfo, reportErrors, nil
 	}
 
 	// Report what is being checked.
@@ -100,7 +104,7 @@ func (checkself *CheckSelfImpl) CheckEngineConfigurationJson(ctx context.Context
 	redactedJson, err := parsedEngineConfigurationJson.RedactedJson(ctx)
 	if err != nil {
 		reportErrors = append(reportErrors, err.Error())
-		return reportChecks, reportInfo, reportErrors, err
+		return reportChecks, reportInfo, reportErrors, nil
 	}
 	reportChecks = append(reportChecks, fmt.Sprintf("%s = %s", option.EngineConfigurationJson.Envar, redactedJson))
 

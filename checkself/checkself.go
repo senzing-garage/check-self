@@ -79,6 +79,7 @@ func (checkself *CheckSelfImpl) CheckSelf(ctx context.Context) error {
 		checkself.CheckSupportPath,
 		checkself.CheckDatabaseUrl,
 		checkself.CheckEngineConfigurationJson,
+		checkself.Break,
 	}
 
 	// Perform checks.
@@ -86,9 +87,9 @@ func (checkself *CheckSelfImpl) CheckSelf(ctx context.Context) error {
 	for _, testFunction := range testFunctions {
 		reportChecks, reportInfo, reportErrors, err = testFunction(ctx, reportChecks, reportInfo, reportErrors)
 		if err != nil {
-			return err
-		}
-		if len(reportErrors) > 0 {
+			if len(err.Error()) > 0 {
+				reportErrors = append(reportErrors, err.Error())
+			}
 			break
 		}
 	}
