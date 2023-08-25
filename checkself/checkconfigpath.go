@@ -12,13 +12,13 @@ var RequiredConfigFiles = []string{
 	"defaultGNRCP.config",
 }
 
-func (checkself *CheckSelfImpl) CheckConfigPath(ctx context.Context, reportChecks []string, reportErrors []string) ([]string, []string, error) {
+func (checkself *CheckSelfImpl) CheckConfigPath(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
 	var err error = nil
 
 	// Short-circuit exit.
 
 	if len(checkself.ConfigPath) == 0 {
-		return reportChecks, reportErrors, err
+		return reportChecks, reportInfo, reportErrors, err
 	}
 
 	// Check Config path.
@@ -26,5 +26,5 @@ func (checkself *CheckSelfImpl) CheckConfigPath(ctx context.Context, reportCheck
 	reportChecks = append(reportChecks, fmt.Sprintf("%s = %s", option.ConfigPath.Envar, checkself.ConfigPath))
 	errorList := statFiles(option.ConfigPath.Envar, checkself.ConfigPath, RequiredConfigFiles)
 	reportErrors = append(reportErrors, errorList...)
-	return reportChecks, reportErrors, err
+	return reportChecks, reportInfo, reportErrors, err
 }

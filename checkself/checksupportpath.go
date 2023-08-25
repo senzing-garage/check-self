@@ -12,13 +12,13 @@ var RequiredSupportFiles = []string{
 	"g2SifterRules.ibm",
 }
 
-func (checkself *CheckSelfImpl) CheckSupportPath(ctx context.Context, reportChecks []string, reportErrors []string) ([]string, []string, error) {
+func (checkself *CheckSelfImpl) CheckSupportPath(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
 	var err error = nil
 
 	// Short-circuit exit.
 
 	if len(checkself.SupportPath) == 0 {
-		return reportChecks, reportErrors, err
+		return reportChecks, reportInfo, reportErrors, err
 	}
 
 	// Check Resource path.
@@ -26,5 +26,5 @@ func (checkself *CheckSelfImpl) CheckSupportPath(ctx context.Context, reportChec
 	reportChecks = append(reportChecks, fmt.Sprintf("%s = %s", option.SupportPath.Envar, checkself.SupportPath))
 	errorList := statFiles(option.SupportPath.Envar, checkself.SupportPath, RequiredSupportFiles)
 	reportErrors = append(reportErrors, errorList...)
-	return reportChecks, reportErrors, err
+	return reportChecks, reportInfo, reportErrors, err
 }

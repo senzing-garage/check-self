@@ -81,13 +81,13 @@ func checkDatabaseUrl(ctx context.Context, variableName string, databaseUrl stri
 
 }
 
-func (checkself *CheckSelfImpl) CheckDatabaseUrl(ctx context.Context, reportChecks []string, reportErrors []string) ([]string, []string, error) {
+func (checkself *CheckSelfImpl) CheckDatabaseUrl(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
 	var err error = nil
 
 	// Short-circuit exit.
 
 	if len(checkself.DatabaseUrl) == 0 {
-		return reportChecks, reportErrors, err
+		return reportChecks, reportInfo, reportErrors, err
 	}
 
 	// Check database URL.
@@ -95,5 +95,5 @@ func (checkself *CheckSelfImpl) CheckDatabaseUrl(ctx context.Context, reportChec
 	reportChecks = append(reportChecks, fmt.Sprintf("%s = %s", option.DatabaseUrl.Envar, checkself.DatabaseUrl))
 	errorList := checkDatabaseUrl(ctx, option.DatabaseUrl.Envar, checkself.DatabaseUrl)
 	reportErrors = append(reportErrors, errorList...)
-	return reportChecks, reportErrors, err
+	return reportChecks, reportInfo, reportErrors, err
 }

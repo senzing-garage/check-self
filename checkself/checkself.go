@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 
 	"google.golang.org/grpc"
 )
@@ -44,6 +45,10 @@ func statFiles(variableName string, path string, requiredFiles []string) []strin
 	return reportErrors
 }
 
+func printTitle(title string) {
+	fmt.Printf("\n-- %s %s\n\n", title, strings.Repeat("-", 76-len(title)))
+}
+
 // ----------------------------------------------------------------------------
 // Interface methods
 // ----------------------------------------------------------------------------
@@ -62,11 +67,13 @@ func (checkself *CheckSelfImpl) CheckSelf(ctx context.Context) error {
 	var err error = nil
 
 	reportChecks := []string{}
+	reportInfo := []string{}
 	reportErrors := []string{}
 
 	// List tests.  Order is important.
 
-	testFunctions := []func(ctx context.Context, reportChecks []string, reportErrors []string) ([]string, []string, error){
+	testFunctions := []func(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error){
+		checkself.CheckTool,
 		checkself.CheckConfigPath,
 		checkself.CheckResourcePath,
 		checkself.CheckSupportPath,
@@ -74,10 +81,10 @@ func (checkself *CheckSelfImpl) CheckSelf(ctx context.Context) error {
 		checkself.CheckEngineConfigurationJson,
 	}
 
-	// Perform tests.
+	// Perform checks.
 
 	for _, testFunction := range testFunctions {
-		reportChecks, reportErrors, err = testFunction(ctx, reportChecks, reportErrors)
+		reportChecks, reportInfo, reportErrors, err = testFunction(ctx, reportChecks, reportInfo, reportErrors)
 		if err != nil {
 			return err
 		}
@@ -88,20 +95,32 @@ func (checkself *CheckSelfImpl) CheckSelf(ctx context.Context) error {
 
 	// Output reports.
 
-	fmt.Printf("\nChecks performed:\n\n")
-	for index, message := range reportChecks {
-		fmt.Printf("  %4d - %s\n", index+1, message)
+	if len(reportInfo) > 0 {
+		printTitle("Information")
+		for _, message := range reportInfo {
+			fmt.Println(message)
+		}
+	}
+
+	if len(reportChecks) > 0 {
+		printTitle("Checks performed")
+		for index, message := range reportChecks {
+			fmt.Printf("  %4d - %s\n", index+1, message)
+		}
 	}
 
 	if len(reportErrors) > 0 {
-		err = fmt.Errorf("%d errors detected", len(reportErrors))
-		fmt.Printf("\nErrors: %s:\n\n", err.Error())
+		printTitle("Errors")
 		for index, message := range reportErrors {
 			fmt.Printf("  %4d - %s\n\n", index+1, message)
 		}
+		err = fmt.Errorf("%d errors detected", len(reportErrors))
+		fmt.Printf("Result: %s\n", err.Error())
 	} else {
-		fmt.Printf("\n\nDone. No errors detected.\n")
+		printTitle("Result")
+		fmt.Println("No errors detected.")
+		fmt.Println(strings.Repeat("-", 80))
 	}
 
-	return err
+	return nil
 }
