@@ -73,7 +73,9 @@ func (checkself *CheckSelfImpl) CheckSelf(ctx context.Context) error {
 	// List tests.  Order is important.
 
 	testFunctions := []func(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error){
-		checkself.CheckTool,
+		checkself.Prolog,
+		checkself.ListEnvironmentVariables,
+		checkself.ListStructVariables,
 		checkself.CheckConfigPath,
 		checkself.CheckResourcePath,
 		checkself.CheckSupportPath,
@@ -106,22 +108,22 @@ func (checkself *CheckSelfImpl) CheckSelf(ctx context.Context) error {
 	if len(reportChecks) > 0 {
 		printTitle("Checks performed")
 		for index, message := range reportChecks {
-			fmt.Printf("  %4d - %s\n", index+1, message)
+			fmt.Printf("%6d. %s\n", index+1, message)
 		}
 	}
 
 	if len(reportErrors) > 0 {
 		printTitle("Errors")
 		for index, message := range reportErrors {
-			fmt.Printf("  %4d - %s\n\n", index+1, message)
+			fmt.Printf("%6d. %s\n\n", index+1, message)
 		}
 		err = fmt.Errorf("%d errors detected", len(reportErrors))
 		fmt.Printf("Result: %s\n", err.Error())
 	} else {
 		printTitle("Result")
-		fmt.Println("No errors detected.")
-		fmt.Println(strings.Repeat("-", 80))
+		fmt.Printf("No errors detected.\n")
 	}
+	fmt.Printf("%s\n\n", strings.Repeat("-", 80))
 
-	return nil
+	return err
 }
