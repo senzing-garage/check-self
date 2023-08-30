@@ -25,7 +25,7 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
       - name: View environment variables
-        run: set
+        run: env
       - name: Install Senzing API
         uses: Senzing/github-action-install-senzing-api@latest
       - name: Copy /etc files
