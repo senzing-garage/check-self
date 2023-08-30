@@ -40,7 +40,7 @@ run:
 setup:
 	@rm -rf /tmp/sqlite
 	@mkdir  /tmp/sqlite
-	@cp testdata/sqlite/G2C.db /tmp/sqlite/G2C.db
+	@cp testdata/sqlite/G2C.db "C:\Temp\sqlite\G2C.db"
 
 # -----------------------------------------------------------------------------
 # Makefile targets supported only by this platform.
