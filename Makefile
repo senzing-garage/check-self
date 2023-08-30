@@ -164,13 +164,6 @@ print-make-variables:
 		$(origin $V)),$(warning $V=$($V) ($(value $V)))))
 
 
-.PHONY: setup
-setup:
-	@rm -rf /tmp/sqlite
-	@mkdir  /tmp/sqlite
-	@cp testdata/sqlite/G2C.db /tmp/sqlite/G2C.db
-
-
 .PHONY: update-pkg-cache
 update-pkg-cache:
 	@GOPROXY=https://proxy.golang.org GO111MODULE=on \
