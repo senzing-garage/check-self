@@ -38,8 +38,8 @@ run:
 
 .PHONY: setup
 setup:
-	@rm -rf /tmp/sqlite
-	@mkdir  /tmp/sqlite
+	@rm -rf "C:\Temp\sqlite"
+	@mkdir  "C:\Temp\sqlite"
 	@cp testdata/sqlite/G2C.db "C:\Temp\sqlite\G2C.db"
 
 # -----------------------------------------------------------------------------
