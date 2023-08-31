@@ -15,7 +15,7 @@ import (
 
 func TestCheckSelfImpl_CheckSelf_Paths(test *testing.T) {
 	ctx := context.TODO()
-	databaseUrl := `sqlite3://na:na@nowhere/C:\Temp\sqlite\G2C.db`
+	databaseUrl := fmt.Sprintf("%#v", "sqlite3://na:na@nowhere/C:\Temp\sqlite\G2C.db")
 	test.Logf(">>>>> test: %s\n", databaseUrl)
 
 	testObject := &CheckSelfImpl{
