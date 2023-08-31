@@ -70,8 +70,6 @@ func (checkself *CheckSelfImpl) CheckSelf(ctx context.Context) error {
 	reportInfo := []string{}
 	reportErrors := []string{}
 
-	fmt.Printf(">>>>>> option.DatabaseUrl: %s\n", checkself.DatabaseUrl)
-
 	// List tests.  Order is important.
 
 	testFunctions := []func(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error){
@@ -88,8 +86,7 @@ func (checkself *CheckSelfImpl) CheckSelf(ctx context.Context) error {
 
 	// Perform checks.
 
-	for ix, testFunction := range testFunctions {
-		fmt.Printf(">>>>>> %d: option.DatabaseUrl: %s\n", ix, checkself.DatabaseUrl)
+	for _, testFunction := range testFunctions {
 		reportChecks, reportInfo, reportErrors, err = testFunction(ctx, reportChecks, reportInfo, reportErrors)
 		if err != nil {
 			if len(err.Error()) > 0 {
