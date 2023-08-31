@@ -4,7 +4,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"os"
 
 	"github.com/senzing/check-self/checkself"
@@ -74,8 +73,6 @@ func PreRun(cobraCommand *cobra.Command, args []string) {
 // Used in construction of cobra.Command
 func RunE(_ *cobra.Command, _ []string) error {
 	ctx := context.Background()
-
-	fmt.Printf(">>>>>> option.DatabaseUrl: %s\n", viper.GetString(option.DatabaseUrl.Arg))
 
 	checkSelf := &checkself.CheckSelfImpl{
 		ConfigPath:              viper.GetString(option.ConfigPath.Arg),
