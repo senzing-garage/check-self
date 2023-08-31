@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/senzing/go-cmdhelping v0.1.8
 	github.com/senzing/go-common v0.2.14
-	github.com/senzing/go-databasing v0.2.7
+	github.com/senzing/go-databasing v0.2.8
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
 	github.com/stretchr/testify v1.8.4
