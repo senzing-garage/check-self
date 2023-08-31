@@ -10,6 +10,7 @@ import (
 
 	"github.com/senzing/go-cmdhelping/option"
 	"github.com/senzing/go-databasing/connector"
+	"github.com/senzing/go-databasing/dbhelper"
 	"golang.org/x/exp/slices"
 )
 
@@ -53,8 +54,13 @@ func checkDatabaseUrl(ctx context.Context, variableName string, databaseUrl stri
 	// Specific database URL scheme checks.
 
 	if parsedUrl.Scheme == "sqlite3" {
-		if _, err := os.Stat(parsedUrl.Path); err != nil {
-			reportErrors = append(reportErrors, fmt.Sprintf("%s = %s is misconfigured. Could not find %s. For more information, visit https://hub.senzing.com/...", variableName, databaseUrl, parsedUrl.Path))
+		sqliteFilename, err := dbhelper.ExtractSqliteDatabaseFilename(databaseUrl)
+		if err != nil {
+			reportErrors = append(reportErrors, fmt.Sprintf("%s = %s is misconfigured. Error: %s. For more information, visit https://hub.senzing.com/...", variableName, databaseUrl, err.Error()))
+			return reportErrors
+		}
+		if _, err := os.Stat(sqliteFilename); err != nil {
+			reportErrors = append(reportErrors, fmt.Sprintf("%s = %s is misconfigured. Could not find %s. For more information, visit https://hub.senzing.com/...", variableName, databaseUrl, sqliteFilename))
 			return reportErrors
 		}
 	}

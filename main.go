@@ -2,10 +2,13 @@
  */
 package main
 
-import "fmt"
+import (
+	"log"
+
+	"github.com/senzing/check-self/cmd"
+)
 
 func main() {
-	fmt.Println("sqlite3://na:na@nowhere/C:\\Temp\\sqlite\\G2C.db")
-	fmt.Println(`sqlite3://na:na@nowhere/C:\\Temp\\sqlite\\G2C.db`)
-	fmt.Println(`sqlite3://na:na@nowhere/C:\Temp\sqlite\G2C.db`)
+	log.SetFlags(0)
+	cmd.Execute()
 }

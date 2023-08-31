@@ -4,8 +4,8 @@ go 1.21
 
 require (
 	github.com/senzing/go-cmdhelping v0.1.8
-	github.com/senzing/go-common v0.2.14
-	github.com/senzing/go-databasing v0.2.8
+	github.com/senzing/go-common v0.3.0
+	github.com/senzing/go-databasing v0.2.9-0.20230831210822-c1b5234c5768
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
 	github.com/stretchr/testify v1.8.4
@@ -26,11 +26,14 @@ require (
 	github.com/lib/pq v1.10.9 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-sqlite3 v1.14.17 // indirect
-	github.com/microsoft/go-mssqldb v1.5.0 // indirect
+	github.com/microsoft/go-mssqldb v1.6.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.1.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
+	github.com/senzing/go-logging v1.3.2 // indirect
+	github.com/senzing/go-messaging v1.3.2 // indirect
+	github.com/senzing/go-observing v0.2.7 // indirect
 	github.com/spf13/afero v1.9.5 // indirect
 	github.com/spf13/cast v1.5.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
