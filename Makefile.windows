@@ -38,9 +38,9 @@ run:
 
 .PHONY: setup
 setup:
-	@rm -rf "C:\Temp\sqlite"
-	@mkdir  "C:\Temp\sqlite"
-	@cp testdata/sqlite/G2C.db "C:\Temp\sqlite\G2C.db"
+	@rmdir /Q C:\Temp\sqlite
+	@mkdir    C:\Temp\sqlite
+	@copy testdata\sqlite\G2C.db C:\Temp\sqlite\G2C.db
 
 # -----------------------------------------------------------------------------
 # Makefile targets supported only by this platform.
