@@ -221,7 +221,7 @@ func (checkself *CheckSelfImpl) CheckSelf(ctx context.Context) error {
 		printTitle("Result")
 		fmt.Printf("No errors detected.\n")
 	}
-	fmt.Printf("%s\n\n", strings.Repeat("-", 80))
+	fmt.Printf("%s\n\n\n\n\n", strings.Repeat("-", 80))
 
 	return err
 }

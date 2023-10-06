@@ -90,7 +90,7 @@ func PreRun(cobraCommand *cobra.Command, args []string) {
 }
 
 // Used in construction of cobra.Command
-func Run(_ *cobra.Command, _ []string) {
+func RunE(_ *cobra.Command, _ []string) error {
 	ctx := context.Background()
 
 	checkSelf := &checkself.CheckSelfImpl{
@@ -109,7 +109,7 @@ func Run(_ *cobra.Command, _ []string) {
 		SenzingDirectory:           viper.GetString(option.SenzingDirectory.Arg),
 		SupportPath:                viper.GetString(option.SupportPath.Arg),
 	}
-	checkSelf.CheckSelf(ctx)
+	return checkSelf.CheckSelf(ctx)
 }
 
 // Used in construction of cobra.Command
@@ -127,6 +127,6 @@ var RootCmd = &cobra.Command{
 	Short:   Short,
 	Long:    Long,
 	PreRun:  PreRun,
-	Run:     Run,
+	RunE:    RunE,
 	Version: Version(),
 }

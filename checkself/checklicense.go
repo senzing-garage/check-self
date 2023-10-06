@@ -78,7 +78,8 @@ func (checkself *CheckSelfImpl) CheckLicense(ctx context.Context, reportChecks [
 	duration := time.Until(licenseExpireDate)
 	expireInDays := int(duration.Hours() / 24)
 
-	reportInfo = append(reportInfo, fmt.Sprintf(`License:
+	reportInfo = append(reportInfo, fmt.Sprintf(`
+License:
 
 - Records used: %d of %d
 - Date license expires: %s
