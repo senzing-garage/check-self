@@ -16,7 +16,7 @@ func TestCheckSelfImpl_CheckSelf_Null(test *testing.T) {
 	ctx := context.TODO()
 	testObject := &CheckSelfImpl{}
 	err := testObject.CheckSelf(ctx)
-	assert.Nil(test, err)
+	assert.NotNil(test, err)
 }
 
 func TestCheckSelfImpl_CheckSelf_EngineConfigurationJson(test *testing.T) {

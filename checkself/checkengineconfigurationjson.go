@@ -112,6 +112,16 @@ func (checkself *CheckSelfImpl) CheckEngineConfigurationJson(ctx context.Context
 		return reportChecks, reportInfo, reportErrors, nil
 	}
 
+	databaseUrls, err := parsedEngineConfigurationJson.GetDatabaseUrls(ctx)
+	if err != nil {
+		reportErrors = append(reportErrors, err.Error())
+		return reportChecks, reportInfo, reportErrors, nil
+	}
+	for _, databaseUrl := range databaseUrls {
+		errorList := checkDatabaseUrl(ctx, option.EngineConfigurationJson.Envar, databaseUrl)
+		reportErrors = append(reportErrors, errorList...)
+	}
+
 	// Report what is being checked.
 
 	redactedJson, err := parsedEngineConfigurationJson.RedactedJson(ctx)

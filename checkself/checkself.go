@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/senzing/g2-sdk-go/g2api"
+	"github.com/senzing/go-common/engineconfigurationjsonparser"
 	"github.com/senzing/go-common/g2engineconfigurationjson"
 	"github.com/senzing/go-sdk-abstract-factory/factory"
 	"google.golang.org/grpc"
@@ -85,6 +86,36 @@ func printTitle(title string) {
 // ----------------------------------------------------------------------------
 // Internal methods
 // ----------------------------------------------------------------------------
+
+func (checkself *CheckSelfImpl) getDatabaseUrl(ctx context.Context) (string, error) {
+
+	// Simple case.
+
+	if len(checkself.DatabaseUrl) > 0 {
+		return checkself.DatabaseUrl, nil
+	}
+
+	if len(checkself.EngineConfigurationJson) == 0 {
+		return "", fmt.Errorf("neither DatabaseUrl nor EngineConfigurationJson set")
+	}
+
+	// Pull database from Senzing engine configuration json.
+	// TODO: This code only returns one database.  Need to handle the multi-database case.
+
+	parsedEngineConfigurationJson, err := engineconfigurationjsonparser.New(checkself.EngineConfigurationJson)
+	if err != nil {
+		return "", fmt.Errorf("unable to parse EngineConfigurationJson: %s", checkself.EngineConfigurationJson)
+	}
+
+	databaseUrls, err := parsedEngineConfigurationJson.GetDatabaseUrls(ctx)
+	if err != nil {
+		return "", fmt.Errorf("unable to extract databases from EngineConfigurationJson: %s", checkself.EngineConfigurationJson)
+	}
+	if len(databaseUrls) == 0 {
+		return "", fmt.Errorf("no databases found in EngineConfigurationJson: %s", checkself.EngineConfigurationJson)
+	}
+	return databaseUrls[0], nil
+}
 
 func (checkself *CheckSelfImpl) getEngineConfigurationJson(ctx context.Context) string {
 	var err error = nil

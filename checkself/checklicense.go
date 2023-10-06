@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/senzing/go-cmdhelping/option"
 	"github.com/senzing/go-databasing/checker"
 	"github.com/senzing/go-databasing/connector"
 )
@@ -21,9 +20,14 @@ func (checkself *CheckSelfImpl) CheckLicense(ctx context.Context, reportChecks [
 
 	// Connect to the database.
 
-	databaseConnector, err := connector.NewConnector(ctx, checkself.DatabaseUrl)
+	databaseUrl, err := checkself.getDatabaseUrl(ctx)
 	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("%s = %s is misconfigured. Could not create a databsae connector. For more information, visit https://hub.senzing.com/...  Error: %s", option.DatabaseUrl.Envar, checkself.DatabaseUrl, err.Error()))
+		reportErrors = append(reportErrors, fmt.Sprintf("Unable to locate Database URL For more information, visit https://hub.senzing.com/...  Error: %s", err.Error()))
+		return reportChecks, reportInfo, reportErrors, nil
+	}
+	databaseConnector, err := connector.NewConnector(ctx, databaseUrl)
+	if err != nil {
+		reportErrors = append(reportErrors, fmt.Sprintf("Database URL '%s' is misconfigured. Could not create a database connector. For more information, visit https://hub.senzing.com/...  Error: %s", databaseUrl, err.Error()))
 		return reportChecks, reportInfo, reportErrors, nil
 	}
 
@@ -88,24 +92,30 @@ License:
 %s`,
 		recordCount, productLicenseResponse.RecordLimit, productLicenseResponse.ExpireDate, expireInDays, prettyJSON.String()))
 
-	// Calculate errors.
+	// Calculate License Days Left error.
 
+	if len(checkself.ErrorLicenseDaysLeft) == 0 {
+		checkself.ErrorLicenseDaysLeft = DefaultSenzingToolsLicenseDaysLeft
+	}
 	errorLicenseDaysLeft, err := strconv.Atoi(checkself.ErrorLicenseDaysLeft)
 	if err != nil {
 		reportErrors = append(reportErrors, fmt.Sprintf("Could not parse SENZING_TOOLS_LICENSE_DAYS_LEFT information: %s.  Error %s", checkself.ErrorLicenseDaysLeft, err.Error()))
 		return reportChecks, reportInfo, reportErrors, nil
 	}
-
 	if expireInDays < errorLicenseDaysLeft {
 		reportErrors = append(reportErrors, fmt.Sprintf("License expires in %d days. For more information, visit https://hub.senzing.com/... ", expireInDays))
 	}
 
+	// Calculate License Records Percent error.
+
+	if len(checkself.ErrorLicenseRecordsPercent) == 0 {
+		checkself.ErrorLicenseRecordsPercent = DefaultSenzingToolsLicenseRecordsPercent
+	}
 	errorLicenseRecordsPercent, err := strconv.Atoi(checkself.ErrorLicenseRecordsPercent)
 	if err != nil {
 		reportErrors = append(reportErrors, fmt.Sprintf("Could not parse SENZING_TOOLS_LICENSE_RECORDS_PERCENT information: %s.  Error %s", checkself.ErrorLicenseRecordsPercent, err.Error()))
 		return reportChecks, reportInfo, reportErrors, nil
 	}
-
 	if (recordCount / productLicenseResponse.RecordLimit) > int64(errorLicenseRecordsPercent) {
 		reportErrors = append(reportErrors, fmt.Sprintf("Records above %d full limit. For more information, visit https://hub.senzing.com/... ", errorLicenseRecordsPercent))
 	}
