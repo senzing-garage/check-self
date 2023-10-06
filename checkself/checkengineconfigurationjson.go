@@ -1,7 +1,9 @@
 package checkself
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -20,7 +22,15 @@ func (checkself *CheckSelfImpl) buildAndCheckEngineConfigurationJson(ctx context
 		reportErrors = append(reportErrors, fmt.Sprintf("Could not build engine configuration json. %s", err.Error()))
 		return reportChecks, reportInfo, reportErrors, nil
 	}
-	reportInfo = append(reportInfo, fmt.Sprintf("\nexport SENZING_TOOLS_ENGINE_CONFIGURATION_JSON='%s'\n", engineConfigurationJson))
+
+	var prettyJSON bytes.Buffer
+	err = json.Indent(&prettyJSON, []byte(engineConfigurationJson), "", "\t")
+	if err != nil {
+		reportErrors = append(reportErrors, fmt.Sprintf("Could not parse license information.  Error %s", err.Error()))
+		return reportChecks, reportInfo, reportErrors, nil
+	}
+
+	reportInfo = append(reportInfo, fmt.Sprintf("\nEffective engine configuration:\n\nexport SENZING_TOOLS_ENGINE_CONFIGURATION_JSON='%s'\n", prettyJSON.String()))
 	return checkself.checkEngineConfigurationJson(ctx, engineConfigurationJson, reportChecks, reportInfo, reportErrors)
 }
 
@@ -85,6 +95,9 @@ func (checkself *CheckSelfImpl) checkEngineConfigurationJson(ctx context.Context
 // ----------------------------------------------------------------------------
 
 func (checkself *CheckSelfImpl) CheckEngineConfigurationJson(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+
+	// Short-circuit exit.
+
 	if len(checkself.EngineConfigurationJson) == 0 {
 		return checkself.buildAndCheckEngineConfigurationJson(ctx, reportChecks, reportInfo, reportErrors)
 	}
@@ -106,7 +119,7 @@ func (checkself *CheckSelfImpl) CheckEngineConfigurationJson(ctx context.Context
 		reportErrors = append(reportErrors, err.Error())
 		return reportChecks, reportInfo, reportErrors, nil
 	}
-	reportChecks = append(reportChecks, fmt.Sprintf("%s = %s", option.EngineConfigurationJson.Envar, redactedJson))
+	reportChecks = append(reportChecks, fmt.Sprintf("Check engine configuration: %s = %s", option.EngineConfigurationJson.Envar, redactedJson))
 
 	// Perform check.
 

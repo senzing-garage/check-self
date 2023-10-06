@@ -9,6 +9,7 @@ import (
 	"github.com/senzing/check-self/checkself"
 	"github.com/senzing/go-cmdhelping/cmdhelper"
 	"github.com/senzing/go-cmdhelping/option"
+	"github.com/senzing/go-cmdhelping/option/optiontype"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -25,6 +26,22 @@ check-self long description.
 // Context variables
 // ----------------------------------------------------------------------------
 
+var LicenseDaysLeft = option.ContextVariable{
+	Arg:     "license-days-left",
+	Default: option.OsLookupEnvString("SENZING_TOOLS_LICENSE_DAYS_LEFT", "30"),
+	Envar:   "SENZING_TOOLS_LICENSE_DAYS_LEFT",
+	Help:    "Number of days left in license before flagging as an error [%s]",
+	Type:    optiontype.String,
+}
+
+var LicenseRecordsPercent = option.ContextVariable{
+	Arg:     "license-records-percent",
+	Default: option.OsLookupEnvString("SENZING_TOOLS_LICENSE_RECORDS_PERCENT", "90"),
+	Envar:   "SENZING_TOOLS_LICENSE_RECORDS_PERCENT",
+	Help:    "Percent of records allowed by license [%s]",
+	Type:    optiontype.String,
+}
+
 var ContextVariablesForMultiPlatform = []option.ContextVariable{
 	option.ConfigPath,
 	option.Configuration,
@@ -39,6 +56,8 @@ var ContextVariablesForMultiPlatform = []option.ContextVariable{
 	option.ResourcePath,
 	option.SenzingDirectory,
 	option.SupportPath,
+	LicenseDaysLeft,
+	LicenseRecordsPercent,
 }
 
 var ContextVariables = append(ContextVariablesForMultiPlatform, ContextVariablesForOsArch...)
@@ -71,24 +90,26 @@ func PreRun(cobraCommand *cobra.Command, args []string) {
 }
 
 // Used in construction of cobra.Command
-func RunE(_ *cobra.Command, _ []string) error {
+func Run(_ *cobra.Command, _ []string) {
 	ctx := context.Background()
 
 	checkSelf := &checkself.CheckSelfImpl{
-		ConfigPath:              viper.GetString(option.ConfigPath.Arg),
-		DatabaseUrl:             viper.GetString(option.DatabaseUrl.Arg),
-		EngineConfigurationJson: viper.GetString(option.EngineConfigurationJson.Arg),
-		EngineLogLevel:          viper.GetString(option.EngineLogLevel.Arg),
-		GrpcUrl:                 viper.GetString(option.GrpcUrl.Arg),
-		InputUrl:                viper.GetString(option.InputURL.Arg),
-		LicenseStringBase64:     viper.GetString(option.LicenseStringBase64.Arg),
-		LogLevel:                viper.GetString(option.LogLevel.Arg),
-		ObserverUrl:             viper.GetString(option.ObserverUrl.Arg),
-		ResourcePath:            viper.GetString(option.ResourcePath.Arg),
-		SenzingDirectory:        viper.GetString(option.SenzingDirectory.Arg),
-		SupportPath:             viper.GetString(option.SupportPath.Arg),
+		ConfigPath:                 viper.GetString(option.ConfigPath.Arg),
+		DatabaseUrl:                viper.GetString(option.DatabaseUrl.Arg),
+		EngineConfigurationJson:    viper.GetString(option.EngineConfigurationJson.Arg),
+		EngineLogLevel:             viper.GetString(option.EngineLogLevel.Arg),
+		ErrorLicenseDaysLeft:       viper.GetString(LicenseDaysLeft.Arg),
+		ErrorLicenseRecordsPercent: viper.GetString(LicenseRecordsPercent.Arg),
+		GrpcUrl:                    viper.GetString(option.GrpcUrl.Arg),
+		InputUrl:                   viper.GetString(option.InputURL.Arg),
+		LicenseStringBase64:        viper.GetString(option.LicenseStringBase64.Arg),
+		LogLevel:                   viper.GetString(option.LogLevel.Arg),
+		ObserverUrl:                viper.GetString(option.ObserverUrl.Arg),
+		ResourcePath:               viper.GetString(option.ResourcePath.Arg),
+		SenzingDirectory:           viper.GetString(option.SenzingDirectory.Arg),
+		SupportPath:                viper.GetString(option.SupportPath.Arg),
 	}
-	return checkSelf.CheckSelf(ctx)
+	checkSelf.CheckSelf(ctx)
 }
 
 // Used in construction of cobra.Command
@@ -106,6 +127,6 @@ var RootCmd = &cobra.Command{
 	Short:   Short,
 	Long:    Long,
 	PreRun:  PreRun,
-	RunE:    RunE,
+	Run:     Run,
 	Version: Version(),
 }

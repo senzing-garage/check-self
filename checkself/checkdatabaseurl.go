@@ -95,10 +95,16 @@ func (checkself *CheckSelfImpl) CheckDatabaseUrl(ctx context.Context, reportChec
 		return reportChecks, reportInfo, reportErrors, nil
 	}
 
+	// Prolog.
+
+	reportChecks = append(reportChecks, fmt.Sprintf("Check database URL: %s = %s", option.DatabaseUrl.Envar, checkself.DatabaseUrl))
+
 	// Check database URL.
 
-	reportChecks = append(reportChecks, fmt.Sprintf("%s = %s", option.DatabaseUrl.Envar, checkself.DatabaseUrl))
 	errorList := checkDatabaseUrl(ctx, option.DatabaseUrl.Envar, checkself.DatabaseUrl)
 	reportErrors = append(reportErrors, errorList...)
+
+	// Epilog.
+
 	return reportChecks, reportInfo, reportErrors, nil
 }

@@ -18,7 +18,7 @@ func (checkself *CheckSelfImpl) ListEnvironmentVariables(ctx context.Context, re
 	}
 
 	if len(osEnviron) > 0 {
-		reportInfo = append(reportInfo, fmt.Sprintf("\nSENZING_TOOLS_* environment variables defined.  Count: %d", len(osEnviron)))
+		reportInfo = append(reportInfo, "\nSENZING_TOOLS_* environment variables defined:\n")
 		count := 0
 		for key, value := range osEnviron {
 			count += 1

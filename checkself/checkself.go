@@ -5,7 +5,11 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"sync"
 
+	"github.com/senzing/g2-sdk-go/g2api"
+	"github.com/senzing/go-common/g2engineconfigurationjson"
+	"github.com/senzing/go-sdk-abstract-factory/factory"
 	"google.golang.org/grpc"
 )
 
@@ -15,23 +19,52 @@ import (
 
 // CheckSelfImpl is the basic checker.
 type CheckSelfImpl struct {
-	ConfigPath              string
-	DatabaseUrl             string            // TODO:
-	EngineConfigurationJson string            // TODO:
-	EngineLogLevel          string            // TODO:
-	GrpcDialOptions         []grpc.DialOption // TODO:
-	GrpcUrl                 string            // TODO:
-	InputUrl                string            // TODO:
-	LicenseStringBase64     string            // TODO:
-	LogLevel                string            // TODO:
-	ObserverUrl             string            // TODO:
-	ResourcePath            string
-	SenzingDirectory        string // TODO:
-	SupportPath             string
+	// g2configSingleton       g2api.G2config
+	// g2configSyncOnce        sync.Once
+	ConfigPath                 string
+	DatabaseUrl                string
+	EngineConfigurationJson    string
+	EngineLogLevel             string // TODO:
+	ErrorLicenseDaysLeft       string
+	ErrorLicenseRecordsPercent string
+	g2configmgrSingleton       g2api.G2configmgr
+	g2configmgrSyncOnce        sync.Once
+	g2factorySingleton         factory.SdkAbstractFactory
+	g2factorySyncOnce          sync.Once
+	g2productSingleton         g2api.G2product
+	g2productSyncOnce          sync.Once
+	GrpcDialOptions            []grpc.DialOption // TODO:
+	GrpcUrl                    string            // TODO:
+	InputUrl                   string            // TODO:
+	LicenseStringBase64        string            // TODO:
+	LogLevel                   string            // TODO:
+	ObserverUrl                string            // TODO:
+	ResourcePath               string
+	SenzingDirectory           string // TODO:
+	SenzingModuleName          string
+	SenzingVerboseLogging      int
+	SupportPath                string
+}
+
+type ProductLicenseResponse struct {
+	Billing      string `json:"billing"`
+	Contract     string `json:"contract"`
+	Customer     string `json:"customer"`
+	ExpireDate   string `json:"expireDate"`
+	IssueDate    string `json:"issueDate"`
+	LicenseLevel string `json:"licenseLevel"`
+	LicenseType  string `json:"licenseType"`
+	RecordLimit  int64  `json:"recordLimit"`
 }
 
 // ----------------------------------------------------------------------------
-// Internal methods
+// Variables
+// ----------------------------------------------------------------------------
+
+var defaultModuleName string = "check-self"
+
+// ----------------------------------------------------------------------------
+// Internal functions
 // ----------------------------------------------------------------------------
 
 func statFiles(variableName string, path string, requiredFiles []string) []string {
@@ -47,6 +80,67 @@ func statFiles(variableName string, path string, requiredFiles []string) []strin
 
 func printTitle(title string) {
 	fmt.Printf("\n-- %s %s\n\n", title, strings.Repeat("-", 76-len(title)))
+}
+
+// ----------------------------------------------------------------------------
+// Internal methods
+// ----------------------------------------------------------------------------
+
+func (checkself *CheckSelfImpl) getEngineConfigurationJson(ctx context.Context) string {
+	var err error = nil
+	result := checkself.EngineConfigurationJson
+	if len(result) == 0 {
+		result, err = g2engineconfigurationjson.BuildSimpleSystemConfigurationJsonUsingEnvVars()
+		if err != nil {
+			panic(err.Error())
+		}
+	}
+	return result
+}
+
+func (checkself *CheckSelfImpl) getModuleName(ctx context.Context) string {
+	result := checkself.SenzingModuleName
+	if len(result) == 0 {
+		result = defaultModuleName
+	}
+	return result
+}
+
+// Create a G2Configmgr singleton and return it.
+func (checkself *CheckSelfImpl) getG2configmgr(ctx context.Context) (g2api.G2configmgr, error) {
+	var err error = nil
+	checkself.g2configmgrSyncOnce.Do(func() {
+		checkself.g2configmgrSingleton, err = checkself.getG2Factory(ctx).GetG2configmgr(ctx)
+		if err != nil {
+			return
+		}
+		if checkself.g2configmgrSingleton.GetSdkId(ctx) == "base" {
+			err = checkself.g2configmgrSingleton.Init(ctx, checkself.getModuleName(ctx), checkself.getEngineConfigurationJson(ctx), checkself.SenzingVerboseLogging)
+		}
+	})
+	return checkself.g2configmgrSingleton, err
+}
+
+func (checkself *CheckSelfImpl) getG2Factory(ctx context.Context) factory.SdkAbstractFactory {
+	checkself.g2factorySyncOnce.Do(func() {
+		checkself.g2factorySingleton = &factory.SdkAbstractFactoryImpl{}
+	})
+	return checkself.g2factorySingleton
+}
+
+// Create a G2Configmgr singleton and return it.
+func (checkself *CheckSelfImpl) getG2product(ctx context.Context) (g2api.G2product, error) {
+	var err error = nil
+	checkself.g2productSyncOnce.Do(func() {
+		checkself.g2productSingleton, err = checkself.getG2Factory(ctx).GetG2product(ctx)
+		if err != nil {
+			return
+		}
+		if checkself.g2configmgrSingleton.GetSdkId(ctx) == "base" {
+			err = checkself.g2productSingleton.Init(ctx, checkself.getModuleName(ctx), checkself.getEngineConfigurationJson(ctx), checkself.SenzingVerboseLogging)
+		}
+	})
+	return checkself.g2productSingleton, err
 }
 
 // ----------------------------------------------------------------------------
@@ -82,6 +176,10 @@ func (checkself *CheckSelfImpl) CheckSelf(ctx context.Context) error {
 		checkself.CheckDatabaseUrl,
 		checkself.CheckEngineConfigurationJson,
 		checkself.Break,
+		checkself.CheckDatabaseSchema,
+		checkself.Break,
+		checkself.CheckSenzingConfiguration,
+		checkself.CheckLicense,
 	}
 
 	// Perform checks.

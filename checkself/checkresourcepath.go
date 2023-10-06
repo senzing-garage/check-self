@@ -19,10 +19,16 @@ func (checkself *CheckSelfImpl) CheckResourcePath(ctx context.Context, reportChe
 		return reportChecks, reportInfo, reportErrors, nil
 	}
 
+	// Prolog.
+
+	reportChecks = append(reportChecks, fmt.Sprintf("Check resource path: %s = %s", option.ResourcePath.Envar, checkself.ResourcePath))
+
 	// Check Resource path.
 
-	reportChecks = append(reportChecks, fmt.Sprintf("%s = %s", option.ResourcePath.Envar, checkself.ResourcePath))
 	errorList := statFiles(option.ResourcePath.Envar, checkself.ResourcePath, RequiredResourceFiles)
 	reportErrors = append(reportErrors, errorList...)
+
+	// Epilog.
+
 	return reportChecks, reportInfo, reportErrors, nil
 }

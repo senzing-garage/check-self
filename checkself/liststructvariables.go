@@ -23,7 +23,7 @@ func (checkself *CheckSelfImpl) ListStructVariables(ctx context.Context, reportC
 	}
 
 	count := 0
-	reportInfo = append(reportInfo, fmt.Sprintf("\nCommand line variables."))
+	reportInfo = append(reportInfo, "\nCommand line variables:\n")
 
 	for key, value := range structStrings {
 		if len(value) > 0 {

@@ -20,10 +20,16 @@ func (checkself *CheckSelfImpl) CheckConfigPath(ctx context.Context, reportCheck
 		return reportChecks, reportInfo, reportErrors, nil
 	}
 
+	// Prolog.
+
+	reportChecks = append(reportChecks, fmt.Sprintf("Check configuration path: %s = %s", option.ConfigPath.Envar, checkself.ConfigPath))
+
 	// Check Config path.
 
-	reportChecks = append(reportChecks, fmt.Sprintf("%s = %s", option.ConfigPath.Envar, checkself.ConfigPath))
 	errorList := statFiles(option.ConfigPath.Envar, checkself.ConfigPath, RequiredConfigFiles)
 	reportErrors = append(reportErrors, errorList...)
+
+	// Epilog.
+
 	return reportChecks, reportInfo, reportErrors, nil
 }
