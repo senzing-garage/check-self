@@ -6,7 +6,7 @@ require (
 	github.com/senzing/g2-sdk-go v0.7.0
 	github.com/senzing/go-cmdhelping v0.1.8
 	github.com/senzing/go-common v0.3.0
-	github.com/senzing/go-databasing v0.2.9
+	github.com/senzing/go-databasing v0.3.0
 	github.com/senzing/go-sdk-abstract-factory v0.4.0
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.17.0
@@ -56,5 +56,3 @@ require (
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/senzing/go-databasing v0.2.9 => /home/senzing/senzing.git/go-databasing
