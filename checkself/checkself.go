@@ -43,7 +43,7 @@ type CheckSelfImpl struct {
 	ResourcePath               string
 	SenzingDirectory           string // TODO:
 	SenzingModuleName          string
-	SenzingVerboseLogging      int
+	SenzingVerboseLogging      int64
 	SupportPath                string
 }
 
