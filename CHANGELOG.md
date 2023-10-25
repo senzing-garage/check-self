@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.2] - 2023-10-25
 
-### Added to 0.0.1
+### Added to 0.0.2
 
 - Refactor to [template-go](https://github.com/Senzing/template-go)
 - Update dependencies
