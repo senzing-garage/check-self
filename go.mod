@@ -9,7 +9,7 @@ require (
 	github.com/senzing/go-databasing v0.3.1
 	github.com/senzing/go-sdk-abstract-factory v0.4.3
 	github.com/spf13/cobra v1.8.0
-	github.com/spf13/viper v1.18.1
+	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/exp v0.0.0-20231206192017-f3f8817b8deb
 	google.golang.org/grpc v1.60.0
