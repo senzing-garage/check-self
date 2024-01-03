@@ -8,8 +8,8 @@ import (
 	"sync"
 
 	"github.com/senzing/g2-sdk-go/g2api"
-	"github.com/senzing/go-common/engineconfigurationjsonparser"
-	"github.com/senzing/go-common/g2engineconfigurationjson"
+	"github.com/senzing-garage/go-common/engineconfigurationjsonparser"
+	"github.com/senzing-garage/go-common/g2engineconfigurationjson"
 	"github.com/senzing/go-sdk-abstract-factory/factory"
 	"google.golang.org/grpc"
 )

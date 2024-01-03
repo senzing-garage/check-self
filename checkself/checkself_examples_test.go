@@ -11,7 +11,7 @@ import (
 // ----------------------------------------------------------------------------
 
 func ExampleCheckSelfImpl_CheckSelf() {
-	// For more information, visit https://github.com/Senzing/check-self/blob/main/checkself/checkself_examples_test.go
+	// For more information, visit https://github.com/senzing-garage/check-self/blob/main/checkself/checkself_examples_test.go
 	ctx := context.TODO()
 	examplePackage := &CheckSelfImpl{}
 	examplePackage.CheckSelf(ctx)

@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/senzing/go-cmdhelping/option"
-	"github.com/senzing/go-common/engineconfigurationjsonparser"
-	"github.com/senzing/go-common/g2engineconfigurationjson"
+	"github.com/senzing-garage/go-cmdhelping/option"
+	"github.com/senzing-garage/go-common/engineconfigurationjsonparser"
+	"github.com/senzing-garage/go-common/g2engineconfigurationjson"
 )
 
 // ----------------------------------------------------------------------------

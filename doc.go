@@ -7,7 +7,7 @@ One or two paragraph overview of this module...
 
 (This page describes the nature of the entire Go module or the top-level command, not an individual package.)
 
-More information at https://github.com/senzing/check-self
+More information at https://github.com/senzing-garage/check-self
 
 # Example Package
 
@@ -16,7 +16,7 @@ documentation, tests, and examples should be done.  This paragraph (or two)
 should provide a brief overview while linking the reader to the documentation
 included in the package itself.
 
-More information can be found in the [pkg/github.com/senzing/check-self/examplepackage] documentation.
+More information can be found in the [pkg/github.com/senzing-garage/check-self/examplepackage] documentation.
 
 # Another Header: Package or other module features...
 
@@ -33,8 +33,8 @@ Examples of use can be seen in the main_test.go files.
 	import (
 		fmt
 
-		"github.com/senzing/check-self/examplepackage"
-		"github.com/senzing/check-self/anotherpackage"
+		"github.com/senzing-garage/check-self/examplepackage"
+		"github.com/senzing-garage/check-self/anotherpackage"
 	)
 
 	func main() {

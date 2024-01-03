@@ -6,10 +6,10 @@ import (
 	"context"
 	"os"
 
-	"github.com/senzing/check-self/checkself"
-	"github.com/senzing/go-cmdhelping/cmdhelper"
-	"github.com/senzing/go-cmdhelping/option"
-	"github.com/senzing/go-cmdhelping/option/optiontype"
+	"github.com/senzing-garage/check-self/checkself"
+	"github.com/senzing-garage/go-cmdhelping/cmdhelper"
+	"github.com/senzing-garage/go-cmdhelping/option"
+	"github.com/senzing-garage/go-cmdhelping/option/optiontype"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

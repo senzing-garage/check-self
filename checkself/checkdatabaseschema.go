@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/senzing/go-cmdhelping/option"
-	"github.com/senzing/go-databasing/checker"
-	"github.com/senzing/go-databasing/connector"
+	"github.com/senzing-garage/go-cmdhelping/option"
+	"github.com/senzing-garage/go-databasing/checker"
+	"github.com/senzing-garage/go-databasing/connector"
 )
 
 func (checkself *CheckSelfImpl) CheckDatabaseSchema(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
