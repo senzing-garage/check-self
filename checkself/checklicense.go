@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/senzing/go-databasing/checker"
-	"github.com/senzing/go-databasing/connector"
+	"github.com/senzing-garage/go-databasing/checker"
+	"github.com/senzing-garage/go-databasing/connector"
 )
 
 func (checkself *CheckSelfImpl) CheckLicense(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {

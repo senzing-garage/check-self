@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/senzing/go-cmdhelping/option"
+	"github.com/senzing-garage/go-cmdhelping/option"
 )
 
 var RequiredConfigFiles = []string{

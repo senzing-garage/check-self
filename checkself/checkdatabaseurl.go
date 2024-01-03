@@ -8,9 +8,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/senzing/go-cmdhelping/option"
-	"github.com/senzing/go-databasing/connector"
-	"github.com/senzing/go-databasing/dbhelper"
+	"github.com/senzing-garage/go-cmdhelping/option"
+	"github.com/senzing-garage/go-databasing/connector"
+	"github.com/senzing-garage/go-databasing/dbhelper"
 	"golang.org/x/exp/slices"
 )
 

@@ -5,7 +5,7 @@ package main
 import (
 	"log"
 
-	"github.com/senzing/check-self/cmd"
+	"github.com/senzing-garage/check-self/cmd"
 )
 
 func main() {
