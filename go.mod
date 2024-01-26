@@ -6,7 +6,7 @@ require (
 	github.com/senzing-garage/go-cmdhelping v0.2.0
 	github.com/senzing-garage/go-common v0.4.0
 	github.com/senzing-garage/go-databasing v0.4.0
-	github.com/senzing/g2-sdk-go v0.8.0
+	github.com/senzing/g2-sdk-go v0.9.0
 	github.com/senzing/go-sdk-abstract-factory v0.5.0
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2
@@ -51,7 +51,7 @@ require (
 	golang.org/x/net v0.20.0 // indirect
 	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240108191215-35c7eff3a6b1 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240125205218-1f4bbc51befe // indirect
 	google.golang.org/protobuf v1.32.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
