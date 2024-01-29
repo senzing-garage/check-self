@@ -16,7 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Refactor to [template-go](https://github.com/senzing-garage/template-go)
 - Update dependencies
-  - github.com/senzing-garage/go-cmdhelping v0.2.0
+  - github.com/senzing-garage/g2-sdk-go v0.9.0
+  - github.com/senzing-garage/go-sdk-abstract-factory v0.6.0
+  - golang.org/x/exp v0.0.0-20240112132812-db7319d0e0e3
+  - google.golang.org/grpc v1.61.0
 
 ## [0.1.0] - 2024-01-03
 
