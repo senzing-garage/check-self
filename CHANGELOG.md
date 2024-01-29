@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -
 
+## [0.1.1] - 2024-01-29
+
+### Changed in 0.1.1
+
+- Refactor to [template-go](https://github.com/senzing-garage/template-go)
+- Update dependencies
+  - github.com/senzing-garage/go-cmdhelping v0.2.0
+
 ## [0.1.0] - 2024-01-03
 
 ### Changed in 0.1.0
