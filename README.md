@@ -15,7 +15,7 @@ Heck, it may not even be appropriate for your application of Senzing!
 ## Synopsis
 
 `check-self` is a command in the
-[senzing-tools](https://github.com/Senzing/senzing-tools)
+[senzing-tools](https://github.com/senzing-garage/senzing-tools)
 suite of tools.
 This command reviews the environment in which the command is run and returns a report.
 
