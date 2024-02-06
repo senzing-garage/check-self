@@ -16,8 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GO111MODULE: on
+
     steps:
-      - name: checkout Source
+      - name: checkout source
         uses: actions/checkout@v4
 
       - name: run Gosec Security Scanner
