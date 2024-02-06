@@ -1,4 +1,4 @@
-name: make-go-github-file.yaml
+name: make go github file checkself
 
 on:
   push:
@@ -10,11 +10,11 @@ permissions:
 
 jobs:
   make-go-github-file:
-    uses: Senzing/build-resources/.github/workflows/make-go-github-file.yaml@main
     secrets:
-      SENZING_GITHUB_GPG_PRIVATE_KEY: ${{ secrets.SENZING_GITHUB_GPG_PRIVATE_KEY }}
-      SENZING_GITHUB_GPG_PASSPHRASE: ${{ secrets.SENZING_GITHUB_GPG_PASSPHRASE }}
       SENZING_GITHUB_ACTOR: ${{ secrets.SENZING_GITHUB_ACTOR }}
+      SENZING_GITHUB_GPG_PASSPHRASE: ${{ secrets.SENZING_GITHUB_GPG_PASSPHRASE }}
+      SENZING_GITHUB_GPG_PRIVATE_KEY: ${{ secrets.SENZING_GITHUB_GPG_PRIVATE_KEY }}
+    uses: Senzing/build-resources/.github/workflows/make-go-github-file.yaml@v1
     with:
       file: checkself/github.go
       package: checkself
