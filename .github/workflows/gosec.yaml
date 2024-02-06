@@ -1,4 +1,4 @@
-name: 'gosec'
+name: gosec
 
 on:
   push:
@@ -17,10 +17,10 @@ jobs:
     env:
       GO111MODULE: on
     steps:
-      - name: Checkout Source
+      - name: checkout Source
         uses: actions/checkout@v4
 
-      - name: Run Gosec Security Scanner
+      - name: run Gosec Security Scanner
         uses: securego/gosec@v2.18.2
         with:
           args: ./...
