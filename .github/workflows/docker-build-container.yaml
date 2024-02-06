@@ -13,7 +13,7 @@ jobs:
       - name: get repo name
         id: repo-basename
         run: |
-          echo "repo=`basename ${{ github.repository }}`" >> $GITHUB_OUTPUT
+          echo "repo=$(basename ${{ github.repository }})" >> "$GITHUB_OUTPUT"
         shell: bash
       - name: build docker image
         uses: senzing-factory/github-action-docker-buildx-build@v1
