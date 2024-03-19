@@ -4,8 +4,10 @@ on:
   pull_request:
     branches: [main]
 
-jobs:
+permissions:
+  repository-projects: write
 
+jobs:
   add-to-project-dependabot:
     secrets:
       SENZING_GITHUB_PROJECT_RW_TOKEN: ${{ secrets.SENZING_GITHUB_PROJECT_RW_TOKEN }}
