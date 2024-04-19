@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/senzing-garage/g2-sdk-go v0.10.1
-	github.com/senzing-garage/go-cmdhelping v0.2.0
+	github.com/senzing-garage/go-cmdhelping v0.2.1
 	github.com/senzing-garage/go-common v0.4.0
 	github.com/senzing-garage/go-databasing v0.4.1
 	github.com/senzing-garage/go-sdk-abstract-factory v0.7.0
@@ -30,7 +30,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.22 // indirect
 	github.com/microsoft/go-mssqldb v1.7.1 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
-	github.com/pelletier/go-toml/v2 v2.1.1 // indirect
+	github.com/pelletier/go-toml/v2 v2.2.1 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sagikazarmark/locafero v0.4.0 // indirect
