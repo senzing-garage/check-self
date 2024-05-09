@@ -142,9 +142,6 @@ func (checkself *CheckSelfImpl) getSzConfigManager(ctx context.Context) (sz.SzCo
 	var err error = nil
 	checkself.szConfigManagerSyncOnce.Do(func() {
 		checkself.szConfigManagerSingleton, err = checkself.getSzFactory(ctx).CreateSzConfigManager(ctx)
-		if err != nil {
-			return
-		}
 	})
 	return checkself.szConfigManagerSingleton, err
 }
@@ -155,7 +152,7 @@ func (checkself *CheckSelfImpl) getSzFactory(ctx context.Context) sz.SzAbstractF
 		checkself.szFactorySingleton, err = szfactorycreator.CreateCoreAbstractFactory(checkself.getInstanceName(ctx), checkself.getSettings(ctx), checkself.SenzingVerboseLogging, sz.SZ_INITIALIZE_WITH_DEFAULT_CONFIGURATION)
 	})
 	if err != nil {
-		return nil
+		panic(err.Error())
 	}
 	return checkself.szFactorySingleton
 }
@@ -165,9 +162,6 @@ func (checkself *CheckSelfImpl) getSzProduct(ctx context.Context) (sz.SzProduct,
 	var err error = nil
 	checkself.szProductSyncOnce.Do(func() {
 		checkself.szProductSingleton, err = checkself.getSzFactory(ctx).CreateSzProduct(ctx)
-		if err != nil {
-			return
-		}
 	})
 	return checkself.szProductSingleton, err
 }
