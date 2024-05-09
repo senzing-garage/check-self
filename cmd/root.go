@@ -96,7 +96,7 @@ func RunE(_ *cobra.Command, _ []string) error {
 	checkSelf := &checkself.CheckSelfImpl{
 		ConfigPath:                 viper.GetString(option.ConfigPath.Arg),
 		DatabaseUrl:                viper.GetString(option.DatabaseUrl.Arg),
-		EngineConfigurationJson:    viper.GetString(option.EngineConfigurationJson.Arg),
+		Settings:                   viper.GetString(option.EngineConfigurationJson.Arg),
 		EngineLogLevel:             viper.GetString(option.EngineLogLevel.Arg),
 		ErrorLicenseDaysLeft:       viper.GetString(LicenseDaysLeft.Arg),
 		ErrorLicenseRecordsPercent: viper.GetString(LicenseRecordsPercent.Arg),

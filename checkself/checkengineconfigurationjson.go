@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	"github.com/senzing-garage/go-cmdhelping/option"
-	"github.com/senzing-garage/go-common/engineconfigurationjsonparser"
-	"github.com/senzing-garage/go-common/g2engineconfigurationjson"
+	"github.com/senzing-garage/go-helpers/engineconfigurationjson"
+	"github.com/senzing-garage/go-helpers/engineconfigurationjsonparser"
 )
 
 // ----------------------------------------------------------------------------
@@ -17,7 +17,7 @@ import (
 // ----------------------------------------------------------------------------
 
 func (checkself *CheckSelfImpl) buildAndCheckEngineConfigurationJson(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
-	engineConfigurationJson, err := g2engineconfigurationjson.BuildSimpleSystemConfigurationJsonUsingEnvVars()
+	engineConfigurationJson, err := engineconfigurationjson.BuildSimpleSystemConfigurationJsonUsingEnvVars()
 	if err != nil {
 		reportErrors = append(reportErrors, fmt.Sprintf("Could not build engine configuration json. %s", err.Error()))
 		return reportChecks, reportInfo, reportErrors, nil
@@ -98,15 +98,15 @@ func (checkself *CheckSelfImpl) CheckEngineConfigurationJson(ctx context.Context
 
 	// Short-circuit exit.
 
-	if len(checkself.EngineConfigurationJson) == 0 {
+	if len(checkself.Settings) == 0 {
 		return checkself.buildAndCheckEngineConfigurationJson(ctx, reportChecks, reportInfo, reportErrors)
 	}
 
 	// Verify that JSON string is syntactically correct.
 
-	parsedEngineConfigurationJson, err := engineconfigurationjsonparser.New(checkself.EngineConfigurationJson)
+	parsedEngineConfigurationJson, err := engineconfigurationjsonparser.New(checkself.Settings)
 	if err != nil {
-		normalizedValue := strings.ReplaceAll(strings.ReplaceAll(checkself.EngineConfigurationJson, "\n", " "), "  ", "")
+		normalizedValue := strings.ReplaceAll(strings.ReplaceAll(checkself.Settings, "\n", " "), "  ", "")
 		reportChecks = append(reportChecks, fmt.Sprintf("%s = %s", option.EngineConfigurationJson.Envar, normalizedValue))
 		reportErrors = append(reportErrors, fmt.Sprintf("%s - %s", option.EngineConfigurationJson.Envar, err.Error()))
 		return reportChecks, reportInfo, reportErrors, nil
@@ -133,5 +133,5 @@ func (checkself *CheckSelfImpl) CheckEngineConfigurationJson(ctx context.Context
 
 	// Perform check.
 
-	return checkself.checkEngineConfigurationJson(ctx, checkself.EngineConfigurationJson, reportChecks, reportInfo, reportErrors)
+	return checkself.checkEngineConfigurationJson(ctx, checkself.Settings, reportChecks, reportInfo, reportErrors)
 }

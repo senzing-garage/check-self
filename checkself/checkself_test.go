@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/senzing-garage/go-common/g2engineconfigurationjson"
+	"github.com/senzing-garage/go-helpers/engineconfigurationjson"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,10 +21,10 @@ func TestCheckSelfImpl_CheckSelf_Null(test *testing.T) {
 
 func TestCheckSelfImpl_CheckSelf_EngineConfigurationJson(test *testing.T) {
 	ctx := context.TODO()
-	engineConfigurationJson, err := g2engineconfigurationjson.BuildSimpleSystemConfigurationJsonUsingEnvVars()
+	engineConfigurationJson, err := engineconfigurationjson.BuildSimpleSystemConfigurationJsonUsingEnvVars()
 	assert.Nil(test, err)
 	testObject := &CheckSelfImpl{
-		EngineConfigurationJson: engineConfigurationJson,
+		Settings: engineConfigurationJson,
 	}
 	err = testObject.CheckSelf(ctx)
 	assert.Nil(test, err)

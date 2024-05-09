@@ -13,7 +13,7 @@ func (checkself *CheckSelfImpl) CheckSenzingConfiguration(ctx context.Context, r
 
 	// Create Senzing objects.
 
-	g2Configmgr, err := checkself.getG2configmgr(ctx)
+	g2Configmgr, err := checkself.getSzConfigManager(ctx)
 	if err != nil {
 		reportErrors = append(reportErrors, fmt.Sprintf("Could not create g2Configmgr.  Error %s", err.Error()))
 		return reportChecks, reportInfo, reportErrors, nil
@@ -21,7 +21,7 @@ func (checkself *CheckSelfImpl) CheckSenzingConfiguration(ctx context.Context, r
 
 	// Determine if Configuration exists.
 
-	configID, err := g2Configmgr.GetDefaultConfigID(ctx)
+	configID, err := g2Configmgr.GetDefaultConfigId(ctx)
 	if err != nil {
 		reportErrors = append(reportErrors, fmt.Sprintf("Could not get Senzing default configuration ID.  Error %s", err.Error()))
 		return reportChecks, reportInfo, reportErrors, nil

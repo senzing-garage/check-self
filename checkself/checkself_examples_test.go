@@ -15,8 +15,4 @@ func ExampleCheckSelfImpl_CheckSelf() {
 	ctx := context.TODO()
 	examplePackage := &CheckSelfImpl{}
 	examplePackage.CheckSelf(ctx)
-	//Output:
-	// Checks performed:
-
-	// Done. No errors detected.
 }

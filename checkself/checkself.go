@@ -7,10 +7,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/senzing-garage/g2-sdk-go/g2api"
-	"github.com/senzing-garage/go-common/engineconfigurationjsonparser"
-	"github.com/senzing-garage/go-common/g2engineconfigurationjson"
-	"github.com/senzing-garage/go-sdk-abstract-factory/factory"
+	"github.com/senzing-garage/go-helpers/engineconfigurationjson"
+	"github.com/senzing-garage/go-helpers/engineconfigurationjsonparser"
+	"github.com/senzing-garage/go-sdk-abstract-factory/szfactorycreator"
+	"github.com/senzing-garage/sz-sdk-go/sz"
 	"google.golang.org/grpc"
 )
 
@@ -20,20 +20,11 @@ import (
 
 // CheckSelfImpl is the basic checker.
 type CheckSelfImpl struct {
-	// g2configSingleton       g2api.G2config
-	// g2configSyncOnce        sync.Once
 	ConfigPath                 string
 	DatabaseUrl                string
-	EngineConfigurationJson    string
 	EngineLogLevel             string // TODO:
 	ErrorLicenseDaysLeft       string
 	ErrorLicenseRecordsPercent string
-	g2configmgrSingleton       g2api.G2configmgr
-	g2configmgrSyncOnce        sync.Once
-	g2factorySingleton         factory.SdkAbstractFactory
-	g2factorySyncOnce          sync.Once
-	g2productSingleton         g2api.G2product
-	g2productSyncOnce          sync.Once
 	GrpcDialOptions            []grpc.DialOption // TODO:
 	GrpcUrl                    string            // TODO:
 	InputUrl                   string            // TODO:
@@ -42,9 +33,16 @@ type CheckSelfImpl struct {
 	ObserverUrl                string            // TODO:
 	ResourcePath               string
 	SenzingDirectory           string // TODO:
-	SenzingModuleName          string
+	SenzingInstanceName        string
 	SenzingVerboseLogging      int64
+	Settings                   string
 	SupportPath                string
+	szConfigManagerSingleton   sz.SzConfigManager
+	szConfigManagerSyncOnce    sync.Once
+	szFactorySingleton         sz.SzAbstractFactory
+	szFactorySyncOnce          sync.Once
+	szProductSingleton         sz.SzProduct
+	szProductSyncOnce          sync.Once
 }
 
 type ProductLicenseResponse struct {
@@ -62,7 +60,7 @@ type ProductLicenseResponse struct {
 // Variables
 // ----------------------------------------------------------------------------
 
-var defaultModuleName string = "check-self"
+var defaultInstanceName string = "check-self"
 
 // ----------------------------------------------------------------------------
 // Internal functions
@@ -95,33 +93,34 @@ func (checkself *CheckSelfImpl) getDatabaseUrl(ctx context.Context) (string, err
 		return checkself.DatabaseUrl, nil
 	}
 
-	if len(checkself.EngineConfigurationJson) == 0 {
+	if len(checkself.Settings) == 0 {
 		return "", fmt.Errorf("neither DatabaseUrl nor EngineConfigurationJson set")
 	}
 
 	// Pull database from Senzing engine configuration json.
 	// TODO: This code only returns one database.  Need to handle the multi-database case.
 
-	parsedEngineConfigurationJson, err := engineconfigurationjsonparser.New(checkself.EngineConfigurationJson)
+	parsedEngineConfigurationJson, err := engineconfigurationjsonparser.New(checkself.Settings)
 	if err != nil {
-		return "", fmt.Errorf("unable to parse EngineConfigurationJson: %s", checkself.EngineConfigurationJson)
+		return "", fmt.Errorf("unable to parse EngineConfigurationJson: %s", checkself.Settings)
 	}
 
 	databaseUrls, err := parsedEngineConfigurationJson.GetDatabaseUrls(ctx)
 	if err != nil {
-		return "", fmt.Errorf("unable to extract databases from EngineConfigurationJson: %s", checkself.EngineConfigurationJson)
+		return "", fmt.Errorf("unable to extract databases from EngineConfigurationJson: %s", checkself.Settings)
 	}
 	if len(databaseUrls) == 0 {
-		return "", fmt.Errorf("no databases found in EngineConfigurationJson: %s", checkself.EngineConfigurationJson)
+		return "", fmt.Errorf("no databases found in EngineConfigurationJson: %s", checkself.Settings)
 	}
 	return databaseUrls[0], nil
 }
 
-func (checkself *CheckSelfImpl) getEngineConfigurationJson(ctx context.Context) string {
+func (checkself *CheckSelfImpl) getSettings(ctx context.Context) string {
+	_ = ctx
 	var err error = nil
-	result := checkself.EngineConfigurationJson
+	result := checkself.Settings
 	if len(result) == 0 {
-		result, err = g2engineconfigurationjson.BuildSimpleSystemConfigurationJsonUsingEnvVars()
+		result, err = engineconfigurationjson.BuildSimpleSystemConfigurationJsonUsingEnvVars()
 		if err != nil {
 			panic(err.Error())
 		}
@@ -129,49 +128,48 @@ func (checkself *CheckSelfImpl) getEngineConfigurationJson(ctx context.Context) 
 	return result
 }
 
-func (checkself *CheckSelfImpl) getModuleName(ctx context.Context) string {
-	result := checkself.SenzingModuleName
+func (checkself *CheckSelfImpl) getInstanceName(ctx context.Context) string {
+	_ = ctx
+	result := checkself.SenzingInstanceName
 	if len(result) == 0 {
-		result = defaultModuleName
+		result = defaultInstanceName
 	}
 	return result
 }
 
-// Create a G2Configmgr singleton and return it.
-func (checkself *CheckSelfImpl) getG2configmgr(ctx context.Context) (g2api.G2configmgr, error) {
+// Create a SzConfigManager singleton and return it.
+func (checkself *CheckSelfImpl) getSzConfigManager(ctx context.Context) (sz.SzConfigManager, error) {
 	var err error = nil
-	checkself.g2configmgrSyncOnce.Do(func() {
-		checkself.g2configmgrSingleton, err = checkself.getG2Factory(ctx).GetG2configmgr(ctx)
+	checkself.szConfigManagerSyncOnce.Do(func() {
+		checkself.szConfigManagerSingleton, err = checkself.getSzFactory(ctx).CreateSzConfigManager(ctx)
 		if err != nil {
 			return
 		}
-		if checkself.g2configmgrSingleton.GetSdkId(ctx) == "base" {
-			err = checkself.g2configmgrSingleton.Init(ctx, checkself.getModuleName(ctx), checkself.getEngineConfigurationJson(ctx), checkself.SenzingVerboseLogging)
-		}
 	})
-	return checkself.g2configmgrSingleton, err
+	return checkself.szConfigManagerSingleton, err
 }
 
-func (checkself *CheckSelfImpl) getG2Factory(ctx context.Context) factory.SdkAbstractFactory {
-	checkself.g2factorySyncOnce.Do(func() {
-		checkself.g2factorySingleton = &factory.SdkAbstractFactoryImpl{}
-	})
-	return checkself.g2factorySingleton
-}
-
-// Create a G2Configmgr singleton and return it.
-func (checkself *CheckSelfImpl) getG2product(ctx context.Context) (g2api.G2product, error) {
+func (checkself *CheckSelfImpl) getSzFactory(ctx context.Context) sz.SzAbstractFactory {
 	var err error = nil
-	checkself.g2productSyncOnce.Do(func() {
-		checkself.g2productSingleton, err = checkself.getG2Factory(ctx).GetG2product(ctx)
+	checkself.szFactorySyncOnce.Do(func() {
+		checkself.szFactorySingleton, err = szfactorycreator.CreateCoreAbstractFactory(checkself.getInstanceName(ctx), checkself.getSettings(ctx), checkself.SenzingVerboseLogging, sz.SZ_INITIALIZE_WITH_DEFAULT_CONFIGURATION)
+	})
+	if err != nil {
+		return nil
+	}
+	return checkself.szFactorySingleton
+}
+
+// Create a SzProduct singleton and return it.
+func (checkself *CheckSelfImpl) getSzProduct(ctx context.Context) (sz.SzProduct, error) {
+	var err error = nil
+	checkself.szProductSyncOnce.Do(func() {
+		checkself.szProductSingleton, err = checkself.getSzFactory(ctx).CreateSzProduct(ctx)
 		if err != nil {
 			return
 		}
-		if checkself.g2configmgrSingleton.GetSdkId(ctx) == "base" {
-			err = checkself.g2productSingleton.Init(ctx, checkself.getModuleName(ctx), checkself.getEngineConfigurationJson(ctx), checkself.SenzingVerboseLogging)
-		}
 	})
-	return checkself.g2productSingleton, err
+	return checkself.szProductSingleton, err
 }
 
 // ----------------------------------------------------------------------------
