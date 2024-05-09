@@ -44,13 +44,13 @@ func (checkself *CheckSelfImpl) CheckLicense(ctx context.Context, reportChecks [
 
 	// Get license
 
-	g2Product, err := checkself.getG2product(ctx)
+	szProduct, err := checkself.getSzProduct(ctx)
 	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("Could not create g2Product.  Error %s", err.Error()))
+		reportErrors = append(reportErrors, fmt.Sprintf("Could not create szProduct.  Error %s", err.Error()))
 		return reportChecks, reportInfo, reportErrors, nil
 	}
 
-	license, err := g2Product.License(ctx)
+	license, err := szProduct.GetLicense(ctx)
 	if err != nil {
 		reportErrors = append(reportErrors, fmt.Sprintf("Could not get license information.  Error %s", err.Error()))
 		return reportChecks, reportInfo, reportErrors, nil

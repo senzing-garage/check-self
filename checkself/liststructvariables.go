@@ -10,7 +10,7 @@ func (checkself *CheckSelfImpl) ListStructVariables(ctx context.Context, reportC
 	structStrings := map[string]string{
 		"ConfigPath":              checkself.ConfigPath,
 		"DatabaseUrl":             checkself.DatabaseUrl,
-		"EngineConfigurationJson": checkself.EngineConfigurationJson,
+		"EngineConfigurationJson": checkself.Settings,
 		"EngineLogLevel":          checkself.EngineLogLevel,
 		"GrpcUrl":                 checkself.GrpcUrl,
 		"InputUrl":                checkself.InputUrl,
