@@ -7,10 +7,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/senzing-garage/go-helpers/engineconfigurationjson"
-	"github.com/senzing-garage/go-helpers/engineconfigurationjsonparser"
+	"github.com/senzing-garage/go-helpers/settings"
+	"github.com/senzing-garage/go-helpers/settingsparser"
 	"github.com/senzing-garage/go-sdk-abstract-factory/szfactorycreator"
-	"github.com/senzing-garage/sz-sdk-go/sz"
+	"github.com/senzing-garage/sz-sdk-go/senzing"
 	"google.golang.org/grpc"
 )
 
@@ -37,11 +37,11 @@ type CheckSelfImpl struct {
 	SenzingVerboseLogging      int64
 	Settings                   string
 	SupportPath                string
-	szConfigManagerSingleton   sz.SzConfigManager
+	szConfigManagerSingleton   senzing.SzConfigManager
 	szConfigManagerSyncOnce    sync.Once
-	szFactorySingleton         sz.SzAbstractFactory
+	szFactorySingleton         senzing.SzAbstractFactory
 	szFactorySyncOnce          sync.Once
-	szProductSingleton         sz.SzProduct
+	szProductSingleton         senzing.SzProduct
 	szProductSyncOnce          sync.Once
 }
 
@@ -94,23 +94,23 @@ func (checkself *CheckSelfImpl) getDatabaseUrl(ctx context.Context) (string, err
 	}
 
 	if len(checkself.Settings) == 0 {
-		return "", fmt.Errorf("neither DatabaseUrl nor EngineConfigurationJson set")
+		return "", fmt.Errorf("neither DatabaseUrl nor settings set")
 	}
 
 	// Pull database from Senzing engine configuration json.
 	// TODO: This code only returns one database.  Need to handle the multi-database case.
 
-	parsedEngineConfigurationJson, err := engineconfigurationjsonparser.New(checkself.Settings)
+	parsedsettings, err := settingsparser.New(checkself.Settings)
 	if err != nil {
-		return "", fmt.Errorf("unable to parse EngineConfigurationJson: %s", checkself.Settings)
+		return "", fmt.Errorf("unable to parse settings: %s", checkself.Settings)
 	}
 
-	databaseUrls, err := parsedEngineConfigurationJson.GetDatabaseUrls(ctx)
+	databaseUrls, err := parsedsettings.GetDatabaseURLs(ctx)
 	if err != nil {
-		return "", fmt.Errorf("unable to extract databases from EngineConfigurationJson: %s", checkself.Settings)
+		return "", fmt.Errorf("unable to extract databases from settings: %s", checkself.Settings)
 	}
 	if len(databaseUrls) == 0 {
-		return "", fmt.Errorf("no databases found in EngineConfigurationJson: %s", checkself.Settings)
+		return "", fmt.Errorf("no databases found in settings: %s", checkself.Settings)
 	}
 	return databaseUrls[0], nil
 }
@@ -120,7 +120,7 @@ func (checkself *CheckSelfImpl) getSettings(ctx context.Context) string {
 	var err error = nil
 	result := checkself.Settings
 	if len(result) == 0 {
-		result, err = engineconfigurationjson.BuildSimpleSystemConfigurationJsonUsingEnvVars()
+		result, err = settings.BuildSimpleSettingsUsingEnvVars()
 		if err != nil {
 			panic(err.Error())
 		}
@@ -138,7 +138,7 @@ func (checkself *CheckSelfImpl) getInstanceName(ctx context.Context) string {
 }
 
 // Create a SzConfigManager singleton and return it.
-func (checkself *CheckSelfImpl) getSzConfigManager(ctx context.Context) (sz.SzConfigManager, error) {
+func (checkself *CheckSelfImpl) getSzConfigManager(ctx context.Context) (senzing.SzConfigManager, error) {
 	var err error = nil
 	checkself.szConfigManagerSyncOnce.Do(func() {
 		checkself.szConfigManagerSingleton, err = checkself.getSzFactory(ctx).CreateSzConfigManager(ctx)
@@ -146,10 +146,10 @@ func (checkself *CheckSelfImpl) getSzConfigManager(ctx context.Context) (sz.SzCo
 	return checkself.szConfigManagerSingleton, err
 }
 
-func (checkself *CheckSelfImpl) getSzFactory(ctx context.Context) sz.SzAbstractFactory {
+func (checkself *CheckSelfImpl) getSzFactory(ctx context.Context) senzing.SzAbstractFactory {
 	var err error = nil
 	checkself.szFactorySyncOnce.Do(func() {
-		checkself.szFactorySingleton, err = szfactorycreator.CreateCoreAbstractFactory(checkself.getInstanceName(ctx), checkself.getSettings(ctx), checkself.SenzingVerboseLogging, sz.SZ_INITIALIZE_WITH_DEFAULT_CONFIGURATION)
+		checkself.szFactorySingleton, err = szfactorycreator.CreateCoreAbstractFactory(checkself.getInstanceName(ctx), checkself.getSettings(ctx), checkself.SenzingVerboseLogging, senzing.SzInitializeWithDefaultConfiguration)
 	})
 	if err != nil {
 		panic(err.Error())
@@ -158,7 +158,7 @@ func (checkself *CheckSelfImpl) getSzFactory(ctx context.Context) sz.SzAbstractF
 }
 
 // Create a SzProduct singleton and return it.
-func (checkself *CheckSelfImpl) getSzProduct(ctx context.Context) (sz.SzProduct, error) {
+func (checkself *CheckSelfImpl) getSzProduct(ctx context.Context) (senzing.SzProduct, error) {
 	var err error = nil
 	checkself.szProductSyncOnce.Do(func() {
 		checkself.szProductSingleton, err = checkself.getSzFactory(ctx).CreateSzProduct(ctx)
@@ -197,7 +197,7 @@ func (checkself *CheckSelfImpl) CheckSelf(ctx context.Context) error {
 		checkself.CheckResourcePath,
 		checkself.CheckSupportPath,
 		checkself.CheckDatabaseUrl,
-		checkself.CheckEngineConfigurationJson,
+		checkself.Checksettings,
 		checkself.Break,
 		checkself.CheckDatabaseSchema,
 		checkself.Break,

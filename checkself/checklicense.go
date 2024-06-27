@@ -33,7 +33,7 @@ func (checkself *CheckSelfImpl) CheckLicense(ctx context.Context, reportChecks [
 
 	// Get number of record in DSRC_RECORD.
 
-	checker := &checker.CheckerImpl{
+	checker := &checker.BasicChecker{
 		DatabaseConnector: databaseConnector,
 	}
 	recordCount, err := checker.RecordCount(ctx)

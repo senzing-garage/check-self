@@ -8,18 +8,18 @@ import (
 func (checkself *CheckSelfImpl) ListStructVariables(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
 
 	structStrings := map[string]string{
-		"ConfigPath":              checkself.ConfigPath,
-		"DatabaseUrl":             checkself.DatabaseUrl,
-		"EngineConfigurationJson": checkself.Settings,
-		"EngineLogLevel":          checkself.EngineLogLevel,
-		"GrpcUrl":                 checkself.GrpcUrl,
-		"InputUrl":                checkself.InputUrl,
-		"LicenseStringBase64":     checkself.LicenseStringBase64,
-		"LogLevel":                checkself.LogLevel,
-		"ObserverUrl":             checkself.ObserverUrl,
-		"ResourcePath":            checkself.ResourcePath,
-		"SenzingDirectory":        checkself.SenzingDirectory,
-		"SupportPath":             checkself.SupportPath,
+		"ConfigPath":          checkself.ConfigPath,
+		"DatabaseUrl":         checkself.DatabaseUrl,
+		"Settings":            checkself.Settings,
+		"EngineLogLevel":      checkself.EngineLogLevel,
+		"GrpcUrl":             checkself.GrpcUrl,
+		"InputUrl":            checkself.InputUrl,
+		"LicenseStringBase64": checkself.LicenseStringBase64,
+		"LogLevel":            checkself.LogLevel,
+		"ObserverUrl":         checkself.ObserverUrl,
+		"ResourcePath":        checkself.ResourcePath,
+		"SenzingDirectory":    checkself.SenzingDirectory,
+		"SupportPath":         checkself.SupportPath,
 	}
 
 	count := 0

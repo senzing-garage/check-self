@@ -25,13 +25,13 @@ func (checkself *CheckSelfImpl) CheckDatabaseSchema(ctx context.Context, reportC
 
 	databaseConnector, err := connector.NewConnector(ctx, checkself.DatabaseUrl)
 	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("%s = %s is misconfigured. Could not create a database connector. For more information, visit https://hub.senzing.com/...  Error: %s", option.DatabaseUrl.Envar, checkself.DatabaseUrl, err.Error()))
+		reportErrors = append(reportErrors, fmt.Sprintf("%s = %s is misconfigured. Could not create a database connector. For more information, visit https://hub.senzing.com/...  Error: %s", option.DatabaseURL.Envar, checkself.DatabaseUrl, err.Error()))
 		return reportChecks, reportInfo, reportErrors, nil
 	}
 
 	// Check for Senzing database schema.
 
-	checker := &checker.CheckerImpl{
+	checker := &checker.BasicChecker{
 		DatabaseConnector: databaseConnector,
 	}
 	isSchemaInstalled, err := checker.IsSchemaInstalled(ctx)
