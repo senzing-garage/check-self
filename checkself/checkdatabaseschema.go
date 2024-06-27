@@ -9,23 +9,27 @@ import (
 	"github.com/senzing-garage/go-databasing/connector"
 )
 
-func (checkself *CheckSelfImpl) CheckDatabaseSchema(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+// ----------------------------------------------------------------------------
+// Interface methods
+// ----------------------------------------------------------------------------
+
+func (checkself *BasicCheckSelf) CheckDatabaseSchema(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
 
 	// Short-circuit exit.
 
-	if len(checkself.DatabaseUrl) == 0 {
+	if len(checkself.DatabaseURL) == 0 {
 		return reportChecks, reportInfo, reportErrors, nil
 	}
 
 	// Prolog.
 
-	reportChecks = append(reportChecks, fmt.Sprintf("Check database schema for %s", checkself.DatabaseUrl))
+	reportChecks = append(reportChecks, fmt.Sprintf("Check database schema for %s", checkself.DatabaseURL))
 
 	// Connect to the database.
 
-	databaseConnector, err := connector.NewConnector(ctx, checkself.DatabaseUrl)
+	databaseConnector, err := connector.NewConnector(ctx, checkself.DatabaseURL)
 	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("%s = %s is misconfigured. Could not create a database connector. For more information, visit https://hub.senzing.com/...  Error: %s", option.DatabaseURL.Envar, checkself.DatabaseUrl, err.Error()))
+		reportErrors = append(reportErrors, fmt.Sprintf("%s = %s is misconfigured. Could not create a database connector. For more information, visit https://hub.senzing.com/...  Error: %s", option.DatabaseURL.Envar, checkself.DatabaseURL, err.Error()))
 		return reportChecks, reportInfo, reportErrors, nil
 	}
 
@@ -36,7 +40,7 @@ func (checkself *CheckSelfImpl) CheckDatabaseSchema(ctx context.Context, reportC
 	}
 	isSchemaInstalled, err := checker.IsSchemaInstalled(ctx)
 	if !isSchemaInstalled {
-		reportErrors = append(reportErrors, fmt.Sprintf("Senzing database schema has not been installed in %s. For more information, visit https://hub.senzing.com/...  Error: %s", checkself.DatabaseUrl, err.Error()))
+		reportErrors = append(reportErrors, fmt.Sprintf("Senzing database schema has not been installed in %s. For more information, visit https://hub.senzing.com/...  Error: %s", checkself.DatabaseURL, err.Error()))
 	}
 
 	// Epilog.

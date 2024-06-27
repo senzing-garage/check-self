@@ -12,7 +12,11 @@ import (
 	"github.com/senzing-garage/go-databasing/connector"
 )
 
-func (checkself *CheckSelfImpl) CheckLicense(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+// ----------------------------------------------------------------------------
+// Interface methods
+// ----------------------------------------------------------------------------
+
+func (checkself *BasicCheckSelf) CheckLicense(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
 
 	// Prolog.
 
@@ -20,14 +24,14 @@ func (checkself *CheckSelfImpl) CheckLicense(ctx context.Context, reportChecks [
 
 	// Connect to the database.
 
-	databaseUrl, err := checkself.getDatabaseUrl(ctx)
+	databaseURL, err := checkself.getDatabaseURL(ctx)
 	if err != nil {
 		reportErrors = append(reportErrors, fmt.Sprintf("Unable to locate Database URL For more information, visit https://hub.senzing.com/...  Error: %s", err.Error()))
 		return reportChecks, reportInfo, reportErrors, nil
 	}
-	databaseConnector, err := connector.NewConnector(ctx, databaseUrl)
+	databaseConnector, err := connector.NewConnector(ctx, databaseURL)
 	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("Database URL '%s' is misconfigured. Could not create a database connector. For more information, visit https://hub.senzing.com/...  Error: %s", databaseUrl, err.Error()))
+		reportErrors = append(reportErrors, fmt.Sprintf("Database URL '%s' is misconfigured. Could not create a database connector. For more information, visit https://hub.senzing.com/...  Error: %s", databaseURL, err.Error()))
 		return reportChecks, reportInfo, reportErrors, nil
 	}
 

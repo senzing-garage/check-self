@@ -5,7 +5,12 @@ import (
 	"fmt"
 )
 
-func (checkself *CheckSelfImpl) Break(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+// ----------------------------------------------------------------------------
+// Interface methods
+// ----------------------------------------------------------------------------
+
+func (checkself *BasicCheckSelf) Break(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+	_ = ctx
 	if len(reportErrors) > 0 {
 		return reportChecks, reportInfo, reportErrors, fmt.Errorf("")
 	}

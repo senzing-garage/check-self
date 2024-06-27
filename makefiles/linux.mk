@@ -48,6 +48,7 @@ run-osarch-specific:
 setup-osarch-specific:
 	@mkdir /tmp/sqlite
 	@cp testdata/sqlite/G2C.db /tmp/sqlite/G2C.db
+	@cp testdata/sqlite/G2C-empty.db /tmp/sqlite/G2C-empty.db
 	@mkdir -p $(TARGET_DIRECTORY)/$(GO_OS)-$(GO_ARCH) || true
 
 

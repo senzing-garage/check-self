@@ -6,14 +6,14 @@ import (
 	"context"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // ----------------------------------------------------------------------------
 // Test interface functions
 // ----------------------------------------------------------------------------
 
-func TestCheckSelfImpl_CheckSelf_Paths(test *testing.T) {
+func TestBasicCheckSelf_CheckSelf_Paths(test *testing.T) {
 	ctx := context.TODO()
 	databaseUrl := "sqlite3://na:na@nowhere/C:\\Temp\\sqlite\\G2C.db"
 	test.Logf(">>>>> test: %s\n", databaseUrl)
@@ -24,12 +24,12 @@ func TestCheckSelfImpl_CheckSelf_Paths(test *testing.T) {
 
 	test.Log(`sqlite3://na:na@nowhere/C:\Temp\sqlite\G2C.db`)
 
-	testObject := &CheckSelfImpl{
+	testObject := &BasicCheckSelf{
 		ConfigPath:   `C:\Program Files\Senzing\g2\etc`,
-		DatabaseUrl:  databaseUrl,
+		DatabaseURL:  databaseUrl,
 		ResourcePath: `C:\Program Files\Senzing\g2\resources`,
 		SupportPath:  `C:\Program Files\Senzing\g2\data`,
 	}
 	err := testObject.CheckSelf(ctx)
-	assert.Nil(test, err)
+	require.NoError(test, err)
 }

@@ -18,19 +18,19 @@ import (
 // Types
 // ----------------------------------------------------------------------------
 
-// CheckSelfImpl is the basic checker.
-type CheckSelfImpl struct {
+// BasicCheckSelf is the basic checker.
+type BasicCheckSelf struct {
 	ConfigPath                 string
-	DatabaseUrl                string
+	DatabaseURL                string
 	EngineLogLevel             string // TODO:
 	ErrorLicenseDaysLeft       string
 	ErrorLicenseRecordsPercent string
 	GrpcDialOptions            []grpc.DialOption // TODO:
-	GrpcUrl                    string            // TODO:
-	InputUrl                   string            // TODO:
+	GrpcURL                    string            // TODO:
+	InputURL                   string            // TODO:
 	LicenseStringBase64        string            // TODO:
 	LogLevel                   string            // TODO:
-	ObserverUrl                string            // TODO:
+	ObserverURL                string            // TODO:
 	ResourcePath               string
 	SenzingDirectory           string // TODO:
 	SenzingInstanceName        string
@@ -60,111 +60,7 @@ type ProductLicenseResponse struct {
 // Variables
 // ----------------------------------------------------------------------------
 
-var defaultInstanceName string = "check-self"
-
-// ----------------------------------------------------------------------------
-// Internal functions
-// ----------------------------------------------------------------------------
-
-func statFiles(variableName string, path string, requiredFiles []string) []string {
-	reportErrors := []string{}
-	for _, requiredFile := range requiredFiles {
-		targetFile := fmt.Sprintf("%s/%s", path, requiredFile)
-		if _, err := os.Stat(targetFile); err != nil {
-			reportErrors = append(reportErrors, fmt.Sprintf("%s = %s is misconfigured. Could not find %s. For more information, visit https://hub.senzing.com/...", variableName, path, targetFile))
-		}
-	}
-	return reportErrors
-}
-
-func printTitle(title string) {
-	fmt.Printf("\n-- %s %s\n\n", title, strings.Repeat("-", 76-len(title)))
-}
-
-// ----------------------------------------------------------------------------
-// Internal methods
-// ----------------------------------------------------------------------------
-
-func (checkself *CheckSelfImpl) getDatabaseUrl(ctx context.Context) (string, error) {
-
-	// Simple case.
-
-	if len(checkself.DatabaseUrl) > 0 {
-		return checkself.DatabaseUrl, nil
-	}
-
-	if len(checkself.Settings) == 0 {
-		return "", fmt.Errorf("neither DatabaseUrl nor settings set")
-	}
-
-	// Pull database from Senzing engine configuration json.
-	// TODO: This code only returns one database.  Need to handle the multi-database case.
-
-	parsedsettings, err := settingsparser.New(checkself.Settings)
-	if err != nil {
-		return "", fmt.Errorf("unable to parse settings: %s", checkself.Settings)
-	}
-
-	databaseUrls, err := parsedsettings.GetDatabaseURLs(ctx)
-	if err != nil {
-		return "", fmt.Errorf("unable to extract databases from settings: %s", checkself.Settings)
-	}
-	if len(databaseUrls) == 0 {
-		return "", fmt.Errorf("no databases found in settings: %s", checkself.Settings)
-	}
-	return databaseUrls[0], nil
-}
-
-func (checkself *CheckSelfImpl) getSettings(ctx context.Context) string {
-	_ = ctx
-	var err error = nil
-	result := checkself.Settings
-	if len(result) == 0 {
-		result, err = settings.BuildSimpleSettingsUsingEnvVars()
-		if err != nil {
-			panic(err.Error())
-		}
-	}
-	return result
-}
-
-func (checkself *CheckSelfImpl) getInstanceName(ctx context.Context) string {
-	_ = ctx
-	result := checkself.SenzingInstanceName
-	if len(result) == 0 {
-		result = defaultInstanceName
-	}
-	return result
-}
-
-// Create a SzConfigManager singleton and return it.
-func (checkself *CheckSelfImpl) getSzConfigManager(ctx context.Context) (senzing.SzConfigManager, error) {
-	var err error = nil
-	checkself.szConfigManagerSyncOnce.Do(func() {
-		checkself.szConfigManagerSingleton, err = checkself.getSzFactory(ctx).CreateSzConfigManager(ctx)
-	})
-	return checkself.szConfigManagerSingleton, err
-}
-
-func (checkself *CheckSelfImpl) getSzFactory(ctx context.Context) senzing.SzAbstractFactory {
-	var err error = nil
-	checkself.szFactorySyncOnce.Do(func() {
-		checkself.szFactorySingleton, err = szfactorycreator.CreateCoreAbstractFactory(checkself.getInstanceName(ctx), checkself.getSettings(ctx), checkself.SenzingVerboseLogging, senzing.SzInitializeWithDefaultConfiguration)
-	})
-	if err != nil {
-		panic(err.Error())
-	}
-	return checkself.szFactorySingleton
-}
-
-// Create a SzProduct singleton and return it.
-func (checkself *CheckSelfImpl) getSzProduct(ctx context.Context) (senzing.SzProduct, error) {
-	var err error = nil
-	checkself.szProductSyncOnce.Do(func() {
-		checkself.szProductSingleton, err = checkself.getSzFactory(ctx).CreateSzProduct(ctx)
-	})
-	return checkself.szProductSingleton, err
-}
+var defaultInstanceName = "check-self"
 
 // ----------------------------------------------------------------------------
 // Interface methods
@@ -180,8 +76,8 @@ Output
   - Nothing is returned, except for an error.  However, something is printed.
     See the example output.
 */
-func (checkself *CheckSelfImpl) CheckSelf(ctx context.Context) error {
-	var err error = nil
+func (checkself *BasicCheckSelf) CheckSelf(ctx context.Context) error {
+	var err error
 
 	reportChecks := []string{}
 	reportInfo := []string{}
@@ -196,8 +92,8 @@ func (checkself *CheckSelfImpl) CheckSelf(ctx context.Context) error {
 		checkself.CheckConfigPath,
 		checkself.CheckResourcePath,
 		checkself.CheckSupportPath,
-		checkself.CheckDatabaseUrl,
-		checkself.Checksettings,
+		checkself.CheckDatabaseURL,
+		checkself.CheckSettings,
 		checkself.Break,
 		checkself.CheckDatabaseSchema,
 		checkself.Break,
@@ -247,4 +143,108 @@ func (checkself *CheckSelfImpl) CheckSelf(ctx context.Context) error {
 	fmt.Printf("%s\n\n\n\n\n", strings.Repeat("-", 80))
 
 	return err
+}
+
+// ----------------------------------------------------------------------------
+// Internal methods
+// ----------------------------------------------------------------------------
+
+func (checkself *BasicCheckSelf) getDatabaseURL(ctx context.Context) (string, error) {
+
+	// Simple case.
+
+	if len(checkself.DatabaseURL) > 0 {
+		return checkself.DatabaseURL, nil
+	}
+
+	if len(checkself.Settings) == 0 {
+		return "", fmt.Errorf("neither DatabaseUrl nor settings set")
+	}
+
+	// Pull database from Senzing engine configuration json.
+	// TODO: This code only returns one database.  Need to handle the multi-database case.
+
+	parsedSettings, err := settingsparser.New(checkself.Settings)
+	if err != nil {
+		return "", fmt.Errorf("unable to parse settings: %s", checkself.Settings)
+	}
+
+	databaseUrls, err := parsedSettings.GetDatabaseURLs(ctx)
+	if err != nil {
+		return "", fmt.Errorf("unable to extract databases from settings: %s", checkself.Settings)
+	}
+	if len(databaseUrls) == 0 {
+		return "", fmt.Errorf("no databases found in settings: %s", checkself.Settings)
+	}
+	return databaseUrls[0], nil
+}
+
+func (checkself *BasicCheckSelf) getSettings(ctx context.Context) string {
+	_ = ctx
+	var err error
+	result := checkself.Settings
+	if len(result) == 0 {
+		result, err = settings.BuildSimpleSettingsUsingEnvVars()
+		if err != nil {
+			panic(err.Error())
+		}
+	}
+	return result
+}
+
+func (checkself *BasicCheckSelf) getInstanceName(ctx context.Context) string {
+	_ = ctx
+	result := checkself.SenzingInstanceName
+	if len(result) == 0 {
+		result = defaultInstanceName
+	}
+	return result
+}
+
+// Create a SzConfigManager singleton and return it.
+func (checkself *BasicCheckSelf) getSzConfigManager(ctx context.Context) (senzing.SzConfigManager, error) {
+	var err error
+	checkself.szConfigManagerSyncOnce.Do(func() {
+		checkself.szConfigManagerSingleton, err = checkself.getSzFactory(ctx).CreateSzConfigManager(ctx)
+	})
+	return checkself.szConfigManagerSingleton, err
+}
+
+func (checkself *BasicCheckSelf) getSzFactory(ctx context.Context) senzing.SzAbstractFactory {
+	var err error
+	checkself.szFactorySyncOnce.Do(func() {
+		checkself.szFactorySingleton, err = szfactorycreator.CreateCoreAbstractFactory(checkself.getInstanceName(ctx), checkself.getSettings(ctx), checkself.SenzingVerboseLogging, senzing.SzInitializeWithDefaultConfiguration)
+	})
+	if err != nil {
+		panic(err.Error())
+	}
+	return checkself.szFactorySingleton
+}
+
+// Create a SzProduct singleton and return it.
+func (checkself *BasicCheckSelf) getSzProduct(ctx context.Context) (senzing.SzProduct, error) {
+	var err error
+	checkself.szProductSyncOnce.Do(func() {
+		checkself.szProductSingleton, err = checkself.getSzFactory(ctx).CreateSzProduct(ctx)
+	})
+	return checkself.szProductSingleton, err
+}
+
+// ----------------------------------------------------------------------------
+// Internal functions
+// ----------------------------------------------------------------------------
+
+func statFiles(variableName string, path string, requiredFiles []string) []string {
+	reportErrors := []string{}
+	for _, requiredFile := range requiredFiles {
+		targetFile := fmt.Sprintf("%s/%s", path, requiredFile)
+		if _, err := os.Stat(targetFile); err != nil {
+			reportErrors = append(reportErrors, fmt.Sprintf("%s = %s is misconfigured. Could not find %s. For more information, visit https://hub.senzing.com/...", variableName, path, targetFile))
+		}
+	}
+	return reportErrors
+}
+
+func printTitle(title string) {
+	fmt.Printf("\n-- %s %s\n\n", title, strings.Repeat("-", 76-len(title)))
 }

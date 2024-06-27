@@ -12,7 +12,12 @@ var RequiredSupportFiles = []string{
 	"g2SifterRules.ibm",
 }
 
-func (checkself *CheckSelfImpl) CheckSupportPath(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+// ----------------------------------------------------------------------------
+// Interface methods
+// ----------------------------------------------------------------------------
+
+func (checkself *BasicCheckSelf) CheckSupportPath(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+	_ = ctx
 
 	// Short-circuit exit.
 
