@@ -11,7 +11,12 @@ var RequiredResourceFiles = []string{
 	"templates/g2config.json",
 }
 
-func (checkself *CheckSelfImpl) CheckResourcePath(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+// ----------------------------------------------------------------------------
+// Interface methods
+// ----------------------------------------------------------------------------
+
+func (checkself *BasicCheckSelf) CheckResourcePath(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+	_ = ctx
 
 	// Short-circuit exit.
 

@@ -12,7 +12,12 @@ var RequiredConfigFiles = []string{
 	"defaultGNRCP.config",
 }
 
-func (checkself *CheckSelfImpl) CheckConfigPath(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+// ----------------------------------------------------------------------------
+// Interface methods
+// ----------------------------------------------------------------------------
+
+func (checkself *BasicCheckSelf) CheckConfigPath(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+	_ = ctx
 
 	// Short-circuit exit.
 

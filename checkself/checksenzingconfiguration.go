@@ -5,7 +5,11 @@ import (
 	"fmt"
 )
 
-func (checkself *CheckSelfImpl) CheckSenzingConfiguration(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+// ----------------------------------------------------------------------------
+// Interface methods
+// ----------------------------------------------------------------------------
+
+func (checkself *BasicCheckSelf) CheckSenzingConfiguration(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
 
 	// Prolog.
 
@@ -21,7 +25,7 @@ func (checkself *CheckSelfImpl) CheckSenzingConfiguration(ctx context.Context, r
 
 	// Determine if Configuration exists.
 
-	configID, err := szConfigManager.GetDefaultConfigId(ctx)
+	configID, err := szConfigManager.GetDefaultConfigID(ctx)
 	if err != nil {
 		reportErrors = append(reportErrors, fmt.Sprintf("Could not get Senzing default configuration ID.  Error %s", err.Error()))
 		return reportChecks, reportInfo, reportErrors, nil

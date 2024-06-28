@@ -3,11 +3,6 @@
 package checkself
 
 var (
-	githubDate           string = "2023-08-01"
-	githubIteration      string = "0"
-	githubRef            string = "refs/tags/0.0.0"
-	githubRefName        string = "0.0.0"
-	githubRepository     string = "Senzing/check-self"
-	githubRepositoryName string = "check-self"
-	githubVersion        string = "0.0.0"
+	githubIteration = "0"
+	githubVersion   = "0.0.0"
 )

@@ -7,7 +7,12 @@ import (
 	"strings"
 )
 
-func (checkself *CheckSelfImpl) ListEnvironmentVariables(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+// ----------------------------------------------------------------------------
+// Interface methods
+// ----------------------------------------------------------------------------
+
+func (checkself *BasicCheckSelf) ListEnvironmentVariables(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+	_ = ctx
 
 	osEnviron := map[string]string{}
 	for _, element := range os.Environ() {
@@ -21,7 +26,7 @@ func (checkself *CheckSelfImpl) ListEnvironmentVariables(ctx context.Context, re
 		reportInfo = append(reportInfo, "\nSENZING_TOOLS_* environment variables defined:\n")
 		count := 0
 		for key, value := range osEnviron {
-			count += 1
+			count++
 			reportInfo = append(reportInfo, fmt.Sprintf("%6d. %s = %s", count, key, value))
 		}
 		reportInfo = append(reportInfo, "")

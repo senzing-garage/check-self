@@ -45,14 +45,14 @@ var LicenseRecordsPercent = option.ContextVariable{
 var ContextVariablesForMultiPlatform = []option.ContextVariable{
 	option.ConfigPath,
 	option.Configuration,
-	option.DatabaseUrl,
-	option.EngineConfigurationJson,
+	option.DatabaseURL,
+	option.EngineConfigurationJSON,
 	option.EngineLogLevel,
-	option.GrpcUrl,
+	option.GrpcURL,
 	option.InputURL,
 	option.LicenseStringBase64,
 	option.LogLevel,
-	option.ObserverUrl,
+	option.ObserverURL,
 	option.ResourcePath,
 	option.SenzingDirectory,
 	option.SupportPath,
@@ -93,18 +93,18 @@ func PreRun(cobraCommand *cobra.Command, args []string) {
 func RunE(_ *cobra.Command, _ []string) error {
 	ctx := context.Background()
 
-	checkSelf := &checkself.CheckSelfImpl{
+	checkSelf := &checkself.BasicCheckSelf{
 		ConfigPath:                 viper.GetString(option.ConfigPath.Arg),
-		DatabaseUrl:                viper.GetString(option.DatabaseUrl.Arg),
-		Settings:                   viper.GetString(option.EngineConfigurationJson.Arg),
+		DatabaseURL:                viper.GetString(option.DatabaseURL.Arg),
+		Settings:                   viper.GetString(option.EngineConfigurationJSON.Arg),
 		EngineLogLevel:             viper.GetString(option.EngineLogLevel.Arg),
 		ErrorLicenseDaysLeft:       viper.GetString(LicenseDaysLeft.Arg),
 		ErrorLicenseRecordsPercent: viper.GetString(LicenseRecordsPercent.Arg),
-		GrpcUrl:                    viper.GetString(option.GrpcUrl.Arg),
-		InputUrl:                   viper.GetString(option.InputURL.Arg),
+		GrpcURL:                    viper.GetString(option.GrpcPort.Arg),
+		InputURL:                   viper.GetString(option.InputURL.Arg),
 		LicenseStringBase64:        viper.GetString(option.LicenseStringBase64.Arg),
 		LogLevel:                   viper.GetString(option.LogLevel.Arg),
-		ObserverUrl:                viper.GetString(option.ObserverUrl.Arg),
+		ObserverURL:                viper.GetString(option.ObserverGrpcPort.Arg),
 		ResourcePath:               viper.GetString(option.ResourcePath.Arg),
 		SenzingDirectory:           viper.GetString(option.SenzingDirectory.Arg),
 		SupportPath:                viper.GetString(option.SupportPath.Arg),

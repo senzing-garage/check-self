@@ -5,21 +5,26 @@ import (
 	"fmt"
 )
 
-func (checkself *CheckSelfImpl) ListStructVariables(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+// ----------------------------------------------------------------------------
+// Interface methods
+// ----------------------------------------------------------------------------
+
+func (checkself *BasicCheckSelf) ListStructVariables(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+	_ = ctx
 
 	structStrings := map[string]string{
-		"ConfigPath":              checkself.ConfigPath,
-		"DatabaseUrl":             checkself.DatabaseUrl,
-		"EngineConfigurationJson": checkself.Settings,
-		"EngineLogLevel":          checkself.EngineLogLevel,
-		"GrpcUrl":                 checkself.GrpcUrl,
-		"InputUrl":                checkself.InputUrl,
-		"LicenseStringBase64":     checkself.LicenseStringBase64,
-		"LogLevel":                checkself.LogLevel,
-		"ObserverUrl":             checkself.ObserverUrl,
-		"ResourcePath":            checkself.ResourcePath,
-		"SenzingDirectory":        checkself.SenzingDirectory,
-		"SupportPath":             checkself.SupportPath,
+		"ConfigPath":          checkself.ConfigPath,
+		"DatabaseURL":         checkself.DatabaseURL,
+		"Settings":            checkself.Settings,
+		"EngineLogLevel":      checkself.EngineLogLevel,
+		"GrpcURL":             checkself.GrpcURL,
+		"InputURL":            checkself.InputURL,
+		"LicenseStringBase64": checkself.LicenseStringBase64,
+		"LogLevel":            checkself.LogLevel,
+		"ObserverURL":         checkself.ObserverURL,
+		"ResourcePath":        checkself.ResourcePath,
+		"SenzingDirectory":    checkself.SenzingDirectory,
+		"SupportPath":         checkself.SupportPath,
 	}
 
 	count := 0
@@ -27,7 +32,7 @@ func (checkself *CheckSelfImpl) ListStructVariables(ctx context.Context, reportC
 
 	for key, value := range structStrings {
 		if len(value) > 0 {
-			count += 1
+			count++
 			reportInfo = append(reportInfo, fmt.Sprintf("%6d. %s = %s", count, key, value))
 		}
 	}
