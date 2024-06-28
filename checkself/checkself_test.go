@@ -36,9 +36,9 @@ func TestBasicCheckSelf_Break(test *testing.T) {
 	testObject := getTestObject(ctx, test)
 	newReportChecks, newReportInfo, newReportErrors, err := testObject.Break(ctx, reportChecks(), reportInfo(), reportErrors())
 	require.NoError(test, err)
-	assert.Len(test, newReportChecks, 0)
-	assert.Len(test, newReportInfo, 0)
-	assert.Len(test, newReportErrors, 0)
+	assert.Empty(test, newReportChecks)
+	assert.Empty(test, newReportInfo)
+	assert.Empty(test, newReportErrors)
 }
 
 func TestBasicCheckSelf_Break_badReportErrors(test *testing.T) {
@@ -54,9 +54,9 @@ func TestBasicCheckSelf_CheckDatabaseSchema(test *testing.T) {
 	testObject := getTestObject(ctx, test)
 	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckDatabaseSchema(ctx, reportChecks(), reportInfo(), reportErrors())
 	require.NoError(test, err)
-	assert.Len(test, newReportChecks, 0)
-	assert.Len(test, newReportInfo, 0)
-	assert.Len(test, newReportErrors, 0)
+	assert.Empty(test, newReportChecks)
+	assert.Empty(test, newReportInfo)
+	assert.Empty(test, newReportErrors)
 }
 
 func TestBasicCheckSelf_CheckDatabaseSchema_badDatabaseURL(test *testing.T) {
@@ -68,7 +68,7 @@ func TestBasicCheckSelf_CheckDatabaseSchema_badDatabaseURL(test *testing.T) {
 	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckDatabaseSchema(ctx, reportChecks(), reportInfo(), badReportErrors)
 	require.NoError(test, err)
 	assert.Len(test, newReportChecks, 1)
-	assert.Len(test, newReportInfo, 0)
+	assert.Empty(test, newReportInfo)
 	assert.Len(test, newReportErrors, 1)
 	assert.Equal(test, expected, newReportErrors[0])
 }
@@ -82,7 +82,7 @@ func TestBasicCheckSelf_CheckDatabaseSchema_noSchemaInstalled(test *testing.T) {
 	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckDatabaseSchema(ctx, reportChecks(), reportInfo(), badReportErrors)
 	require.NoError(test, err)
 	assert.Len(test, newReportChecks, 1)
-	assert.Len(test, newReportInfo, 0)
+	assert.Empty(test, newReportInfo)
 	assert.Len(test, newReportErrors, 1)
 	assert.Equal(test, expected, newReportErrors[0])
 }
@@ -94,7 +94,7 @@ func TestBasicCheckSelf_CheckLicense(test *testing.T) {
 	require.NoError(test, err)
 	assert.Len(test, newReportChecks, 1)
 	assert.Len(test, newReportInfo, 1)
-	assert.Len(test, newReportErrors, 0)
+	assert.Empty(test, newReportErrors)
 }
 
 func TestBasicCheckSelf_CheckLicense_badGetDatabaseURL(test *testing.T) {
@@ -116,7 +116,7 @@ func TestBasicCheckSelf_CheckLicense_badGetDatabaseURL(test *testing.T) {
 	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckLicense(ctx, reportChecks(), reportInfo(), reportErrors())
 	require.NoError(test, err)
 	assert.Len(test, newReportChecks, 1)
-	assert.Len(test, newReportInfo, 0)
+	assert.Empty(test, newReportInfo)
 	assert.Len(test, newReportErrors, 1)
 }
 
@@ -141,7 +141,7 @@ func TestBasicCheckSelf_CheckLicense_badGetLicense(test *testing.T) {
 	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckLicense(ctx, reportChecks(), reportInfo(), reportErrors())
 	require.NoError(test, err)
 	assert.Len(test, newReportChecks, 1)
-	assert.Len(test, newReportInfo, 0)
+	assert.Empty(test, newReportInfo)
 	assert.Len(test, newReportErrors, 1)
 	assert.Equal(test, expected, newReportErrors[0])
 }
@@ -177,8 +177,8 @@ func TestBasicCheckSelf_CheckSenzingConfiguration_badGetDefaultConfigID(test *te
 	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckSenzingConfiguration(ctx, reportChecks(), reportInfo(), reportErrors())
 	require.NoError(test, err)
 	assert.Len(test, newReportChecks, 1)
-	assert.Len(test, newReportInfo, 0)
-	assert.Len(test, newReportErrors, 0)
+	assert.Empty(test, newReportInfo)
+	assert.Empty(test, newReportErrors)
 	// TODO: assert.Equal(test, expected, newReportErrors[0])
 }
 
@@ -188,8 +188,8 @@ func TestBasicCheckSelf_CheckSettings(test *testing.T) {
 	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckSettings(ctx, reportChecks(), reportInfo(), reportErrors())
 	require.NoError(test, err)
 	assert.Len(test, newReportChecks, 1)
-	assert.Len(test, newReportInfo, 0)
-	assert.Len(test, newReportErrors, 0)
+	assert.Empty(test, newReportInfo)
+	assert.Empty(test, newReportErrors)
 }
 
 func TestBasicCheckSelf_CheckSettings_badSettings(test *testing.T) {
@@ -200,7 +200,7 @@ func TestBasicCheckSelf_CheckSettings_badSettings(test *testing.T) {
 	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckSettings(ctx, reportChecks(), reportInfo(), reportErrors())
 	require.NoError(test, err)
 	assert.Len(test, newReportChecks, 1)
-	assert.Len(test, newReportInfo, 0)
+	assert.Empty(test, newReportInfo)
 	assert.Len(test, newReportErrors, 1)
 	assert.Equal(test, expected, newReportErrors[0])
 }
@@ -225,7 +225,7 @@ func TestBasicCheckSelf_CheckSettings_badDatabaseURLs(test *testing.T) {
 	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckSettings(ctx, reportChecks(), reportInfo(), reportErrors())
 	require.NoError(test, err)
 	assert.Len(test, newReportChecks, 1)
-	assert.Len(test, newReportInfo, 0)
+	assert.Empty(test, newReportInfo)
 	assert.Len(test, newReportErrors, 2)
 	// assert.Equal(test, expected, newReportErrors[0])
 }
@@ -258,6 +258,7 @@ func TestBasicCheckSelf_CheckSettings_badDatabaseURLs(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestBasicCheckSelf_checkDatabaseURL_sqlite3(test *testing.T) {
+	_ = test
 	ctx := context.TODO()
 	expected := "????"
 	actual := checkDatabaseURL(ctx, variableName, sqlite3URL)
@@ -265,36 +266,42 @@ func TestBasicCheckSelf_checkDatabaseURL_sqlite3(test *testing.T) {
 }
 
 func TestBasicCheckSelf_checkDatabaseURL_postgresql(test *testing.T) {
+	_ = test
 	ctx := context.TODO()
 	expected := "????"
 	actual := checkDatabaseURL(ctx, variableName, postgresqlURL)
 	sink(expected, actual)
 }
 func TestBasicCheckSelf_checkDatabaseURL_mysql(test *testing.T) {
+	_ = test
 	ctx := context.TODO()
 	expected := "????"
 	actual := checkDatabaseURL(ctx, variableName, mysqlURL)
 	sink(expected, actual)
 }
 func TestBasicCheckSelf_checkDatabaseURL_db2(test *testing.T) {
+	_ = test
 	ctx := context.TODO()
 	expected := "????"
 	actual := checkDatabaseURL(ctx, variableName, db2URL)
 	sink(expected, actual)
 }
 func TestBasicCheckSelf_checkDatabaseURL_oci(test *testing.T) {
+	_ = test
 	ctx := context.TODO()
 	expected := "????"
 	actual := checkDatabaseURL(ctx, variableName, ociURL)
 	sink(expected, actual)
 }
 func TestBasicCheckSelf_checkDatabaseURL_mssql(test *testing.T) {
+	_ = test
 	ctx := context.TODO()
 	expected := "????"
 	actual := checkDatabaseURL(ctx, variableName, mssqlURL)
 	sink(expected, actual)
 }
 func TestBasicCheckSelf_checkDatabaseURL_badURLParse(test *testing.T) {
+	_ = test
 	ctx := context.TODO()
 	expected := "VariableName = \n\tnot-a-URL is misconfigured. Could not parse database URL. For more information, visit https://hub.senzing.com/...  Error: parse \"\\n\\tnot-a-URL\": net/url: invalid control character in URL"
 	badDatabaseURL := "\n\tnot-a-URL"
@@ -303,6 +310,7 @@ func TestBasicCheckSelf_checkDatabaseURL_badURLParse(test *testing.T) {
 }
 
 func TestBasicCheckSelf_checkDatabaseURL_badURLParse_postgres(test *testing.T) {
+	_ = test
 	ctx := context.TODO()
 	expected := "????"
 	badDatabaseURL := "postgresql://username:password@hostname:5432:database/?schema=schemaname"
@@ -311,6 +319,7 @@ func TestBasicCheckSelf_checkDatabaseURL_badURLParse_postgres(test *testing.T) {
 }
 
 func TestBasicCheckSelf_checkDatabaseURL_badSqliteURL(test *testing.T) {
+	_ = test
 	ctx := context.TODO()
 	expected := "????"
 	badDatabaseURL := "sqlite3://na:na@host.com:port//tmp/nodatabase.db"
