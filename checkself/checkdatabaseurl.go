@@ -18,6 +18,32 @@ import (
 // Interface methods
 // ----------------------------------------------------------------------------
 
+func (checkself *BasicCheckSelf) CheckDatabaseURL(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+
+	// Short-circuit exit.
+
+	if len(checkself.DatabaseURL) == 0 {
+		return reportChecks, reportInfo, reportErrors, nil
+	}
+
+	// Prolog.
+
+	reportChecks = append(reportChecks, fmt.Sprintf("Check database URL: %s = %s", option.DatabaseURL.Envar, checkself.DatabaseURL))
+
+	// Check database URL.
+
+	errorList := checkDatabaseURL(ctx, option.DatabaseURL.Envar, checkself.DatabaseURL)
+	reportErrors = append(reportErrors, errorList...)
+
+	// Epilog.
+
+	return reportChecks, reportInfo, reportErrors, nil
+}
+
+// ----------------------------------------------------------------------------
+// Private functions
+// ----------------------------------------------------------------------------
+
 func checkDatabaseURL(ctx context.Context, variableName string, databaseURL string) []string {
 	reportErrors := []string{}
 
@@ -89,26 +115,4 @@ func checkDatabaseURL(ctx context.Context, variableName string, databaseURL stri
 
 	return reportErrors
 
-}
-
-func (checkself *BasicCheckSelf) CheckDatabaseURL(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
-
-	// Short-circuit exit.
-
-	if len(checkself.DatabaseURL) == 0 {
-		return reportChecks, reportInfo, reportErrors, nil
-	}
-
-	// Prolog.
-
-	reportChecks = append(reportChecks, fmt.Sprintf("Check database URL: %s = %s", option.DatabaseURL.Envar, checkself.DatabaseURL))
-
-	// Check database URL.
-
-	errorList := checkDatabaseURL(ctx, option.DatabaseURL.Envar, checkself.DatabaseURL)
-	reportErrors = append(reportErrors, errorList...)
-
-	// Epilog.
-
-	return reportChecks, reportInfo, reportErrors, nil
 }

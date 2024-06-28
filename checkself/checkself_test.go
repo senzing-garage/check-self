@@ -10,15 +10,14 @@ import (
 )
 
 var (
-	variableName  = "VariableName"
-	reportChecks  = []string{}
-	reportInfo    = []string{}
-	sqlite3URL    = "sqlite3://na:na@/tmp/sqlite/G2C.db"
-	postgresqlURL = "postgresql://username:password@hostname:5432:database/?schema=schemaname:"
-	mysqlURL      = "mysql://username:password@hostname:3306/?schema=schemaname"
+	badJSON       = "}{"
 	db2URL        = "db2://username:password@database/?schema=schemaname"
-	ociURL        = "oci://username:password@database"
 	mssqlURL      = "mssql://username:password@server:port:database/?driver=mssqldriver"
+	mysqlURL      = "mysql://username:password@hostname:3306/?schema=schemaname"
+	ociURL        = "oci://username:password@database"
+	postgresqlURL = "postgresql://username:password@hostname:5432:database/?schema=schemaname:"
+	sqlite3URL    = "sqlite3://na:na@/tmp/sqlite/G2C.db"
+	variableName  = "VariableName"
 )
 
 // ----------------------------------------------------------------------------
@@ -32,21 +31,32 @@ var (
 // 	require.NoError(test, err)
 // }
 
+func TestBasicCheckSelf_Break(test *testing.T) {
+	ctx := context.TODO()
+	testObject := getTestObject(ctx, test)
+	newReportChecks, newReportInfo, newReportErrors, err := testObject.Break(ctx, reportChecks(), reportInfo(), reportErrors())
+	require.NoError(test, err)
+	assert.Len(test, newReportChecks, 0)
+	assert.Len(test, newReportInfo, 0)
+	assert.Len(test, newReportErrors, 0)
+}
+
 func TestBasicCheckSelf_Break_badReportErrors(test *testing.T) {
 	ctx := context.TODO()
 	testObject := getTestObject(ctx, test)
 	badReportErrors := []string{"example error text"}
-	_, _, _, err := testObject.Break(ctx, reportChecks, reportInfo, badReportErrors)
+	_, _, _, err := testObject.Break(ctx, reportChecks(), reportInfo(), badReportErrors)
 	require.Error(test, err)
 }
 
-func TestBasicCheckSelf_CheckLicense_badReportErrors(test *testing.T) {
+func TestBasicCheckSelf_CheckDatabaseSchema(test *testing.T) {
 	ctx := context.TODO()
 	testObject := getTestObject(ctx, test)
-	testObject.DatabaseURL = "nothing://" FIXME:
-		badReportErrors := []string{"example error text"}
-	_, _, _, err := testObject.Break(ctx, reportChecks, reportInfo, badReportErrors)
-	require.Error(test, err)
+	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckDatabaseSchema(ctx, reportChecks(), reportInfo(), reportErrors())
+	require.NoError(test, err)
+	assert.Len(test, newReportChecks, 0)
+	assert.Len(test, newReportInfo, 0)
+	assert.Len(test, newReportErrors, 0)
 }
 
 func TestBasicCheckSelf_CheckDatabaseSchema_badDatabaseURL(test *testing.T) {
@@ -55,8 +65,10 @@ func TestBasicCheckSelf_CheckDatabaseSchema_badDatabaseURL(test *testing.T) {
 	testObject := getTestObject(ctx, test)
 	badReportErrors := []string{}
 	testObject.DatabaseURL = "bad-database-URL"
-	_, _, newReportErrors, err := testObject.CheckDatabaseSchema(ctx, reportChecks, reportInfo, badReportErrors)
+	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckDatabaseSchema(ctx, reportChecks(), reportInfo(), badReportErrors)
 	require.NoError(test, err)
+	assert.Len(test, newReportChecks, 1)
+	assert.Len(test, newReportInfo, 0)
 	assert.Len(test, newReportErrors, 1)
 	assert.Equal(test, expected, newReportErrors[0])
 }
@@ -67,8 +79,69 @@ func TestBasicCheckSelf_CheckDatabaseSchema_noSchemaInstalled(test *testing.T) {
 	testObject := getTestObject(ctx, test)
 	badReportErrors := []string{}
 	testObject.DatabaseURL = "sqlite3://na:na@/tmp/sqlite/G2C-empty.db"
-	_, _, newReportErrors, err := testObject.CheckDatabaseSchema(ctx, reportChecks, reportInfo, badReportErrors)
+	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckDatabaseSchema(ctx, reportChecks(), reportInfo(), badReportErrors)
 	require.NoError(test, err)
+	assert.Len(test, newReportChecks, 1)
+	assert.Len(test, newReportInfo, 0)
+	assert.Len(test, newReportErrors, 1)
+	assert.Equal(test, expected, newReportErrors[0])
+}
+
+func TestBasicCheckSelf_CheckLicense(test *testing.T) {
+	ctx := context.TODO()
+	testObject := getTestObject(ctx, test)
+	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckLicense(ctx, reportChecks(), reportInfo(), reportErrors())
+	require.NoError(test, err)
+	assert.Len(test, newReportChecks, 1)
+	assert.Len(test, newReportInfo, 1)
+	assert.Len(test, newReportErrors, 0)
+}
+
+func TestBasicCheckSelf_CheckLicense_badGetDatabaseURL(test *testing.T) {
+	ctx := context.TODO()
+	testObject := getTestObject(ctx, test)
+	testObject.Settings = `
+        {
+            "PIPELINE": {
+                "CONFIGPATH": "/etc/opt/senzing",
+                "LICENSESTRINGBASE64": "",
+                "RESOURCEPATH": "/opt/senzing/g2/resources",
+                "SUPPORTPATH": "/opt/senzing/data"
+            },
+            "SQL": {
+                "BACKEND": "SQL",
+            }
+        }
+        `
+	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckLicense(ctx, reportChecks(), reportInfo(), reportErrors())
+	require.NoError(test, err)
+	assert.Len(test, newReportChecks, 1)
+	assert.Len(test, newReportInfo, 0)
+	assert.Len(test, newReportErrors, 1)
+}
+
+func TestBasicCheckSelf_CheckLicense_badGetLicense(test *testing.T) {
+	ctx := context.TODO()
+	expected := "Could not get count of records.  Error no such table: DSRC_RECORD"
+	testObject := getTestObject(ctx, test)
+	testObject.Settings = `
+        {
+            "PIPELINE": {
+                "CONFIGPATH": "/etc/opt/senzing",
+                "LICENSESTRINGBASE64": "badLicense",
+                "RESOURCEPATH": "/opt/senzing/g2/resources",
+                "SUPPORTPATH": "/opt/senzing/data"
+            },
+            "SQL": {
+                "BACKEND": "SQL",
+                "CONNECTION": "sqlite3://na:na@/tmp/sqlite/G2C-empty.db"
+            }
+        }
+        `
+	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckLicense(ctx, reportChecks(), reportInfo(), reportErrors())
+	require.NoError(test, err)
+	assert.Len(test, newReportChecks, 1)
+	assert.Len(test, newReportInfo, 0)
 	assert.Len(test, newReportErrors, 1)
 	assert.Equal(test, expected, newReportErrors[0])
 }
@@ -80,17 +153,105 @@ func TestBasicCheckSelf_CheckSelf(test *testing.T) {
 	require.NoError(test, err)
 }
 
+func TestBasicCheckSelf_CheckSelf_badSettings(test *testing.T) {
+	ctx := context.TODO()
+	testObject := getTestObject(ctx, test)
+	testObject.Settings = `{}`
+	err := testObject.CheckSelf(ctx)
+	require.Error(test, err)
+}
+
+func TestBasicCheckSelf_CheckSenzingConfiguration_badGetDefaultConfigID(test *testing.T) {
+	ctx := context.TODO()
+	// expected := "????"
+	testObject := getTestObject(ctx, test)
+	testObject.Settings = `
+        {
+            "SQL": {
+                "BACKEND": "SQL",
+                "CONNECTION": "sqlite3://na:na@/tmp/sqlite/G2C-empty.db"
+            }
+        }
+        `
+	testObject.DatabaseURL = "sqlite3://na:na@/tmp/sqlite/G2C-empty.db"
+	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckSenzingConfiguration(ctx, reportChecks(), reportInfo(), reportErrors())
+	require.NoError(test, err)
+	assert.Len(test, newReportChecks, 1)
+	assert.Len(test, newReportInfo, 0)
+	assert.Len(test, newReportErrors, 0)
+	// TODO: assert.Equal(test, expected, newReportErrors[0])
+}
+
+func TestBasicCheckSelf_CheckSettings(test *testing.T) {
+	ctx := context.TODO()
+	testObject := getTestObject(ctx, test)
+	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckSettings(ctx, reportChecks(), reportInfo(), reportErrors())
+	require.NoError(test, err)
+	assert.Len(test, newReportChecks, 1)
+	assert.Len(test, newReportInfo, 0)
+	assert.Len(test, newReportErrors, 0)
+}
+
+func TestBasicCheckSelf_CheckSettings_badSettings(test *testing.T) {
+	ctx := context.TODO()
+	expected := "SENZING_TOOLS_ENGINE_CONFIGURATION_JSON - incorrect JSON syntax in }{"
+	testObject := getTestObject(ctx, test)
+	testObject.Settings = badJSON
+	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckSettings(ctx, reportChecks(), reportInfo(), reportErrors())
+	require.NoError(test, err)
+	assert.Len(test, newReportChecks, 1)
+	assert.Len(test, newReportInfo, 0)
+	assert.Len(test, newReportErrors, 1)
+	assert.Equal(test, expected, newReportErrors[0])
+}
+
+func TestBasicCheckSelf_CheckSettings_badDatabaseURLs(test *testing.T) {
+	ctx := context.TODO()
+	// expected := "????"
+	testObject := getTestObject(ctx, test)
+	testObject.Settings = `
+        {
+            "PIPELINE": {
+                "CONFIGPATH": "/etc/opt/senzing",
+                "LICENSESTRINGBASE64": "",
+                "RESOURCEPATH": "/opt/senzing/g2/resources",
+                "SUPPORTPATH": "/opt/senzing/data"
+            },
+            "SQL": {
+                "BACKEND": "SQL"
+            }
+        }
+        `
+	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckSettings(ctx, reportChecks(), reportInfo(), reportErrors())
+	require.NoError(test, err)
+	assert.Len(test, newReportChecks, 1)
+	assert.Len(test, newReportInfo, 0)
+	assert.Len(test, newReportErrors, 2)
+	// assert.Equal(test, expected, newReportErrors[0])
+}
+
 // ----------------------------------------------------------------------------
 // Test private functions
 // ----------------------------------------------------------------------------
 
-func TestBasicCheckSelf_buildAndCheckSettingsBreak_badReportErrors(test *testing.T) {
-	ctx := context.TODO()
-	testObject := getTestObject(ctx, test)
-	badReportErrors := []string{"example error text"}
-	_, _, _, err := testObject.Break(ctx, reportChecks, reportInfo, badReportErrors)
-	require.Error(test, err)
-}
+// func TestBasicCheckSelf_CheckSettings_buildAndCheckSettingsBreak_badReportErrors(test *testing.T) {
+// 	ctx := context.TODO()
+// 	testObject := getTestObject(ctx, test)
+// 	badReportErrors := []string{"example error text"}
+// 	_, _, _, err := testObject.Break(ctx, reportChecks(), reportInfo(), badReportErrors)
+// 	require.Error(test, err)
+// }
+
+// func TestBasicCheckSelf_CheckSettings_getDatabaseURL_badSettingsLength(test *testing.T) {
+// 	ctx := context.TODO()
+// 	testObject := getTestObject(ctx, test)
+// 	testObject.Settings = ""
+// 	newReportChecks, newReportInfo, newReportErrors, err := testObject.Break(ctx, reportChecks(), reportInfo(), reportErrors())
+// 	require.NoError(test, err)
+// 	assert.Len(test, newReportChecks, 0)
+// 	assert.Len(test, newReportInfo, 0)
+// 	assert.Len(test, newReportErrors, 0)
+// }
 
 // ----------------------------------------------------------------------------
 // Test private functions
@@ -193,6 +354,17 @@ func getTestObject(ctx context.Context, test *testing.T) *BasicCheckSelf {
 		Settings: settings,
 	}
 	return result
+}
+
+func reportChecks() []string {
+	return []string{}
+}
+
+func reportErrors() []string {
+	return []string{}
+}
+func reportInfo() []string {
+	return []string{}
 }
 
 func sink(x string, y []string) {
