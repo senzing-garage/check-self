@@ -9,7 +9,6 @@ import (
 	"github.com/senzing-garage/check-self/checkself"
 	"github.com/senzing-garage/go-cmdhelping/cmdhelper"
 	"github.com/senzing-garage/go-cmdhelping/option"
-	"github.com/senzing-garage/go-cmdhelping/option/optiontype"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -26,49 +25,38 @@ check-self long description.
 // Context variables
 // ----------------------------------------------------------------------------
 
-var LicenseDaysLeft = option.ContextVariable{
-	Arg:     "license-days-left",
-	Default: option.OsLookupEnvString("SENZING_TOOLS_LICENSE_DAYS_LEFT", "30"),
-	Envar:   "SENZING_TOOLS_LICENSE_DAYS_LEFT",
-	Help:    "Number of days left in license before flagging as an error [%s]",
-	Type:    optiontype.String,
-}
-
-var LicenseRecordsPercent = option.ContextVariable{
-	Arg:     "license-records-percent",
-	Default: option.OsLookupEnvString("SENZING_TOOLS_LICENSE_RECORDS_PERCENT", "90"),
-	Envar:   "SENZING_TOOLS_LICENSE_RECORDS_PERCENT",
-	Help:    "Percent of records allowed by license [%s]",
-	Type:    optiontype.String,
-}
-
 var ContextVariablesForMultiPlatform = []option.ContextVariable{
 	option.ConfigPath,
 	option.Configuration,
 	option.DatabaseURL,
-	option.EngineConfigurationJSON,
+	option.EngineSettings,
 	option.EngineLogLevel,
 	option.GrpcURL,
 	option.InputURL,
+	option.LicenseDaysLeft,
+	option.LicenseRecordsPercent,
 	option.LicenseStringBase64,
 	option.LogLevel,
 	option.ObserverURL,
 	option.ResourcePath,
 	option.SenzingDirectory,
 	option.SupportPath,
-	LicenseDaysLeft,
-	LicenseRecordsPercent,
 }
 
 var ContextVariables = append(ContextVariablesForMultiPlatform, ContextVariablesForOsArch...)
 
 // ----------------------------------------------------------------------------
-// Private functions
+// Command
 // ----------------------------------------------------------------------------
 
-// Since init() is always invoked, define command line parameters.
-func init() {
-	cmdhelper.Init(RootCmd, ContextVariables)
+// RootCmd represents the command.
+var RootCmd = &cobra.Command{
+	Use:     Use,
+	Short:   Short,
+	Long:    Long,
+	PreRun:  PreRun,
+	RunE:    RunE,
+	Version: Version(),
 }
 
 // ----------------------------------------------------------------------------
@@ -96,10 +84,10 @@ func RunE(_ *cobra.Command, _ []string) error {
 	checkSelf := &checkself.BasicCheckSelf{
 		ConfigPath:                 viper.GetString(option.ConfigPath.Arg),
 		DatabaseURL:                viper.GetString(option.DatabaseURL.Arg),
-		Settings:                   viper.GetString(option.EngineConfigurationJSON.Arg),
+		Settings:                   viper.GetString(option.EngineSettings.Arg),
 		EngineLogLevel:             viper.GetString(option.EngineLogLevel.Arg),
-		ErrorLicenseDaysLeft:       viper.GetString(LicenseDaysLeft.Arg),
-		ErrorLicenseRecordsPercent: viper.GetString(LicenseRecordsPercent.Arg),
+		ErrorLicenseDaysLeft:       viper.GetString(option.LicenseDaysLeft.Arg),
+		ErrorLicenseRecordsPercent: viper.GetString(option.LicenseRecordsPercent.Arg),
 		GrpcURL:                    viper.GetString(option.GrpcPort.Arg),
 		InputURL:                   viper.GetString(option.InputURL.Arg),
 		LicenseStringBase64:        viper.GetString(option.LicenseStringBase64.Arg),
@@ -118,15 +106,10 @@ func Version() string {
 }
 
 // ----------------------------------------------------------------------------
-// Command
+// Private functions
 // ----------------------------------------------------------------------------
 
-// RootCmd represents the command.
-var RootCmd = &cobra.Command{
-	Use:     Use,
-	Short:   Short,
-	Long:    Long,
-	PreRun:  PreRun,
-	RunE:    RunE,
-	Version: Version(),
+// Since init() is always invoked, define command line parameters.
+func init() {
+	cmdhelper.Init(RootCmd, ContextVariables)
 }

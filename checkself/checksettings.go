@@ -29,8 +29,8 @@ func (checkself *BasicCheckSelf) CheckSettings(ctx context.Context, reportChecks
 	parsedSettings, err := settingsparser.New(checkself.Settings)
 	if err != nil {
 		normalizedValue := strings.ReplaceAll(strings.ReplaceAll(checkself.Settings, "\n", " "), "  ", "")
-		reportChecks = append(reportChecks, fmt.Sprintf("%s = %s", option.EngineConfigurationJSON.Envar, normalizedValue))
-		reportErrors = append(reportErrors, fmt.Sprintf("%s - %s", option.EngineConfigurationJSON.Envar, err.Error()))
+		reportChecks = append(reportChecks, fmt.Sprintf("%s = %s", option.EngineSettings.Envar, normalizedValue))
+		reportErrors = append(reportErrors, fmt.Sprintf("%s - %s", option.EngineSettings.Envar, err.Error()))
 		return reportChecks, reportInfo, reportErrors, nil
 	}
 
@@ -40,7 +40,7 @@ func (checkself *BasicCheckSelf) CheckSettings(ctx context.Context, reportChecks
 		return reportChecks, reportInfo, reportErrors, nil
 	}
 	for _, databaseURL := range databaseURLs {
-		errorList := checkDatabaseURL(ctx, option.EngineConfigurationJSON.Envar, databaseURL)
+		errorList := checkDatabaseURL(ctx, option.EngineSettings.Envar, databaseURL)
 		reportErrors = append(reportErrors, errorList...)
 	}
 
@@ -51,7 +51,7 @@ func (checkself *BasicCheckSelf) CheckSettings(ctx context.Context, reportChecks
 		reportErrors = append(reportErrors, err.Error())
 		return reportChecks, reportInfo, reportErrors, nil
 	}
-	reportChecks = append(reportChecks, fmt.Sprintf("Check engine configuration: %s = %s", option.EngineConfigurationJSON.Envar, redactedJSON))
+	reportChecks = append(reportChecks, fmt.Sprintf("Check engine configuration: %s = %s", option.EngineSettings.Envar, redactedJSON))
 
 	// Perform check.
 

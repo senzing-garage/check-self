@@ -154,7 +154,7 @@ func TestBasicCheckSelf_CheckSettings(test *testing.T) {
 
 func TestBasicCheckSelf_CheckSettings_badSettings(test *testing.T) {
 	ctx := context.TODO()
-	expected := "SENZING_TOOLS_ENGINE_CONFIGURATION_JSON - incorrect JSON syntax in }{"
+	expected := "SENZING_TOOLS_ENGINE_SETTINGS - incorrect JSON syntax in }{"
 	testObject := getTestObject(ctx, test)
 	testObject.Settings = badJSON
 	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckSettings(ctx, reportChecks(), reportInfo(), reportErrors())
