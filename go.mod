@@ -5,13 +5,13 @@ go 1.21
 require (
 	github.com/senzing-garage/go-cmdhelping v0.2.3
 	github.com/senzing-garage/go-databasing v0.4.2
-	github.com/senzing-garage/go-helpers v0.5.2
+	github.com/senzing-garage/go-helpers v0.6.0
 	github.com/senzing-garage/go-sdk-abstract-factory v0.8.1
 	github.com/senzing-garage/sz-sdk-go v0.13.6
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.9.0
-	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56
+	golang.org/x/exp v0.0.0-20240808152545-0cdaa3abc0fa
 	google.golang.org/grpc v1.65.0
 )
 
