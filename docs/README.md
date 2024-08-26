@@ -1,4 +1,4 @@
-# template-go
+# check-self
 
 Placeholder for [GitHub pages].
 

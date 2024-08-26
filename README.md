@@ -44,27 +44,25 @@ This command reviews the environment in which the command is run and returns a r
 1. Related artifacts:
     1. [DockerHub]
 
-[API documentation]: https://pkg.go.dev/github.com/senzing-garage/template-go
+[API documentation]: https://pkg.go.dev/github.com/senzing-garage/check-self
 [Development]: docs/development.md
-[DockerHub]: https://hub.docker.com/r/senzing/template-go
+[DockerHub]: https://hub.docker.com/r/senzing/check-self
 [Errors]: docs/errors.md
 [Examples]: docs/examples.md
-[Go Package library]: https://pkg.go.dev
-[Go Reference Badge]: https://pkg.go.dev/badge/github.com/senzing-garage/template-go.svg
-[Go Report Card Badge]: https://goreportcard.com/badge/github.com/senzing-garage/template-go
-[Go Report Card]: https://goreportcard.com/report/github.com/senzing-garage/template-go
-[go-test-darwin.yaml Badge]: https://github.com/senzing-garage/template-go/actions/workflows/go-test-darwin.yaml/badge.svg
-[go-test-darwin.yaml]: https://github.com/senzing-garage/template-go/actions/workflows/go-test-darwin.yaml
-[go-test-linux.yaml Badge]: https://github.com/senzing-garage/template-go/actions/workflows/go-test-linux.yaml/badge.svg
-[go-test-linux.yaml]: https://github.com/senzing-garage/template-go/actions/workflows/go-test-linux.yaml
-[go-test-windows.yaml Badge]: https://github.com/senzing-garage/template-go/actions/workflows/go-test-windows.yaml/badge.svg
-[go-test-windows.yaml]: https://github.com/senzing-garage/template-go/actions/workflows/go-test-windows.yaml
-[golangci-lint.yaml Badge]: https://github.com/senzing-garage/template-go/actions/workflows/golangci-lint.yaml/badge.svg
-[golangci-lint.yaml]: https://github.com/senzing-garage/template-go/actions/workflows/golangci-lint.yaml
+[Go Reference Badge]: https://pkg.go.dev/badge/github.com/senzing-garage/check-self.svg
+[Go Report Card Badge]: https://goreportcard.com/badge/github.com/senzing-garage/check-self
+[Go Report Card]: https://goreportcard.com/report/github.com/senzing-garage/check-self
+[go-test-darwin.yaml Badge]: https://github.com/senzing-garage/check-self/actions/workflows/go-test-darwin.yaml/badge.svg
+[go-test-darwin.yaml]: https://github.com/senzing-garage/check-self/actions/workflows/go-test-darwin.yaml
+[go-test-linux.yaml Badge]: https://github.com/senzing-garage/check-self/actions/workflows/go-test-linux.yaml/badge.svg
+[go-test-linux.yaml]: https://github.com/senzing-garage/check-self/actions/workflows/go-test-linux.yaml
+[go-test-windows.yaml Badge]: https://github.com/senzing-garage/check-self/actions/workflows/go-test-windows.yaml/badge.svg
+[go-test-windows.yaml]: https://github.com/senzing-garage/check-self/actions/workflows/go-test-windows.yaml
+[golangci-lint.yaml Badge]: https://github.com/senzing-garage/check-self/actions/workflows/golangci-lint.yaml/badge.svg
+[golangci-lint.yaml]: https://github.com/senzing-garage/check-self/actions/workflows/golangci-lint.yaml
 [License Badge]: https://img.shields.io/badge/License-Apache2-brightgreen.svg
-[License]: https://github.com/senzing-garage/template-go/blob/main/LICENSE
-[main.go]: main.go
-[Package reference]: https://pkg.go.dev/github.com/senzing-garage/template-go
+[License]: https://github.com/senzing-garage/check-self/blob/main/LICENSE
+[Package reference]: https://pkg.go.dev/github.com/senzing-garage/check-self
 [Senzing Garage]: https://github.com/senzing-garage
 [Senzing Quick Start guides]: https://docs.senzing.com/quickstart/
 [Senzing]: https://senzing.com/
