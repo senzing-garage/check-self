@@ -19,7 +19,7 @@ func TestBasicCheckSelf_CheckSelf_Paths(test *testing.T) {
 	testObject := &BasicCheckSelf{
 		ConfigPath:   "/etc/opt/senzing",
 		DatabaseURL:  "sqlite3://na:na@/tmp/sqlite/G2C.db",
-		ResourcePath: "/opt/senzing/g2/resources",
+		ResourcePath: "/opt/senzing/er/resources",
 		SupportPath:  "/opt/senzing/data",
 	}
 	err := testObject.CheckSelf(ctx)
@@ -49,7 +49,7 @@ func TestBasicCheckSelf_CheckLicense_badGetLicense(test *testing.T) {
             "PIPELINE": {
                 "CONFIGPATH": "/etc/opt/senzing",
                 "LICENSESTRINGBASE64": "badLicense",
-                "RESOURCEPATH": "/opt/senzing/g2/resources",
+                "RESOURCEPATH": "/opt/senzing/er/resources",
                 "SUPPORTPATH": "/opt/senzing/data"
             },
             "SQL": {
@@ -75,7 +75,7 @@ func TestBasicCheckSelf_CheckSettings_badDatabaseURLs(test *testing.T) {
             "PIPELINE": {
                 "CONFIGPATH": "/etc/opt/senzing",
                 "LICENSESTRINGBASE64": "",
-                "RESOURCEPATH": "/opt/senzing/g2/resources",
+                "RESOURCEPATH": "/opt/senzing/er/resources",
                 "SUPPORTPATH": "/opt/senzing/data"
             },
             "SQL": {

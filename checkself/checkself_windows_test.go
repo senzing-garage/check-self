@@ -25,10 +25,10 @@ func TestBasicCheckSelf_CheckSelf_Paths(test *testing.T) {
 	test.Log(`sqlite3://na:na@nowhere/C:\Temp\sqlite\G2C.db`)
 
 	testObject := &BasicCheckSelf{
-		ConfigPath:   `C:\Program Files\Senzing\g2\etc`,
+		ConfigPath:   `C:\Program Files\Senzing\er\etc`,
 		DatabaseURL:  databaseUrl,
-		ResourcePath: `C:\Program Files\Senzing\g2\resources`,
-		SupportPath:  `C:\Program Files\Senzing\g2\data`,
+		ResourcePath: `C:\Program Files\Senzing\er\resources`,
+		SupportPath:  `C:\Program Files\Senzing\er\data`,
 	}
 	err := testObject.CheckSelf(ctx)
 	require.NoError(test, err)
