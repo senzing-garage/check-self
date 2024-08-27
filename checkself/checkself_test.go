@@ -91,7 +91,7 @@ func TestBasicCheckSelf_CheckLicense_badGetDatabaseURL(test *testing.T) {
             "PIPELINE": {
                 "CONFIGPATH": "/etc/opt/senzing",
                 "LICENSESTRINGBASE64": "",
-                "RESOURCEPATH": "/opt/senzing/g2/resources",
+                "RESOURCEPATH": "/opt/senzing/er/resources",
                 "SUPPORTPATH": "/opt/senzing/data"
             },
             "SQL": {

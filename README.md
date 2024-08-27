@@ -8,6 +8,12 @@ Although this GitHub repository may help you understand an approach to using Sen
 it's not considered to be "production ready" and is not considered to be part of the Senzing product.
 Heck, it may not even be appropriate for your application of Senzing!
 
+## :warning: WARNING: check-self is still in development :warning: _
+
+At the moment, this is "work-in-progress" with Semantic Versions of `0.n.x`.
+Although it can be reviewed and commented on,
+the recommendation is not to use it yet.
+
 ## Synopsis
 
 `check-self` is a command in the
@@ -15,14 +21,14 @@ Heck, it may not even be appropriate for your application of Senzing!
 suite of tools.
 This command reviews the environment in which the command is run and returns a report.
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/senzing-garage/check-self.svg)](https://pkg.go.dev/github.com/senzing-garage/check-self)
-[![Go Report Card](https://goreportcard.com/badge/github.com/senzing-garage/check-self)](https://goreportcard.com/report/github.com/senzing-garage/check-self)
-[![License](https://img.shields.io/badge/License-Apache2-brightgreen.svg)](https://github.com/senzing-garage/check-self/blob/main/LICENSE)
+[![Go Reference Badge]][Package reference]
+[![Go Report Card Badge]][Go Report Card]
+[![License Badge]][License]
+[![go-test-linux.yaml Badge]][go-test-linux.yaml]
+[![go-test-darwin.yaml Badge]][go-test-darwin.yaml]
+[![go-test-windows.yaml Badge]][go-test-windows.yaml]
 
-[![go-test-linux.yaml](https://github.com/senzing-garage/self-check/actions/workflows/go-test-linux.yaml/badge.svg)](https://github.com/senzing-garage/self-check/actions/workflows/go-test-linux.yaml)
-[![go-test-darwin.yaml](https://github.com/senzing-garage/self-check/actions/workflows/go-test-darwin.yaml/badge.svg)](https://github.com/senzing-garage/self-check/actions/workflows/go-test-darwin.yaml)
-[![go-test-windows.yaml](https://github.com/senzing-garage/self-check/actions/workflows/go-test-windows.yaml/badge.svg)](https://github.com/senzing-garage/self-check/actions/workflows/go-test-windows.yaml)
-
+[![golangci-lint.yaml Badge]][golangci-lint.yaml]
 
 ## Overview
 
@@ -34,17 +40,29 @@ This command reviews the environment in which the command is run and returns a r
 1. [Development]
 1. [Errors]
 1. [Examples]
+1. [Package reference]
 1. Related artifacts:
     1. [DockerHub]
-    1. [Helm Chart]
 
-[API documentation]: https://pkg.go.dev/github.com/senzing-garage/template-go
+[API documentation]: https://pkg.go.dev/github.com/senzing-garage/check-self
 [Development]: docs/development.md
-[DockerHub]: https://hub.docker.com/r/senzing/template-go
+[DockerHub]: https://hub.docker.com/r/senzing/check-self
 [Errors]: docs/errors.md
 [Examples]: docs/examples.md
-[Helm Chart]: https://github.com/senzing-garage/charts/tree/main/charts/template-go
-[main.go]: main.go
-[Senzing Garage]: https://github.com/senzing-garage-garage
+[Go Reference Badge]: https://pkg.go.dev/badge/github.com/senzing-garage/check-self.svg
+[Go Report Card Badge]: https://goreportcard.com/badge/github.com/senzing-garage/check-self
+[Go Report Card]: https://goreportcard.com/report/github.com/senzing-garage/check-self
+[go-test-darwin.yaml Badge]: https://github.com/senzing-garage/check-self/actions/workflows/go-test-darwin.yaml/badge.svg
+[go-test-darwin.yaml]: https://github.com/senzing-garage/check-self/actions/workflows/go-test-darwin.yaml
+[go-test-linux.yaml Badge]: https://github.com/senzing-garage/check-self/actions/workflows/go-test-linux.yaml/badge.svg
+[go-test-linux.yaml]: https://github.com/senzing-garage/check-self/actions/workflows/go-test-linux.yaml
+[go-test-windows.yaml Badge]: https://github.com/senzing-garage/check-self/actions/workflows/go-test-windows.yaml/badge.svg
+[go-test-windows.yaml]: https://github.com/senzing-garage/check-self/actions/workflows/go-test-windows.yaml
+[golangci-lint.yaml Badge]: https://github.com/senzing-garage/check-self/actions/workflows/golangci-lint.yaml/badge.svg
+[golangci-lint.yaml]: https://github.com/senzing-garage/check-self/actions/workflows/golangci-lint.yaml
+[License Badge]: https://img.shields.io/badge/License-Apache2-brightgreen.svg
+[License]: https://github.com/senzing-garage/check-self/blob/main/LICENSE
+[Package reference]: https://pkg.go.dev/github.com/senzing-garage/check-self
+[Senzing Garage]: https://github.com/senzing-garage
 [Senzing Quick Start guides]: https://docs.senzing.com/quickstart/
 [Senzing]: https://senzing.com/

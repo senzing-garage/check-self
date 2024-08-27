@@ -1,5 +1,8 @@
 # check-self
 
-Placeholder for [GitHub pages](https://pages.github.com/).
+Placeholder for [GitHub pages].
 
-See [https://garage.senzing.com/check-self](https://garage.senzing.com/check-self).
+See [GitHub page].
+
+[GitHub page]: https://garage.senzing.com/check-self
+[GitHub pages]: https://pages.github.com/
