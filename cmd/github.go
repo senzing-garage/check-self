@@ -1,15 +1,15 @@
-// 0.2.2
-// Created by senzing-factory/github-action-make-go-github-file.yaml on Fri Jun 28 16:18:34 UTC 2024
+// 0.3.1
+// Created by senzing-factory/github-action-make-go-github-file.yaml on Tue Aug 27 18:46:16 UTC 2024
 //
 //lint:file-ignore U1000 Ignore all unused code, it's generated
 package cmd
 
 var (
-	githubDate           = "2024-06-28"
+	githubDate           = "2024-08-27"
 	githubIteration      = "0"
-	githubRef            = "refs/tags/0.2.2"
-	githubRefName        = "0.2.2"
+	githubRef            = "refs/tags/0.3.1"
+	githubRefName        = "0.3.1"
 	githubRepository     = "senzing-garage/check-self"
 	githubRepositoryName = "check-self"
-	githubVersion        = "0.2.2"
+	githubVersion        = "0.3.1"
 )
