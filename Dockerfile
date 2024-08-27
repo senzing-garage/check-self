@@ -16,7 +16,7 @@ FROM ${IMAGE_FINAL} AS senzingapi_runtime
 # -----------------------------------------------------------------------------
 
 FROM ${IMAGE_BUILDER} AS builder
-ENV REFRESHED_AT=2024-07-01a
+ENV REFRESHED_AT=2024-07-01
 LABEL Name="senzing/go-builder" \
       Maintainer="support@senzing.com" \
       Version="0.1.0"
@@ -67,7 +67,7 @@ COPY ./rootfs /
 
 # Copy files from prior stage.
 
-COPY --from=go_builder "/output/linux-amd64/check-self" "/app/check-self"
+COPY --from=builder "/output/linux-amd64/check-self" "/app/check-self"
 
 # Run as non-root container
 
