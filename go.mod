@@ -8,7 +8,7 @@ require (
 	github.com/senzing-garage/go-cmdhelping v0.3.1
 	github.com/senzing-garage/go-databasing v0.5.3
 	github.com/senzing-garage/go-helpers v0.6.1
-	github.com/senzing-garage/go-sdk-abstract-factory v0.9.3-0.20241030183108-4457c1789c2d
+	github.com/senzing-garage/go-sdk-abstract-factory v0.9.3
 	github.com/senzing-garage/sz-sdk-go v0.14.3
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
