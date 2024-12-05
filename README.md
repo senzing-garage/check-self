@@ -44,7 +44,7 @@ This command reviews the environment in which the command is run and returns a r
 1. Related artifacts:
     1. [DockerHub]
 
-[SDK documentation]: https://pkg.go.dev/github.com/senzing-garage/template-go
+[SDK documentation]: https://pkg.go.dev/github.com/senzing-garage/check-self
 [Development]: docs/development.md
 [DockerHub]: https://hub.docker.com/r/senzing/check-self
 [Errors]: docs/errors.md
