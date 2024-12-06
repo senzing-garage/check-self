@@ -36,7 +36,7 @@ This command reviews the environment in which the command is run and returns a r
 
 ## References
 
-1. [API documentation]
+1. [SDK documentation]
 1. [Development]
 1. [Errors]
 1. [Examples]
@@ -44,7 +44,7 @@ This command reviews the environment in which the command is run and returns a r
 1. Related artifacts:
     1. [DockerHub]
 
-[API documentation]: https://pkg.go.dev/github.com/senzing-garage/check-self
+[SDK documentation]: https://pkg.go.dev/github.com/senzing-garage/check-self
 [Development]: docs/development.md
 [DockerHub]: https://hub.docker.com/r/senzing/check-self
 [Errors]: docs/errors.md
