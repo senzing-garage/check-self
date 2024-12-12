@@ -205,7 +205,7 @@ func (checkself *BasicCheckSelf) getInstanceName(ctx context.Context) string {
 func (checkself *BasicCheckSelf) getSzConfigManager(ctx context.Context) (senzing.SzConfigManager, error) {
 	var err error
 	checkself.szConfigManagerSyncOnce.Do(func() {
-		checkself.szConfigManagerSingleton, err = checkself.getSzFactory(ctx).CreateSzConfigManager(ctx)
+		checkself.szConfigManagerSingleton, err = checkself.getSzFactory(ctx).CreateConfigManager(ctx)
 	})
 	return checkself.szConfigManagerSingleton, err
 }
@@ -225,7 +225,7 @@ func (checkself *BasicCheckSelf) getSzFactory(ctx context.Context) senzing.SzAbs
 func (checkself *BasicCheckSelf) getSzProduct(ctx context.Context) (senzing.SzProduct, error) {
 	var err error
 	checkself.szProductSyncOnce.Do(func() {
-		checkself.szProductSingleton, err = checkself.getSzFactory(ctx).CreateSzProduct(ctx)
+		checkself.szProductSingleton, err = checkself.getSzFactory(ctx).CreateProduct(ctx)
 	})
 	return checkself.szProductSingleton, err
 }
