@@ -4,8 +4,10 @@ package checkself
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
+	"github.com/senzing-garage/go-helpers/settings"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -16,11 +18,12 @@ import (
 
 func TestBasicCheckSelf_CheckSelf_Paths(test *testing.T) {
 	ctx := context.TODO()
+	senzingPath := settings.GetSenzingPath()
 	testObject := &BasicCheckSelf{
 		ConfigPath:   "/etc/opt/senzing",
 		DatabaseURL:  "sqlite3://na:na@/tmp/sqlite/G2C.db",
-		ResourcePath: "/opt/senzing/er/resources",
-		SupportPath:  "/opt/senzing/data",
+		ResourcePath: fmt.Sprintf("%s/er/resources", senzingPath),
+		SupportPath:  fmt.Sprintf("%s/data", senzingPath),
 	}
 	err := testObject.CheckSelf(ctx)
 	require.NoError(test, err)
