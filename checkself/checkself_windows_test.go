@@ -22,7 +22,7 @@ func TestBasicCheckSelf_CheckSelf_Paths(test *testing.T) {
 		ConfigPath:   fmt.Sprintf("%s\\er\\etc", senzingPath),
 		DatabaseURL:  "sqlite3://na:na@nowhere/C:\\Temp\\sqlite\\G2C.db",
 		ResourcePath: fmt.Sprintf("%s\\er\\resources", senzingPath),
-		SupportPath:  fmt.Sprintf("%s\\er\\data", senzingPath),
+		SupportPath:  fmt.Sprintf("%s\\data", senzingPath),
 	}
 	err := testObject.CheckSelf(ctx)
 	require.NoError(test, err)
