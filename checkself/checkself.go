@@ -169,14 +169,14 @@ func (checkself *BasicCheckSelf) getDatabaseURL(ctx context.Context) (string, er
 		return "", fmt.Errorf("unable to parse settings: %s", checkself.Settings)
 	}
 
-	databaseUrls, err := parsedSettings.GetDatabaseURLs(ctx)
+	databaseUris, err := parsedSettings.GetDatabaseURIs(ctx)
 	if err != nil {
 		return "", fmt.Errorf("unable to extract databases from settings: %s", checkself.Settings)
 	}
-	if len(databaseUrls) == 0 {
+	if len(databaseUris) == 0 {
 		return "", fmt.Errorf("no databases found in settings: %s", checkself.Settings)
 	}
-	return databaseUrls[0], nil
+	return databaseUris[0], nil
 }
 
 func (checkself *BasicCheckSelf) getSettings(ctx context.Context) string {

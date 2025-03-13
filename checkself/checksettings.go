@@ -34,13 +34,13 @@ func (checkself *BasicCheckSelf) CheckSettings(ctx context.Context, reportChecks
 		return reportChecks, reportInfo, reportErrors, nil
 	}
 
-	databaseURLs, err := parsedSettings.GetDatabaseURLs(ctx)
+	databaseURIs, err := parsedSettings.GetDatabaseURIs(ctx)
 	if err != nil {
 		reportErrors = append(reportErrors, err.Error())
 		return reportChecks, reportInfo, reportErrors, nil
 	}
-	for _, databaseURL := range databaseURLs {
-		errorList := checkDatabaseURL(ctx, option.EngineSettings.Envar, databaseURL)
+	for _, databaseURI := range databaseURIs {
+		errorList := checkDatabaseURL(ctx, option.EngineSettings.Envar, databaseURI)
 		reportErrors = append(reportErrors, errorList...)
 	}
 
@@ -122,13 +122,13 @@ func (checkself *BasicCheckSelf) checkSettings(ctx context.Context, settings str
 	// Test SENZING_TOOLS_ENGINE_CONFIGURATION_JSON.SQL.CONNECTION.
 
 	connectionVariable := "SENZING_TOOLS_ENGINE_CONFIGURATION_JSON.SQL.CONNECTION"
-	connectionValues, err := parsedSettings.GetDatabaseURLs(ctx)
+	databaseURIs, err := parsedSettings.GetDatabaseURIs(ctx)
 	if err != nil {
 		reportErrors = append(reportErrors, fmt.Sprintf("Could not parse %s. Error: %s", connectionVariable, err.Error()))
 		return reportChecks, reportInfo, reportErrors, nil
 	}
-	for _, connectionValue := range connectionValues {
-		errorList = checkDatabaseURL(ctx, connectionVariable, connectionValue)
+	for _, databaseURI := range databaseURIs {
+		errorList = checkDatabaseURL(ctx, connectionVariable, databaseURI)
 		reportErrors = append(reportErrors, errorList...)
 	}
 

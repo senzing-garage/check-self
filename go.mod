@@ -5,9 +5,9 @@ go 1.23.0
 toolchain go1.23.2
 
 require (
-	github.com/senzing-garage/go-cmdhelping v0.3.2
+	github.com/senzing-garage/go-cmdhelping v0.3.3
 	github.com/senzing-garage/go-databasing v0.5.5
-	github.com/senzing-garage/go-helpers v0.6.7
+	github.com/senzing-garage/go-helpers v0.6.8
 	github.com/senzing-garage/go-sdk-abstract-factory v0.9.5
 	github.com/senzing-garage/sz-sdk-go v0.14.5
 	github.com/spf13/cobra v1.9.1
