@@ -69,7 +69,7 @@ COPY ./rootfs /
 
 # Copy files from prior stage.
 
-COPY --from=builder /output/linux-amd64/check-self /app/check-self
+COPY --from=builder /output/linux/check-self /app/check-self
 
 # Run as non-root container
 
