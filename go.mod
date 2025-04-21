@@ -12,7 +12,7 @@ require (
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/exp v0.0.0-20250408133849-7e4ce0ab07d0
-	google.golang.org/grpc v1.71.1
+	google.golang.org/grpc v1.72.0
 )
 
 require (
