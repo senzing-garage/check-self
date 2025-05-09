@@ -34,7 +34,12 @@ var (
 func TestBasicCheckSelf_Break(test *testing.T) {
 	ctx := context.TODO()
 	testObject := getTestObject(ctx, test)
-	newReportChecks, newReportInfo, newReportErrors, err := testObject.Break(ctx, reportChecks(), reportInfo(), reportErrors())
+	newReportChecks, newReportInfo, newReportErrors, err := testObject.Break(
+		ctx,
+		reportChecks(),
+		reportInfo(),
+		reportErrors(),
+	)
 	require.NoError(test, err)
 	assert.Empty(test, newReportChecks)
 	assert.Empty(test, newReportInfo)
@@ -52,7 +57,12 @@ func TestBasicCheckSelf_Break_badReportErrors(test *testing.T) {
 func TestBasicCheckSelf_CheckDatabaseSchema(test *testing.T) {
 	ctx := context.TODO()
 	testObject := getTestObject(ctx, test)
-	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckDatabaseSchema(ctx, reportChecks(), reportInfo(), reportErrors())
+	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckDatabaseSchema(
+		ctx,
+		reportChecks(),
+		reportInfo(),
+		reportErrors(),
+	)
 	require.NoError(test, err)
 	assert.Empty(test, newReportChecks)
 	assert.Empty(test, newReportInfo)
@@ -61,11 +71,16 @@ func TestBasicCheckSelf_CheckDatabaseSchema(test *testing.T) {
 
 func TestBasicCheckSelf_CheckDatabaseSchema_badDatabaseURL(test *testing.T) {
 	ctx := context.TODO()
-	expected := "SENZING_TOOLS_DATABASE_URL = bad-database-URL is misconfigured. Could not create a database connector. For more information, visit https://hub.senzing.com/...  Error: unknown database scheme: "
+	expected := "SENZING_TOOLS_DATABASE_URL = bad-database-URL is misconfigured. Could not create a database connector. For more information, visit https://hub.senzing.com/...  Error: connector.NewConnector error: unknown database scheme:  error: connector"
 	testObject := getTestObject(ctx, test)
 	badReportErrors := []string{}
 	testObject.DatabaseURL = "bad-database-URL"
-	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckDatabaseSchema(ctx, reportChecks(), reportInfo(), badReportErrors)
+	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckDatabaseSchema(
+		ctx,
+		reportChecks(),
+		reportInfo(),
+		badReportErrors,
+	)
 	require.NoError(test, err)
 	assert.Len(test, newReportChecks, 1)
 	assert.Empty(test, newReportInfo)
@@ -76,7 +91,12 @@ func TestBasicCheckSelf_CheckDatabaseSchema_badDatabaseURL(test *testing.T) {
 func TestBasicCheckSelf_CheckLicense(test *testing.T) {
 	ctx := context.TODO()
 	testObject := getTestObject(ctx, test)
-	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckLicense(ctx, reportChecks(), reportInfo(), reportErrors())
+	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckLicense(
+		ctx,
+		reportChecks(),
+		reportInfo(),
+		reportErrors(),
+	)
 	require.NoError(test, err)
 	assert.Len(test, newReportChecks, 1)
 	assert.Len(test, newReportInfo, 1)
@@ -99,7 +119,12 @@ func TestBasicCheckSelf_CheckLicense_badGetDatabaseURL(test *testing.T) {
             }
         }
         `
-	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckLicense(ctx, reportChecks(), reportInfo(), reportErrors())
+	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckLicense(
+		ctx,
+		reportChecks(),
+		reportInfo(),
+		reportErrors(),
+	)
 	require.NoError(test, err)
 	assert.Len(test, newReportChecks, 1)
 	assert.Empty(test, newReportInfo)
@@ -134,7 +159,12 @@ func TestBasicCheckSelf_CheckSenzingConfiguration_badGetDefaultConfigID(test *te
         }
         `
 	testObject.DatabaseURL = "sqlite3://na:na@/tmp/sqlite/G2C-empty.db"
-	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckSenzingConfiguration(ctx, reportChecks(), reportInfo(), reportErrors())
+	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckSenzingConfiguration(
+		ctx,
+		reportChecks(),
+		reportInfo(),
+		reportErrors(),
+	)
 	require.NoError(test, err)
 	assert.Len(test, newReportChecks, 1)
 	assert.Empty(test, newReportInfo)
@@ -145,7 +175,12 @@ func TestBasicCheckSelf_CheckSenzingConfiguration_badGetDefaultConfigID(test *te
 func TestBasicCheckSelf_CheckSettings(test *testing.T) {
 	ctx := context.TODO()
 	testObject := getTestObject(ctx, test)
-	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckSettings(ctx, reportChecks(), reportInfo(), reportErrors())
+	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckSettings(
+		ctx,
+		reportChecks(),
+		reportInfo(),
+		reportErrors(),
+	)
 	require.NoError(test, err)
 	assert.Len(test, newReportChecks, 1)
 	assert.Empty(test, newReportInfo)
@@ -157,7 +192,12 @@ func TestBasicCheckSelf_CheckSettings_badSettings(test *testing.T) {
 	expected := "SENZING_TOOLS_ENGINE_SETTINGS - incorrect JSON syntax in }{"
 	testObject := getTestObject(ctx, test)
 	testObject.Settings = badJSON
-	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckSettings(ctx, reportChecks(), reportInfo(), reportErrors())
+	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckSettings(
+		ctx,
+		reportChecks(),
+		reportInfo(),
+		reportErrors(),
+	)
 	require.NoError(test, err)
 	assert.Len(test, newReportChecks, 1)
 	assert.Empty(test, newReportInfo)
