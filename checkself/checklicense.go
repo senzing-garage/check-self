@@ -3,20 +3,27 @@ package checkself
 import (
 	"bytes"
 	"context"
+	"database/sql/driver"
 	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
 
 	"github.com/senzing-garage/go-databasing/checker"
-	"github.com/senzing-garage/go-databasing/connector"
+	"github.com/senzing-garage/go-helpers/wraperror"
 )
 
 // ----------------------------------------------------------------------------
 // Interface methods
 // ----------------------------------------------------------------------------
 
-func (checkself *BasicCheckSelf) CheckLicense(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+func (checkself *BasicCheckSelf) CheckLicense(
+	ctx context.Context,
+	reportChecks []string,
+	reportInfo []string,
+	reportErrors []string,
+) ([]string, []string, []string, error) {
+	var err error
 
 	// Prolog.
 
@@ -24,25 +31,17 @@ func (checkself *BasicCheckSelf) CheckLicense(ctx context.Context, reportChecks 
 
 	// Connect to the database.
 
-	databaseURL, err := checkself.getDatabaseURL(ctx)
+	databaseConnector, err := checkself.getDatabaseConnector(ctx)
 	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("Unable to locate Database URL For more information, visit https://hub.senzing.com/...  Error: %s", err.Error()))
-		return reportChecks, reportInfo, reportErrors, nil
-	}
-	databaseConnector, err := connector.NewConnector(ctx, databaseURL)
-	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("Database URL '%s' is misconfigured. Could not create a database connector. For more information, visit https://hub.senzing.com/...  Error: %s", databaseURL, err.Error()))
+		reportErrors = append(reportErrors, err.Error())
 		return reportChecks, reportInfo, reportErrors, nil
 	}
 
 	// Get number of record in DSRC_RECORD.
 
-	checker := &checker.BasicChecker{
-		DatabaseConnector: databaseConnector,
-	}
-	recordCount, err := checker.RecordCount(ctx)
+	recordCount, err := checkself.getRecordCount(ctx, databaseConnector)
 	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("Could not get count of records.  Error %s", err.Error()))
+		reportErrors = append(reportErrors, err.Error())
 		return reportChecks, reportInfo, reportErrors, nil
 	}
 
@@ -65,7 +64,10 @@ func (checkself *BasicCheckSelf) CheckLicense(ctx context.Context, reportChecks 
 	productLicenseResponse := &ProductLicenseResponse{}
 	err = json.Unmarshal([]byte(license), productLicenseResponse)
 	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("Could not parse license information into structure.  Error %s", err.Error()))
+		reportErrors = append(
+			reportErrors,
+			fmt.Sprintf("Could not parse license information into structure.  Error %s", err.Error()),
+		)
 		return reportChecks, reportInfo, reportErrors, nil
 	}
 
@@ -80,13 +82,17 @@ func (checkself *BasicCheckSelf) CheckLicense(ctx context.Context, reportChecks 
 
 	licenseExpireDate, err := time.Parse(time.DateOnly, productLicenseResponse.ExpireDate)
 	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("Could not parse expireDate information.  Error %s", err.Error()))
+		reportErrors = append(
+			reportErrors,
+			fmt.Sprintf("Could not parse expireDate information.  Error %s", err.Error()),
+		)
 		return reportChecks, reportInfo, reportErrors, nil
 	}
 	duration := time.Until(licenseExpireDate)
 	expireInDays := int(duration.Hours() / 24)
 
-	reportInfo = append(reportInfo, fmt.Sprintf(`
+	reportInfo = append(reportInfo, fmt.Sprintf(
+		`
 License:
 
 - Records used: %d of %d
@@ -94,7 +100,12 @@ License:
 - Days until license expires: %d
 
 %s`,
-		recordCount, productLicenseResponse.RecordLimit, productLicenseResponse.ExpireDate, expireInDays, prettyJSON.String()))
+		recordCount,
+		productLicenseResponse.RecordLimit,
+		productLicenseResponse.ExpireDate,
+		expireInDays,
+		prettyJSON.String(),
+	))
 
 	// Calculate License Days Left error.
 
@@ -103,11 +114,24 @@ License:
 	}
 	errorLicenseDaysLeft, err := strconv.Atoi(checkself.ErrorLicenseDaysLeft)
 	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("Could not parse SENZING_TOOLS_LICENSE_DAYS_LEFT information: %s.  Error %s", checkself.ErrorLicenseDaysLeft, err.Error()))
+		reportErrors = append(
+			reportErrors,
+			fmt.Sprintf(
+				"Could not parse SENZING_TOOLS_LICENSE_DAYS_LEFT information: %s.  Error %s",
+				checkself.ErrorLicenseDaysLeft,
+				err.Error(),
+			),
+		)
 		return reportChecks, reportInfo, reportErrors, nil
 	}
 	if expireInDays < errorLicenseDaysLeft {
-		reportErrors = append(reportErrors, fmt.Sprintf("License expires in %d days. For more information, visit https://hub.senzing.com/... ", expireInDays))
+		reportErrors = append(
+			reportErrors,
+			fmt.Sprintf(
+				"License expires in %d days. For more information, visit https://hub.senzing.com/... ",
+				expireInDays,
+			),
+		)
 	}
 
 	// Calculate License Records Percent error.
@@ -117,14 +141,46 @@ License:
 	}
 	errorLicenseRecordsPercent, err := strconv.Atoi(checkself.ErrorLicenseRecordsPercent)
 	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("Could not parse SENZING_TOOLS_LICENSE_RECORDS_PERCENT information: %s.  Error %s", checkself.ErrorLicenseRecordsPercent, err.Error()))
+		reportErrors = append(
+			reportErrors,
+			fmt.Sprintf(
+				"Could not parse SENZING_TOOLS_LICENSE_RECORDS_PERCENT information: %s.  Error %s",
+				checkself.ErrorLicenseRecordsPercent,
+				err.Error(),
+			),
+		)
 		return reportChecks, reportInfo, reportErrors, nil
 	}
 	if (recordCount / productLicenseResponse.RecordLimit) > int64(errorLicenseRecordsPercent) {
-		reportErrors = append(reportErrors, fmt.Sprintf("Records above %d full limit. For more information, visit https://hub.senzing.com/... ", errorLicenseRecordsPercent))
+		reportErrors = append(
+			reportErrors,
+			fmt.Sprintf(
+				"Records above %d full limit. For more information, visit https://hub.senzing.com/... ",
+				errorLicenseRecordsPercent,
+			),
+		)
 	}
 
 	// Epilog.
 
 	return reportChecks, reportInfo, reportErrors, nil
+}
+
+func (checkself *BasicCheckSelf) getRecordCount(
+	ctx context.Context,
+	databaseConnector driver.Connector,
+) (int64, error) {
+	var (
+		err    error
+		result int64
+	)
+	checker := &checker.BasicChecker{
+		DatabaseConnector: databaseConnector,
+	}
+	result, err = checker.RecordCount(ctx)
+	if err != nil {
+		return result, wraperror.Errorf(err, "Could not get count of records.  Error %w", err)
+	}
+
+	return result, err
 }

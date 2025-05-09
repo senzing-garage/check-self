@@ -50,8 +50,11 @@ func TestBasicCheckSelf_Break_badReportErrors(test *testing.T) {
 	ctx := context.TODO()
 	testObject := getTestObject(ctx, test)
 	badReportErrors := []string{"example error text"}
-	_, _, _, err := testObject.Break(ctx, reportChecks(), reportInfo(), badReportErrors)
+	reportChecks, reportInfo, reportErrors, err := testObject.Break(ctx, reportChecks(), reportInfo(), badReportErrors)
 	require.Error(test, err)
+	require.Empty(test, reportChecks, "reportChecks")
+	require.Empty(test, reportInfo, "reportInfo")
+	require.NotEmpty(test, reportErrors, "reportErrors")
 }
 
 func TestBasicCheckSelf_CheckDatabaseSchema(test *testing.T) {

@@ -2,6 +2,7 @@ package checkself
 
 import (
 	"context"
+	"errors"
 )
 
 // ----------------------------------------------------------------------------
@@ -30,3 +31,5 @@ const DefaultSenzingToolsLicenseRecordsPercent = "90"
 var ExampleVariable = map[int]string{
 	1: "Just a string",
 }
+
+var errForPackage = errors.New("checkself")

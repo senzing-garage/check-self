@@ -2,13 +2,16 @@ package checkself
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"os"
 	"strings"
 	"sync"
 
+	"github.com/senzing-garage/go-databasing/connector"
 	"github.com/senzing-garage/go-helpers/settings"
 	"github.com/senzing-garage/go-helpers/settingsparser"
+	"github.com/senzing-garage/go-helpers/wraperror"
 	"github.com/senzing-garage/go-sdk-abstract-factory/szfactorycreator"
 	"github.com/senzing-garage/sz-sdk-go/senzing"
 	"google.golang.org/grpc"
@@ -134,7 +137,7 @@ func (checkself *BasicCheckSelf) CheckSelf(ctx context.Context) error {
 		for index, message := range reportErrors {
 			fmt.Printf("%6d. %s\n\n", index+1, message)
 		}
-		err = fmt.Errorf("%d errors detected", len(reportErrors))
+		err = wraperror.Errorf(errForPackage, "%d errors detected", len(reportErrors))
 		fmt.Printf("Result: %s\n", err.Error())
 	} else {
 		printTitle("Result")
@@ -158,7 +161,7 @@ func (checkself *BasicCheckSelf) getDatabaseURL(ctx context.Context) (string, er
 	}
 
 	if len(checkself.Settings) == 0 {
-		return "", fmt.Errorf("neither DatabaseUrl nor settings set")
+		return "", wraperror.Errorf(errForPackage, "neither DatabaseUrl nor settings set")
 	}
 
 	// Pull database from Senzing engine configuration json.
@@ -166,17 +169,46 @@ func (checkself *BasicCheckSelf) getDatabaseURL(ctx context.Context) (string, er
 
 	parsedSettings, err := settingsparser.New(checkself.Settings)
 	if err != nil {
-		return "", fmt.Errorf("unable to parse settings: %s", checkself.Settings)
+		return "", wraperror.Errorf(errForPackage, "unable to parse settings: %s", checkself.Settings)
 	}
 
 	databaseUris, err := parsedSettings.GetDatabaseURIs(ctx)
 	if err != nil {
-		return "", fmt.Errorf("unable to extract databases from settings: %s", checkself.Settings)
+		return "", wraperror.Errorf(errForPackage, "unable to extract databases from settings: %s", checkself.Settings)
 	}
 	if len(databaseUris) == 0 {
-		return "", fmt.Errorf("no databases found in settings: %s", checkself.Settings)
+		return "", wraperror.Errorf(err, "no databases found in settings: %s", checkself.Settings)
 	}
 	return databaseUris[0], nil
+}
+
+func (checkself *BasicCheckSelf) getDatabaseConnector(ctx context.Context) (driver.Connector, error) {
+	var (
+		err    error
+		result driver.Connector
+	)
+
+	databaseURL, err := checkself.getDatabaseURL(ctx)
+	if err != nil {
+		return result, wraperror.Errorf(
+			err,
+			"Unable to locate Database URL For more information, visit https://hub.senzing.com/...  Error: %w",
+			err,
+		)
+	}
+
+	result, err = connector.NewConnector(ctx, databaseURL)
+	if err != nil {
+		return result, wraperror.Errorf(
+			err,
+			"Database URL '%s' is misconfigured. Could not create a database connector. For more information, visit https://hub.senzing.com/...  Error: %w",
+			databaseURL,
+			err,
+		)
+
+	}
+
+	return result, err
 }
 
 func (checkself *BasicCheckSelf) getSettings(ctx context.Context) string {
@@ -213,7 +245,12 @@ func (checkself *BasicCheckSelf) getSzConfigManager(ctx context.Context) (senzin
 func (checkself *BasicCheckSelf) getSzFactory(ctx context.Context) senzing.SzAbstractFactory {
 	var err error
 	checkself.szFactorySyncOnce.Do(func() {
-		checkself.szFactorySingleton, err = szfactorycreator.CreateCoreAbstractFactory(checkself.getInstanceName(ctx), checkself.getSettings(ctx), checkself.SenzingVerboseLogging, senzing.SzInitializeWithDefaultConfiguration)
+		checkself.szFactorySingleton, err = szfactorycreator.CreateCoreAbstractFactory(
+			checkself.getInstanceName(ctx),
+			checkself.getSettings(ctx),
+			checkself.SenzingVerboseLogging,
+			senzing.SzInitializeWithDefaultConfiguration,
+		)
 	})
 	if err != nil {
 		panic(err.Error())
@@ -239,7 +276,15 @@ func statFiles(variableName string, path string, requiredFiles []string) []strin
 	for _, requiredFile := range requiredFiles {
 		targetFile := fmt.Sprintf("%s/%s", path, requiredFile)
 		if _, err := os.Stat(targetFile); err != nil {
-			reportErrors = append(reportErrors, fmt.Sprintf("%s = %s is misconfigured. Could not find %s. For more information, visit https://hub.senzing.com/...", variableName, path, targetFile))
+			reportErrors = append(
+				reportErrors,
+				fmt.Sprintf(
+					"%s = %s is misconfigured. Could not find %s. For more information, visit https://hub.senzing.com/...",
+					variableName,
+					path,
+					targetFile,
+				),
+			)
 		}
 	}
 	return reportErrors

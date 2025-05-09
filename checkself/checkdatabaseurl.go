@@ -18,7 +18,12 @@ import (
 // Interface methods
 // ----------------------------------------------------------------------------
 
-func (checkself *BasicCheckSelf) CheckDatabaseURL(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+func (checkself *BasicCheckSelf) CheckDatabaseURL(
+	ctx context.Context,
+	reportChecks []string,
+	reportInfo []string,
+	reportErrors []string,
+) ([]string, []string, []string, error) {
 
 	// Short-circuit exit.
 
@@ -28,7 +33,10 @@ func (checkself *BasicCheckSelf) CheckDatabaseURL(ctx context.Context, reportChe
 
 	// Prolog.
 
-	reportChecks = append(reportChecks, fmt.Sprintf("Check database URL: %s = %s", option.DatabaseURL.Envar, checkself.DatabaseURL))
+	reportChecks = append(
+		reportChecks,
+		fmt.Sprintf("Check database URL: %s = %s", option.DatabaseURL.Envar, checkself.DatabaseURL),
+	)
 
 	// Check database URL.
 
@@ -57,7 +65,15 @@ func checkDatabaseURL(ctx context.Context, variableName string, databaseURL stri
 			parsedURL, err = url.Parse(newDatabaseURL)
 		}
 		if err != nil {
-			reportErrors = append(reportErrors, fmt.Sprintf("%s = %s is misconfigured. Could not parse database URL. For more information, visit https://hub.senzing.com/...  Error: %s", variableName, databaseURL, err.Error()))
+			reportErrors = append(
+				reportErrors,
+				fmt.Sprintf(
+					"%s = %s is misconfigured. Could not parse database URL. For more information, visit https://hub.senzing.com/...  Error: %s",
+					variableName,
+					databaseURL,
+					err.Error(),
+				),
+			)
 			return reportErrors
 		}
 	}
@@ -65,7 +81,14 @@ func checkDatabaseURL(ctx context.Context, variableName string, databaseURL stri
 	// Check database URL scheme.
 
 	if len(parsedURL.Scheme) == 0 {
-		reportErrors = append(reportErrors, fmt.Sprintf("%s = %s is misconfigured. A database scheme is needed (e.g. postgresql://...). For more information, visit https://hub.senzing.com/...", variableName, databaseURL))
+		reportErrors = append(
+			reportErrors,
+			fmt.Sprintf(
+				"%s = %s is misconfigured. A database scheme is needed (e.g. postgresql://...). For more information, visit https://hub.senzing.com/...",
+				variableName,
+				databaseURL,
+			),
+		)
 		return reportErrors
 	}
 
@@ -77,7 +100,15 @@ func checkDatabaseURL(ctx context.Context, variableName string, databaseURL stri
 	}
 
 	if !slices.Contains(databaseSchemes, parsedURL.Scheme) {
-		reportErrors = append(reportErrors, fmt.Sprintf("%s = %s is misconfigured. Scheme '%s://' is not recognized. For more information, visit https://hub.senzing.com/...", variableName, databaseURL, parsedURL.Scheme))
+		reportErrors = append(
+			reportErrors,
+			fmt.Sprintf(
+				"%s = %s is misconfigured. Scheme '%s://' is not recognized. For more information, visit https://hub.senzing.com/...",
+				variableName,
+				databaseURL,
+				parsedURL.Scheme,
+			),
+		)
 		return reportErrors
 	}
 
@@ -86,21 +117,55 @@ func checkDatabaseURL(ctx context.Context, variableName string, databaseURL stri
 	if parsedURL.Scheme == "sqlite3" {
 		sqliteFilename, err := dbhelper.ExtractSqliteDatabaseFilename(databaseURL)
 		if err != nil {
-			reportErrors = append(reportErrors, fmt.Sprintf("%s = %s is misconfigured. Error: %s. For more information, visit https://hub.senzing.com/...", variableName, databaseURL, err.Error()))
+			reportErrors = append(
+				reportErrors,
+				fmt.Sprintf(
+					"%s = %s is misconfigured. Error: %s. For more information, visit https://hub.senzing.com/...",
+					variableName,
+					databaseURL,
+					err.Error(),
+				),
+			)
 			return reportErrors
 		}
 		if _, err := os.Stat(sqliteFilename); err != nil {
-			reportErrors = append(reportErrors, fmt.Sprintf("%s = %s is misconfigured. Could not find %s. For more information, visit https://hub.senzing.com/...", variableName, databaseURL, sqliteFilename))
+			reportErrors = append(
+				reportErrors,
+				fmt.Sprintf(
+					"%s = %s is misconfigured. Could not find %s. For more information, visit https://hub.senzing.com/...",
+					variableName,
+					databaseURL,
+					sqliteFilename,
+				),
+			)
 			return reportErrors
 		}
 	}
 
+	databaseConnectionReport := checkDatabaseConnection(ctx, variableName, databaseURL)
+	reportErrors = append(reportErrors, databaseConnectionReport...)
+
 	// Check database connector creation.
+
+	return reportErrors
+
+}
+
+func checkDatabaseConnection(ctx context.Context, variableName string, databaseURL string) []string {
+	var result []string
 
 	databaseConnector, err := connector.NewConnector(ctx, databaseURL)
 	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("%s = %s is misconfigured. Could not make a new connector. For more information, visit https://hub.senzing.com/...  Error: %s", variableName, databaseURL, err.Error()))
-		return reportErrors
+		result = append(
+			result,
+			fmt.Sprintf(
+				"%s = %s is misconfigured. Could not make a new connector. For more information, visit https://hub.senzing.com/...  Error: %s",
+				variableName,
+				databaseURL,
+				err.Error(),
+			),
+		)
+		return result
 	}
 
 	// Check database connection.
@@ -110,9 +175,15 @@ func checkDatabaseURL(ctx context.Context, variableName string, databaseURL stri
 
 	err = database.PingContext(ctx)
 	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("%s = %s is misconfigured. Could not connect. For more information, visit https://hub.senzing.com/...  Error: %s", variableName, databaseURL, err.Error()))
+		result = append(
+			result,
+			fmt.Sprintf(
+				"%s = %s is misconfigured. Could not connect. For more information, visit https://hub.senzing.com/...  Error: %s",
+				variableName,
+				databaseURL,
+				err.Error(),
+			),
+		)
 	}
-
-	return reportErrors
-
+	return result
 }
