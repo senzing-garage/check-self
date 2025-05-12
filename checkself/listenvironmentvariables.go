@@ -11,7 +11,12 @@ import (
 // Interface methods
 // ----------------------------------------------------------------------------
 
-func (checkself *BasicCheckSelf) ListEnvironmentVariables(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+func (checkself *BasicCheckSelf) ListEnvironmentVariables(
+	ctx context.Context,
+	reportChecks []string,
+	reportInfo []string,
+	reportErrors []string,
+) ([]string, []string, []string, error) {
 	_ = ctx
 
 	osEnviron := map[string]string{}
@@ -30,7 +35,6 @@ func (checkself *BasicCheckSelf) ListEnvironmentVariables(ctx context.Context, r
 			reportInfo = append(reportInfo, fmt.Sprintf("%6d. %s = %s", count, key, value))
 		}
 		reportInfo = append(reportInfo, "")
-
 	}
 
 	return reportChecks, reportInfo, reportErrors, nil

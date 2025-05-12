@@ -23,6 +23,7 @@ clean-osarch-specific:
 	@rm -f  $(MAKEFILE_DIRECTORY)/cover.out || true
 	@rm -fr $(TARGET_DIRECTORY) || true
 	@rm -fr /tmp/sqlite || true
+	@rm -f  /tmp/nodatabase.db || true
 	@pkill godoc || true
 	@docker-compose -f docker-compose.test.yaml down 2> /dev/null || true
 

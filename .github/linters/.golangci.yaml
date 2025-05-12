@@ -33,15 +33,15 @@ linters:
     - funlen
     - ginkgolinter
     - gocheckcompilerdirectives
-    # - gochecknoglobals
-    # - gochecknoinits
+    - gochecknoglobals
+    - gochecknoinits
     - gochecksumtype
     - gocognit
-    # - goconst
+    - goconst
     - gocritic
     - gocyclo
-    # - godot
-    # - godox
+    - godot
+    - godox
     - goheader
     - gomoddirectives
     - gomodguard
@@ -56,27 +56,27 @@ linters:
     - ineffassign
     - interfacebloat
     - intrange
-    # - ireturn
-    # - lll
+    - ireturn
+    - lll
     - loggercheck
     - maintidx
     - makezero
     - mirror
     - misspell
-    # - mnd
+    - mnd
     - musttag
     - nakedret
     - nestif
     - nilerr
     - nilnesserr
     - nilnil
-    # - nlreturn
+    - nlreturn
     - noctx
     - nolintlint
     - nonamedreturns
     - nosprintfhostport
     # - paralleltest
-    # - perfsprint
+    - perfsprint
     - prealloc
     - predeclared
     - promlinter
@@ -91,25 +91,27 @@ linters:
     - staticcheck
     - tagalign
     - tagliatelle
-    # - testableexamples
+    - testableexamples
     - testifylint
     # - testpackage
-    # - thelper
+    - thelper
     - tparallel
     - unconvert
     - unparam
     - unused
     - usestdlibvars
-    # - usetesting
+    - usetesting
     - varnamelen
     - wastedassign
-    # - whitespace
+    - whitespace
     # - wrapcheck
     # - wsl
     - zerologlint
   disable:
     - gochecknoglobals
     - gochecknoinits
+    - lll
+    - testableexamples
   exclusions:
     generated: lax
     presets:
@@ -141,9 +143,10 @@ linters:
 
     ireturn:
       allow:
-        - anon
-        - empty
         - error
+        - senzing.SzAbstractFactory
+        - senzing.SzConfigManager
+        - senzing.SzProduct
         - stdlib
     mnd:
       ignored-functions:

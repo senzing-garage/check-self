@@ -110,7 +110,6 @@ func checkDatabaseURL(ctx context.Context, variableName string, databaseURL stri
 	// Check database connector creation.
 
 	return result
-
 }
 
 func checkDatabaseConnection(ctx context.Context, variableName string, databaseURL string) []string {
@@ -146,6 +145,7 @@ func checkDatabaseConnection(ctx context.Context, variableName string, databaseU
 			),
 		)
 	}
+
 	return result
 }
 
@@ -160,12 +160,14 @@ func checkSqlite(variableName string, databaseURL string) []string {
 			databaseURL,
 			err.Error()))
 	}
-	if _, err := os.Stat(sqliteFilename); err != nil {
+	_, err = os.Stat(sqliteFilename)
+	if err != nil {
 		return append(result, fmt.Sprintf(
 			"%s = %s is misconfigured. Could not find %s. For more information, visit https://hub.senzing.com/...",
 			variableName,
 			databaseURL,
 			sqliteFilename))
 	}
+
 	return result
 }

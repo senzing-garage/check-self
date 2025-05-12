@@ -97,6 +97,7 @@ func RunE(_ *cobra.Command, _ []string) error {
 		SenzingDirectory:           viper.GetString(option.SenzingDirectory.Arg),
 		SupportPath:                viper.GetString(option.SupportPath.Arg),
 	}
+
 	return checkSelf.CheckSelf(ctx)
 }
 

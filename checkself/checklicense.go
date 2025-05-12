@@ -12,6 +12,10 @@ import (
 	"github.com/senzing-garage/go-helpers/wraperror"
 )
 
+const (
+	hoursPerDay = 24
+)
+
 // ----------------------------------------------------------------------------
 // Interface methods
 // ----------------------------------------------------------------------------
@@ -105,6 +109,7 @@ func (checkself *BasicCheckSelf) checkExpiry(expireInDays int) ([]string, error)
 			),
 		)
 	}
+
 	return result, err
 }
 
@@ -123,6 +128,7 @@ func (checkself *BasicCheckSelf) getLicense(ctx context.Context) (string, error)
 	if err != nil {
 		return result, wraperror.Errorf(err, "Could not get license information.  error: %w", err)
 	}
+
 	return result, err
 }
 
@@ -207,6 +213,7 @@ func buildReportInfo(
 			expireInDays,
 			prettyJSON,
 		)}
+
 	return result
 }
 
@@ -217,7 +224,8 @@ func getExpireInDays(productLicenseResponse *ProductLicenseResponse) (int, error
 		return result, wraperror.Errorf(err, "Could not parse expireDate information. error %w", err)
 	}
 	duration := time.Until(licenseExpireDate)
-	result = int(duration.Hours() / 24)
+	result = int(duration.Hours() / hoursPerDay)
+
 	return result, err
 }
 
@@ -227,6 +235,7 @@ func getPrettyJSON(license string) (bytes.Buffer, error) {
 	if err != nil {
 		return result, wraperror.Errorf(err, "Could not parse license information.  Error %w", err)
 	}
+
 	return result, err
 }
 
@@ -236,6 +245,7 @@ func getProductLicenseResponse(license string) (*ProductLicenseResponse, error) 
 	if err != nil {
 		return result, wraperror.Errorf(err, "Could not parse license information into structure.  Error %w", err)
 	}
+
 	return result, err
 }
 
@@ -248,5 +258,6 @@ func returnValues(
 	if err != nil {
 		reportErrors = append(reportErrors, err.Error())
 	}
+
 	return reportChecks, reportInfo, reportErrors, nil
 }

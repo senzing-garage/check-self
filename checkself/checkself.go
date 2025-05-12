@@ -25,17 +25,17 @@ import (
 type BasicCheckSelf struct {
 	ConfigPath                 string
 	DatabaseURL                string
-	EngineLogLevel             string // TODO:
+	EngineLogLevel             string // IMPROVE:
 	ErrorLicenseDaysLeft       string
 	ErrorLicenseRecordsPercent string
-	GrpcDialOptions            []grpc.DialOption // TODO:
-	GrpcURL                    string            // TODO:
-	InputURL                   string            // TODO:
-	LicenseStringBase64        string            // TODO:
-	LogLevel                   string            // TODO:
-	ObserverURL                string            // TODO:
+	GrpcDialOptions            []grpc.DialOption // IMPROVE:
+	GrpcURL                    string            // IMPROVE:
+	InputURL                   string            // IMPROVE:
+	LicenseStringBase64        string            // IMPROVE:
+	LogLevel                   string            // IMPROVE:
+	ObserverURL                string            // IMPROVE:
 	ResourcePath               string
-	SenzingDirectory           string // TODO:
+	SenzingDirectory           string // IMPROVE:
 	SenzingInstanceName        string
 	SenzingVerboseLogging      int64
 	Settings                   string
@@ -58,6 +58,11 @@ type ProductLicenseResponse struct {
 	LicenseType  string `json:"licenseType"`
 	RecordLimit  int64  `json:"recordLimit"`
 }
+
+const (
+	horizontalRuleLength  = 80
+	horizontalTitleLength = horizontalRuleLength - 4
+)
 
 // ----------------------------------------------------------------------------
 // Variables
@@ -98,6 +103,7 @@ func (checkself *BasicCheckSelf) CheckSelf(ctx context.Context) error {
 			if len(err.Error()) > 0 {
 				reportErrors = append(reportErrors, err.Error())
 			}
+
 			break
 		}
 	}
@@ -129,7 +135,7 @@ func (checkself *BasicCheckSelf) CheckSelf(ctx context.Context) error {
 		printTitle("Result")
 		outputf("No errors detected.\n")
 	}
-	outputf("%s\n\n\n\n\n", strings.Repeat("-", 80))
+	outputf("%s\n\n\n\n\n", strings.Repeat("-", horizontalRuleLength))
 
 	return err
 }
@@ -139,10 +145,7 @@ func (checkself *BasicCheckSelf) CheckSelf(ctx context.Context) error {
 // ----------------------------------------------------------------------------
 
 func (checkself *BasicCheckSelf) getDatabaseURL(ctx context.Context) (string, error) {
-
-	// Simple case.
-
-	if len(checkself.DatabaseURL) > 0 {
+	if len(checkself.DatabaseURL) > 0 { // Simple case.
 		return checkself.DatabaseURL, nil
 	}
 
@@ -151,7 +154,7 @@ func (checkself *BasicCheckSelf) getDatabaseURL(ctx context.Context) (string, er
 	}
 
 	// Pull database from Senzing engine configuration json.
-	// TODO: This code only returns one database.  Need to handle the multi-database case.
+	// IMPROVE: This code only returns one database.  Need to handle the multi-database case.
 
 	parsedSettings, err := settingsparser.New(checkself.Settings)
 	if err != nil {
@@ -165,6 +168,7 @@ func (checkself *BasicCheckSelf) getDatabaseURL(ctx context.Context) (string, er
 	if len(databaseUris) == 0 {
 		return "", wraperror.Errorf(err, "no databases found in settings: %s", checkself.Settings)
 	}
+
 	return databaseUris[0], nil
 }
 
@@ -191,7 +195,6 @@ func (checkself *BasicCheckSelf) getDatabaseConnector(ctx context.Context) (driv
 			databaseURL,
 			err,
 		)
-
 	}
 
 	return result, err
@@ -203,6 +206,7 @@ func (checkself *BasicCheckSelf) getInstanceName(ctx context.Context) string {
 	if len(result) == 0 {
 		result = defaultInstanceName
 	}
+
 	return result
 }
 
@@ -216,6 +220,7 @@ func (checkself *BasicCheckSelf) getSettings(ctx context.Context) string {
 			panic(err.Error())
 		}
 	}
+
 	return result
 }
 
@@ -225,6 +230,7 @@ func (checkself *BasicCheckSelf) getSzConfigManager(ctx context.Context) (senzin
 	checkself.szConfigManagerSyncOnce.Do(func() {
 		checkself.szConfigManagerSingleton, err = checkself.getSzFactory(ctx).CreateConfigManager(ctx)
 	})
+
 	return checkself.szConfigManagerSingleton, err
 }
 
@@ -241,6 +247,7 @@ func (checkself *BasicCheckSelf) getSzFactory(ctx context.Context) senzing.SzAbs
 	if err != nil {
 		panic(err.Error())
 	}
+
 	return checkself.szFactorySingleton
 }
 
@@ -250,6 +257,7 @@ func (checkself *BasicCheckSelf) getSzProduct(ctx context.Context) (senzing.SzPr
 	checkself.szProductSyncOnce.Do(func() {
 		checkself.szProductSingleton, err = checkself.getSzFactory(ctx).CreateProduct(ctx)
 	})
+
 	return checkself.szProductSingleton, err
 }
 
@@ -291,6 +299,7 @@ func statFiles(variableName string, path string, requiredFiles []string) []strin
 			)
 		}
 	}
+
 	return reportErrors
 }
 
@@ -303,5 +312,5 @@ func outputln(message ...any) {
 }
 
 func printTitle(title string) {
-	outputf("\n-- %s %s\n\n", title, strings.Repeat("-", 76-len(title)))
+	outputf("\n-- %s %s\n\n", title, strings.Repeat("-", horizontalTitleLength-len(title)))
 }
