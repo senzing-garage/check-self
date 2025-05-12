@@ -88,21 +88,7 @@ func (checkself *BasicCheckSelf) CheckSelf(ctx context.Context) error {
 
 	// List tests.  Order is important.
 
-	testFunctions := []func(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error){
-		checkself.Prolog,
-		checkself.ListEnvironmentVariables,
-		checkself.ListStructVariables,
-		checkself.CheckConfigPath,
-		checkself.CheckResourcePath,
-		checkself.CheckSupportPath,
-		checkself.CheckDatabaseURL,
-		checkself.CheckSettings,
-		checkself.Break,
-		checkself.CheckDatabaseSchema,
-		checkself.Break,
-		checkself.CheckSenzingConfiguration,
-		checkself.CheckLicense,
-	}
+	testFunctions := checkself.getTestFunctions()
 
 	// Perform checks.
 
@@ -121,35 +107,35 @@ func (checkself *BasicCheckSelf) CheckSelf(ctx context.Context) error {
 	if len(reportInfo) > 0 {
 		printTitle("Information")
 		for _, message := range reportInfo {
-			fmt.Println(message)
+			outputln(message)
 		}
 	}
 
 	if len(reportChecks) > 0 {
 		printTitle("Checks performed")
 		for index, message := range reportChecks {
-			fmt.Printf("%6d. %s\n", index+1, message)
+			outputf("%6d. %s\n", index+1, message)
 		}
 	}
 
 	if len(reportErrors) > 0 {
 		printTitle("Errors")
 		for index, message := range reportErrors {
-			fmt.Printf("%6d. %s\n\n", index+1, message)
+			outputf("%6d. %s\n\n", index+1, message)
 		}
 		err = wraperror.Errorf(errForPackage, "%d errors detected", len(reportErrors))
-		fmt.Printf("Result: %s\n", err.Error())
+		outputf("Result: %s\n", err.Error())
 	} else {
 		printTitle("Result")
-		fmt.Printf("No errors detected.\n")
+		outputf("No errors detected.\n")
 	}
-	fmt.Printf("%s\n\n\n\n\n", strings.Repeat("-", 80))
+	outputf("%s\n\n\n\n\n", strings.Repeat("-", 80))
 
 	return err
 }
 
 // ----------------------------------------------------------------------------
-// Internal methods
+// Private methods
 // ----------------------------------------------------------------------------
 
 func (checkself *BasicCheckSelf) getDatabaseURL(ctx context.Context) (string, error) {
@@ -211,6 +197,15 @@ func (checkself *BasicCheckSelf) getDatabaseConnector(ctx context.Context) (driv
 	return result, err
 }
 
+func (checkself *BasicCheckSelf) getInstanceName(ctx context.Context) string {
+	_ = ctx
+	result := checkself.SenzingInstanceName
+	if len(result) == 0 {
+		result = defaultInstanceName
+	}
+	return result
+}
+
 func (checkself *BasicCheckSelf) getSettings(ctx context.Context) string {
 	_ = ctx
 	var err error
@@ -220,15 +215,6 @@ func (checkself *BasicCheckSelf) getSettings(ctx context.Context) string {
 		if err != nil {
 			panic(err.Error())
 		}
-	}
-	return result
-}
-
-func (checkself *BasicCheckSelf) getInstanceName(ctx context.Context) string {
-	_ = ctx
-	result := checkself.SenzingInstanceName
-	if len(result) == 0 {
-		result = defaultInstanceName
 	}
 	return result
 }
@@ -267,8 +253,26 @@ func (checkself *BasicCheckSelf) getSzProduct(ctx context.Context) (senzing.SzPr
 	return checkself.szProductSingleton, err
 }
 
+func (checkself *BasicCheckSelf) getTestFunctions() []func(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+	return []func(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error){
+		checkself.Prolog,
+		checkself.ListEnvironmentVariables,
+		checkself.ListStructVariables,
+		checkself.CheckConfigPath,
+		checkself.CheckResourcePath,
+		checkself.CheckSupportPath,
+		checkself.CheckDatabaseURL,
+		checkself.CheckSettings,
+		checkself.Break,
+		checkself.CheckDatabaseSchema,
+		checkself.Break,
+		checkself.CheckSenzingConfiguration,
+		checkself.CheckLicense,
+	}
+}
+
 // ----------------------------------------------------------------------------
-// Internal functions
+// Private functions
 // ----------------------------------------------------------------------------
 
 func statFiles(variableName string, path string, requiredFiles []string) []string {
@@ -290,6 +294,14 @@ func statFiles(variableName string, path string, requiredFiles []string) []strin
 	return reportErrors
 }
 
+func outputf(format string, message ...any) {
+	fmt.Printf(format, message...) //nolint
+}
+
+func outputln(message ...any) {
+	fmt.Println(message...) //nolint
+}
+
 func printTitle(title string) {
-	fmt.Printf("\n-- %s %s\n\n", title, strings.Repeat("-", 76-len(title)))
+	outputf("\n-- %s %s\n\n", title, strings.Repeat("-", 76-len(title)))
 }

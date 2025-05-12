@@ -24,13 +24,13 @@ linters:
     - errname
     - errorlint
     - exhaustive
-    # - exhaustruct
-    # - exptostd
+    - exhaustruct
+    - exptostd
     - fatcontext
-    # - forbidigo
+    - forbidigo
     - forcetypeassert
-    # - funcorder
-    # - funlen
+    - funcorder
+    - funlen
     - ginkgolinter
     - gocheckcompilerdirectives
     # - gochecknoglobals
@@ -136,6 +136,9 @@ linters:
     exhaustruct:
       exclude:
         - '.+/cobra\.Command$'
+        - '.+/checkself\.BasicCheckSelf$'
+        - '.+/checkself\.ProductLicenseResponse$'
+
     ireturn:
       allow:
         - anon
