@@ -16,7 +16,12 @@ var RequiredSupportFiles = []string{
 // Interface methods
 // ----------------------------------------------------------------------------
 
-func (checkself *BasicCheckSelf) CheckSupportPath(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+func (checkself *BasicCheckSelf) CheckSupportPath(
+	ctx context.Context,
+	reportChecks []string,
+	reportInfo []string,
+	reportErrors []string,
+) ([]string, []string, []string, error) {
 	_ = ctx
 
 	// Short-circuit exit.
@@ -27,7 +32,10 @@ func (checkself *BasicCheckSelf) CheckSupportPath(ctx context.Context, reportChe
 
 	// Prolog.
 
-	reportChecks = append(reportChecks, fmt.Sprintf("Check support path: %s = %s", option.SupportPath.Envar, checkself.SupportPath))
+	reportChecks = append(
+		reportChecks,
+		fmt.Sprintf("Check support path: %s = %s", option.SupportPath.Envar, checkself.SupportPath),
+	)
 
 	// Check Resource path.
 

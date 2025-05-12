@@ -49,6 +49,7 @@ func (checkself *BasicCheckSelf) CheckDatabaseSchema(
 	checker := &checker.BasicChecker{
 		DatabaseConnector: databaseConnector,
 	}
+
 	isSchemaInstalled, err := checker.IsSchemaInstalled(ctx)
 	if !isSchemaInstalled {
 		reportErrors = append(

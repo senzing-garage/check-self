@@ -172,8 +172,8 @@ func TestBasicCheckSelf_CheckSenzingConfiguration_badGetDefaultConfigID(test *te
 	require.NoError(test, err)
 	assert.Len(test, newReportChecks, 1)
 	assert.Empty(test, newReportInfo)
-	assert.Empty(test, newReportErrors)
 	// IMPROVE: assert.Equal(test, expected, newReportErrors[0])
+	assert.Empty(test, newReportErrors)
 }
 
 func TestBasicCheckSelf_CheckSettings(test *testing.T) {
@@ -251,6 +251,7 @@ func TestBasicCheckSelf_checkDatabaseURL_postgresql(test *testing.T) {
 	actual := checkDatabaseURL(ctx, variableName, postgresqlURL)
 	sink(expected, actual)
 }
+
 func TestBasicCheckSelf_checkDatabaseURL_mysql(test *testing.T) {
 	_ = test
 	ctx := test.Context()
@@ -258,6 +259,7 @@ func TestBasicCheckSelf_checkDatabaseURL_mysql(test *testing.T) {
 	actual := checkDatabaseURL(ctx, variableName, mysqlURL)
 	sink(expected, actual)
 }
+
 func TestBasicCheckSelf_checkDatabaseURL_db2(test *testing.T) {
 	_ = test
 	ctx := test.Context()
@@ -265,6 +267,7 @@ func TestBasicCheckSelf_checkDatabaseURL_db2(test *testing.T) {
 	actual := checkDatabaseURL(ctx, variableName, db2URL)
 	sink(expected, actual)
 }
+
 func TestBasicCheckSelf_checkDatabaseURL_oci(test *testing.T) {
 	_ = test
 	ctx := test.Context()
@@ -272,6 +275,7 @@ func TestBasicCheckSelf_checkDatabaseURL_oci(test *testing.T) {
 	actual := checkDatabaseURL(ctx, variableName, ociURL)
 	sink(expected, actual)
 }
+
 func TestBasicCheckSelf_checkDatabaseURL_mssql(test *testing.T) {
 	_ = test
 	ctx := test.Context()
@@ -279,6 +283,7 @@ func TestBasicCheckSelf_checkDatabaseURL_mssql(test *testing.T) {
 	actual := checkDatabaseURL(ctx, variableName, mssqlURL)
 	sink(expected, actual)
 }
+
 func TestBasicCheckSelf_checkDatabaseURL_badURLParse(test *testing.T) {
 	_ = test
 	ctx := test.Context()
@@ -328,9 +333,11 @@ func TestBasicCheckSelf_checkDatabaseURL_badSchema(test *testing.T) {
 
 func getTestObject(ctx context.Context, t *testing.T) *BasicCheckSelf {
 	t.Helper()
+
 	_ = ctx
 	settings, err := settings.BuildSimpleSettingsUsingEnvVars()
 	require.NoError(t, err)
+
 	result := &BasicCheckSelf{
 		Settings: settings,
 	}
@@ -345,6 +352,7 @@ func reportChecks() []string {
 func reportErrors() []string {
 	return []string{}
 }
+
 func reportInfo() []string {
 	return []string{}
 }

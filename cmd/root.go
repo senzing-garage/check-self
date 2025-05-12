@@ -9,6 +9,7 @@ import (
 	"github.com/senzing-garage/check-self/checkself"
 	"github.com/senzing-garage/go-cmdhelping/cmdhelper"
 	"github.com/senzing-garage/go-cmdhelping/option"
+	"github.com/senzing-garage/go-helpers/wraperror"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -98,7 +99,9 @@ func RunE(_ *cobra.Command, _ []string) error {
 		SupportPath:                viper.GetString(option.SupportPath.Arg),
 	}
 
-	return checkSelf.CheckSelf(ctx)
+	err := checkSelf.CheckSelf(ctx)
+
+	return wraperror.Errorf(err, "RunE error: %w", err)
 }
 
 // Used in construction of cobra.Command.

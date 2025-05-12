@@ -20,6 +20,7 @@ func (checkself *BasicCheckSelf) ListEnvironmentVariables(
 	_ = ctx
 
 	osEnviron := map[string]string{}
+
 	for _, element := range os.Environ() {
 		if strings.HasPrefix(element, "SENZING_TOOLS_") {
 			variable := strings.Split(element, "=")
@@ -29,11 +30,13 @@ func (checkself *BasicCheckSelf) ListEnvironmentVariables(
 
 	if len(osEnviron) > 0 {
 		reportInfo = append(reportInfo, "\nSENZING_TOOLS_* environment variables defined:\n")
+
 		count := 0
 		for key, value := range osEnviron {
 			count++
 			reportInfo = append(reportInfo, fmt.Sprintf("%6d. %s = %s", count, key, value))
 		}
+
 		reportInfo = append(reportInfo, "")
 	}
 

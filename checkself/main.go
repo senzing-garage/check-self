@@ -19,9 +19,11 @@ type CheckSelf interface {
 // ----------------------------------------------------------------------------
 
 // An example constant.
-const ExampleConstant = 1
-const DefaultSenzingToolsLicenseDaysLeft = "30"
-const DefaultSenzingToolsLicenseRecordsPercent = "90"
+const (
+	ExampleConstant                          = 1
+	DefaultSenzingToolsLicenseDaysLeft       = "30"
+	DefaultSenzingToolsLicenseRecordsPercent = "90"
+)
 
 // ----------------------------------------------------------------------------
 // Variables

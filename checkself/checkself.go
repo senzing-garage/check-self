@@ -112,6 +112,7 @@ func (checkself *BasicCheckSelf) CheckSelf(ctx context.Context) error {
 
 	if len(reportInfo) > 0 {
 		printTitle("Information")
+
 		for _, message := range reportInfo {
 			outputln(message)
 		}
@@ -119,6 +120,7 @@ func (checkself *BasicCheckSelf) CheckSelf(ctx context.Context) error {
 
 	if len(reportChecks) > 0 {
 		printTitle("Checks performed")
+
 		for index, message := range reportChecks {
 			outputf("%6d. %s\n", index+1, message)
 		}
@@ -126,15 +128,18 @@ func (checkself *BasicCheckSelf) CheckSelf(ctx context.Context) error {
 
 	if len(reportErrors) > 0 {
 		printTitle("Errors")
+
 		for index, message := range reportErrors {
 			outputf("%6d. %s\n\n", index+1, message)
 		}
+
 		err = wraperror.Errorf(errForPackage, "%d errors detected", len(reportErrors))
 		outputf("Result: %s\n", err.Error())
 	} else {
 		printTitle("Result")
 		outputf("No errors detected.\n")
 	}
+
 	outputf("%s\n\n\n\n\n", strings.Repeat("-", horizontalRuleLength))
 
 	return err
@@ -165,6 +170,7 @@ func (checkself *BasicCheckSelf) getDatabaseURL(ctx context.Context) (string, er
 	if err != nil {
 		return "", wraperror.Errorf(errForPackage, "unable to extract databases from settings: %s", checkself.Settings)
 	}
+
 	if len(databaseUris) == 0 {
 		return "", wraperror.Errorf(err, "no databases found in settings: %s", checkself.Settings)
 	}
@@ -197,11 +203,12 @@ func (checkself *BasicCheckSelf) getDatabaseConnector(ctx context.Context) (driv
 		)
 	}
 
-	return result, err
+	return result, wraperror.Errorf(err, "checkself.getDatabaseURL error: %w", err)
 }
 
 func (checkself *BasicCheckSelf) getInstanceName(ctx context.Context) string {
 	_ = ctx
+
 	result := checkself.SenzingInstanceName
 	if len(result) == 0 {
 		result = defaultInstanceName
@@ -212,7 +219,9 @@ func (checkself *BasicCheckSelf) getInstanceName(ctx context.Context) string {
 
 func (checkself *BasicCheckSelf) getSettings(ctx context.Context) string {
 	_ = ctx
+
 	var err error
+
 	result := checkself.Settings
 	if len(result) == 0 {
 		result, err = settings.BuildSimpleSettingsUsingEnvVars()
@@ -227,15 +236,17 @@ func (checkself *BasicCheckSelf) getSettings(ctx context.Context) string {
 // Create a SzConfigManager singleton and return it.
 func (checkself *BasicCheckSelf) getSzConfigManager(ctx context.Context) (senzing.SzConfigManager, error) {
 	var err error
+
 	checkself.szConfigManagerSyncOnce.Do(func() {
 		checkself.szConfigManagerSingleton, err = checkself.getSzFactory(ctx).CreateConfigManager(ctx)
 	})
 
-	return checkself.szConfigManagerSingleton, err
+	return checkself.szConfigManagerSingleton, wraperror.Errorf(err, "checkself.getSzConfigManager error: %w", err)
 }
 
 func (checkself *BasicCheckSelf) getSzFactory(ctx context.Context) senzing.SzAbstractFactory {
 	var err error
+
 	checkself.szFactorySyncOnce.Do(func() {
 		checkself.szFactorySingleton, err = szfactorycreator.CreateCoreAbstractFactory(
 			checkself.getInstanceName(ctx),
@@ -244,6 +255,7 @@ func (checkself *BasicCheckSelf) getSzFactory(ctx context.Context) senzing.SzAbs
 			senzing.SzInitializeWithDefaultConfiguration,
 		)
 	})
+
 	if err != nil {
 		panic(err.Error())
 	}
@@ -254,11 +266,12 @@ func (checkself *BasicCheckSelf) getSzFactory(ctx context.Context) senzing.SzAbs
 // Create a SzProduct singleton and return it.
 func (checkself *BasicCheckSelf) getSzProduct(ctx context.Context) (senzing.SzProduct, error) {
 	var err error
+
 	checkself.szProductSyncOnce.Do(func() {
 		checkself.szProductSingleton, err = checkself.getSzFactory(ctx).CreateProduct(ctx)
 	})
 
-	return checkself.szProductSingleton, err
+	return checkself.szProductSingleton, wraperror.Errorf(err, "checkself.getSzProduct error: %w", err)
 }
 
 func (checkself *BasicCheckSelf) getTestFunctions() []func(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
@@ -285,6 +298,7 @@ func (checkself *BasicCheckSelf) getTestFunctions() []func(ctx context.Context, 
 
 func statFiles(variableName string, path string, requiredFiles []string) []string {
 	reportErrors := []string{}
+
 	for _, requiredFile := range requiredFiles {
 		targetFile := fmt.Sprintf("%s/%s", path, requiredFile)
 		if _, err := os.Stat(targetFile); err != nil {

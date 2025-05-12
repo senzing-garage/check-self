@@ -43,6 +43,7 @@ func (checkself *BasicCheckSelf) CheckSettings(
 
 		return reportChecks, reportInfo, reportErrors, nil
 	}
+
 	for _, databaseURI := range databaseURIs {
 		errorList := checkDatabaseURL(ctx, option.EngineSettings.Envar, databaseURI)
 		reportErrors = append(reportErrors, errorList...)
@@ -56,6 +57,7 @@ func (checkself *BasicCheckSelf) CheckSettings(
 
 		return reportChecks, reportInfo, reportErrors, nil
 	}
+
 	reportChecks = append(
 		reportChecks,
 		fmt.Sprintf("Check engine configuration: %s = %s", option.EngineSettings.Envar, redactedJSON),
@@ -84,6 +86,7 @@ func (checkself *BasicCheckSelf) buildAndCheckSettings(
 	}
 
 	var prettyJSON bytes.Buffer
+
 	err = json.Indent(&prettyJSON, []byte(settings), "", "\t")
 	if err != nil {
 		reportErrors = append(reportErrors, "Could not parse license information.  Error: "+err.Error())
@@ -116,52 +119,64 @@ func (checkself *BasicCheckSelf) checkSettings(
 	// Test SENZING_TOOLS_ENGINE_CONFIGURATION_JSON.PIPELINE.CONFIGPATH.
 
 	configVariable := "SENZING_TOOLS_ENGINE_CONFIGURATION_JSON.PIPELINE.CONFIGPATH"
+
 	configValue, err := parsedSettings.GetConfigPath(ctx)
 	if err != nil {
 		reportErrors = append(reportErrors, fmt.Sprintf("Could not parse %s. Error: %s", configVariable, err.Error()))
 
 		return reportChecks, reportInfo, reportErrors, nil
 	}
-	errorList := statFiles(configVariable, configValue, RequiredConfigFiles)
-	reportErrors = append(reportErrors, errorList...)
+
+	reportErrors = append(reportErrors, statFiles(configVariable, configValue, RequiredConfigFiles)...)
 
 	// Test SENZING_TOOLS_ENGINE_CONFIGURATION_JSON.PIPELINE.RESOURCEPATH.
 
 	resourceVariable := "SENZING_TOOLS_ENGINE_CONFIGURATION_JSON.PIPELINE.RESOURCEPATH"
+
 	resourceValue, err := parsedSettings.GetResourcePath(ctx)
 	if err != nil {
 		reportErrors = append(reportErrors, fmt.Sprintf("Could not parse %s. Error: %s", resourceVariable, err.Error()))
 
 		return reportChecks, reportInfo, reportErrors, nil
 	}
+
 	reportErrors = append(reportErrors, statFiles(resourceVariable, resourceValue, RequiredResourceFiles)...)
 
 	// Test SENZING_TOOLS_ENGINE_CONFIGURATION_JSON.PIPELINE.SUPPORTPATH.
 
 	supportVariable := "SENZING_TOOLS_ENGINE_CONFIGURATION_JSON.PIPELINE.SUPPORTPATH"
+
 	supportValue, err := parsedSettings.GetSupportPath(ctx)
 	if err != nil {
 		reportErrors = append(reportErrors, fmt.Sprintf("Could not parse %s. Error: %s", supportVariable, err.Error()))
 
 		return reportChecks, reportInfo, reportErrors, nil
 	}
-	reportErrors = append(reportErrors, statFiles(supportVariable, supportValue, RequiredSupportFiles)...)
 
-	// Test SENZING_TOOLS_ENGINE_CONFIGURATION_JSON.SQL.CONNECTION.
+	reportErrors = append(reportErrors, statFiles(supportVariable, supportValue, RequiredSupportFiles)...)
+	reportErrors = append(reportErrors, checkDatabaseURIs(ctx, parsedSettings)...)
+
+	return reportChecks, reportInfo, reportErrors, nil
+}
+
+func checkDatabaseURIs(ctx context.Context, parsedSettings *settingsparser.BasicSettingsParser) []string {
+	var result []string
 
 	connectionVariable := "SENZING_TOOLS_ENGINE_CONFIGURATION_JSON.SQL.CONNECTION"
+
 	databaseURIs, err := parsedSettings.GetDatabaseURIs(ctx)
 	if err != nil {
-		reportErrors = append(
-			reportErrors,
+		result = append(
+			result,
 			fmt.Sprintf("Could not parse %s. Error: %s", connectionVariable, err.Error()),
 		)
 
-		return reportChecks, reportInfo, reportErrors, nil
-	}
-	for _, databaseURI := range databaseURIs {
-		reportErrors = append(reportErrors, checkDatabaseURL(ctx, connectionVariable, databaseURI)...)
+		return result
 	}
 
-	return reportChecks, reportInfo, reportErrors, nil
+	for _, databaseURI := range databaseURIs {
+		result = append(result, checkDatabaseURL(ctx, connectionVariable, databaseURI)...)
+	}
+
+	return result
 }

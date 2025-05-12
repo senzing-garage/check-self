@@ -91,6 +91,7 @@ func (checkself *BasicCheckSelf) checkExpiry(expireInDays int) ([]string, error)
 	if len(checkself.ErrorLicenseDaysLeft) == 0 {
 		checkself.ErrorLicenseDaysLeft = DefaultSenzingToolsLicenseDaysLeft
 	}
+
 	errorLicenseDaysLeft, err := strconv.Atoi(checkself.ErrorLicenseDaysLeft)
 	if err != nil {
 		return result, wraperror.Errorf(
@@ -100,6 +101,7 @@ func (checkself *BasicCheckSelf) checkExpiry(expireInDays int) ([]string, error)
 			err,
 		)
 	}
+
 	if expireInDays < errorLicenseDaysLeft {
 		result = append(
 			result,
@@ -110,7 +112,7 @@ func (checkself *BasicCheckSelf) checkExpiry(expireInDays int) ([]string, error)
 		)
 	}
 
-	return result, err
+	return result, wraperror.Errorf(err, "checkself.checkExpiry error: %w", err)
 }
 
 func (checkself *BasicCheckSelf) getLicense(ctx context.Context) (string, error) {
@@ -129,7 +131,7 @@ func (checkself *BasicCheckSelf) getLicense(ctx context.Context) (string, error)
 		return result, wraperror.Errorf(err, "Could not get license information.  error: %w", err)
 	}
 
-	return result, err
+	return result, wraperror.Errorf(err, "checkself.getLicense error: %w", err)
 }
 
 func (checkself *BasicCheckSelf) checkRecordPercent(
@@ -141,6 +143,7 @@ func (checkself *BasicCheckSelf) checkRecordPercent(
 	if len(checkself.ErrorLicenseRecordsPercent) == 0 {
 		checkself.ErrorLicenseRecordsPercent = DefaultSenzingToolsLicenseRecordsPercent
 	}
+
 	errorLicenseRecordsPercent, err := strconv.Atoi(checkself.ErrorLicenseRecordsPercent)
 	if err != nil {
 		return result, wraperror.Errorf(
@@ -161,7 +164,7 @@ func (checkself *BasicCheckSelf) checkRecordPercent(
 		)
 	}
 
-	return result, err
+	return result, wraperror.Errorf(err, "checkself.checkRecordPercent error: %w", err)
 }
 
 func (checkself *BasicCheckSelf) getRecordCount(
@@ -180,12 +183,13 @@ func (checkself *BasicCheckSelf) getRecordCount(
 	checker := &checker.BasicChecker{
 		DatabaseConnector: databaseConnector,
 	}
+
 	result, err = checker.RecordCount(ctx)
 	if err != nil {
 		return result, wraperror.Errorf(err, "Could not get count of records.  Error %w", err)
 	}
 
-	return result, err
+	return result, wraperror.Errorf(err, "checkself.getRecordCount error: %w", err)
 }
 
 // ----------------------------------------------------------------------------
@@ -200,53 +204,52 @@ func buildReportInfo(
 ) []string {
 	result := []string{
 		fmt.Sprintf(`
-	License:
+License:
 
-	- Records used: %d of %d
-	- Date license expires: %s
-	- Days until license expires: %d
+- Records used: %d of %d
+- Date license expires: %s
+- Days until license expires: %d
 
-	%s`,
-			recordCount,
-			productLicenseResponse.RecordLimit,
-			productLicenseResponse.ExpireDate,
-			expireInDays,
-			prettyJSON,
-		)}
+%s`, recordCount, productLicenseResponse.RecordLimit, productLicenseResponse.ExpireDate, expireInDays, prettyJSON),
+	}
 
 	return result
 }
 
 func getExpireInDays(productLicenseResponse *ProductLicenseResponse) (int, error) {
 	var result int
+
 	licenseExpireDate, err := time.Parse(time.DateOnly, productLicenseResponse.ExpireDate)
 	if err != nil {
 		return result, wraperror.Errorf(err, "Could not parse expireDate information. error %w", err)
 	}
+
 	duration := time.Until(licenseExpireDate)
 	result = int(duration.Hours() / hoursPerDay)
 
-	return result, err
+	return result, wraperror.Errorf(err, "checkself.getExpireInDays error: %w", err)
 }
 
 func getPrettyJSON(license string) (bytes.Buffer, error) {
 	var result bytes.Buffer
+
 	err := json.Indent(&result, []byte(license), "", "\t")
 	if err != nil {
 		return result, wraperror.Errorf(err, "Could not parse license information.  Error %w", err)
 	}
 
-	return result, err
+	return result, wraperror.Errorf(err, "checkself.getPrettyJSON error: %w", err)
 }
 
 func getProductLicenseResponse(license string) (*ProductLicenseResponse, error) {
 	result := &ProductLicenseResponse{}
+
 	err := json.Unmarshal([]byte(license), result)
 	if err != nil {
 		return result, wraperror.Errorf(err, "Could not parse license information into structure.  Error %w", err)
 	}
 
-	return result, err
+	return result, wraperror.Errorf(err, "checkself.getProductLicenseResponse error: %w", err)
 }
 
 func returnValues(

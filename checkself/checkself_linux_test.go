@@ -103,8 +103,8 @@ func TestBasicCheckSelf_CheckSettings_badDatabaseURLs(test *testing.T) {
 	require.NoError(test, err)
 	assert.Len(test, newReportChecks, 1)
 	assert.Empty(test, newReportInfo)
-	assert.Len(test, newReportErrors, 2)
 	// assert.Equal(test, expected, newReportErrors[0])
+	assert.Len(test, newReportErrors, 2)
 }
 
 func TestBasicCheckSelf_checkDatabaseURL_badSqliteURL_stat(test *testing.T) {

@@ -17,6 +17,7 @@ func (checkself *BasicCheckSelf) Prolog(
 	reportErrors []string,
 ) ([]string, []string, []string, error) {
 	_ = ctx
+
 	reportInfo = append(reportInfo, fmt.Sprintf("Date: %s ", time.Now().UTC().Format(time.RFC3339)))
 	reportInfo = append(reportInfo, fmt.Sprintf("Version: %s-%s ", githubVersion, githubIteration))
 

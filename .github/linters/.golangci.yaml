@@ -93,7 +93,7 @@ linters:
     - tagliatelle
     - testableexamples
     - testifylint
-    # - testpackage
+    - testpackage
     - thelper
     - tparallel
     - unconvert
@@ -104,8 +104,8 @@ linters:
     - varnamelen
     - wastedassign
     - whitespace
-    # - wrapcheck
-    # - wsl
+    - wrapcheck
+    - wsl
     - zerologlint
   disable:
     - gochecknoglobals
@@ -155,9 +155,9 @@ formatters:
   enable:
     - gci
     - gofmt
-    # - gofumpt
+    - gofumpt
     - goimports
-    # - golines
+    - golines
   exclusions:
     generated: lax
     paths:

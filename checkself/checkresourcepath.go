@@ -15,7 +15,12 @@ var RequiredResourceFiles = []string{
 // Interface methods
 // ----------------------------------------------------------------------------
 
-func (checkself *BasicCheckSelf) CheckResourcePath(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+func (checkself *BasicCheckSelf) CheckResourcePath(
+	ctx context.Context,
+	reportChecks []string,
+	reportInfo []string,
+	reportErrors []string,
+) ([]string, []string, []string, error) {
 	_ = ctx
 
 	// Short-circuit exit.
@@ -26,7 +31,10 @@ func (checkself *BasicCheckSelf) CheckResourcePath(ctx context.Context, reportCh
 
 	// Prolog.
 
-	reportChecks = append(reportChecks, fmt.Sprintf("Check resource path: %s = %s", option.ResourcePath.Envar, checkself.ResourcePath))
+	reportChecks = append(
+		reportChecks,
+		fmt.Sprintf("Check resource path: %s = %s", option.ResourcePath.Envar, checkself.ResourcePath),
+	)
 
 	// Check Resource path.
 

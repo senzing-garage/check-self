@@ -58,6 +58,7 @@ func checkDatabaseURL(ctx context.Context, variableName string, databaseURL stri
 	// Parse the database URL.
 
 	normalizedDatabaseURL := databaseURL
+
 	if strings.HasPrefix(databaseURL, "postgresql") {
 		index := strings.LastIndex(databaseURL, ":")
 		normalizedDatabaseURL = databaseURL[:index] + "/" + databaseURL[index+1:]
@@ -160,6 +161,7 @@ func checkSqlite(variableName string, databaseURL string) []string {
 			databaseURL,
 			err.Error()))
 	}
+
 	_, err = os.Stat(sqliteFilename)
 	if err != nil {
 		return append(result, fmt.Sprintf(

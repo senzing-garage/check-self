@@ -36,6 +36,7 @@ func (checkself *BasicCheckSelf) CheckSenzingConfiguration(
 
 		return reportChecks, reportInfo, reportErrors, nil //nolint
 	}
+
 	if configID == 0 {
 		reportErrors = append(
 			reportErrors,

@@ -15,24 +15,28 @@ import (
 func Test_Execute(test *testing.T) {
 	_ = test
 	os.Args = []string{"command-name"}
+
 	Execute()
 }
 
 func Test_Execute_completion(test *testing.T) {
 	_ = test
 	os.Args = []string{"command-name", "completion"}
+
 	Execute()
 }
 
 func Test_Execute_docs(test *testing.T) {
 	_ = test
 	os.Args = []string{"command-name", "docs"}
+
 	Execute()
 }
 
 func Test_Execute_help(test *testing.T) {
 	_ = test
 	os.Args = []string{"command-name", "--help"}
+
 	Execute()
 }
 
@@ -44,6 +48,7 @@ func Test_PreRun(test *testing.T) {
 
 func Test_RunE(test *testing.T) {
 	test.Setenv("SENZING_TOOLS_AVOID_SERVING", "true")
+
 	err := RunE(RootCmd, []string{})
 	require.NoError(test, err)
 }
@@ -84,6 +89,7 @@ func Test_completionAction(test *testing.T) {
 
 func Test_DocsAction_badDir(test *testing.T) {
 	var buffer bytes.Buffer
+
 	badDir := "/tmp/no/directory/exists"
 	err := DocsAction(&buffer, badDir)
 	require.Error(test, err)
