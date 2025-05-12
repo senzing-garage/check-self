@@ -41,7 +41,7 @@ func (checkself *BasicCheckSelf) CheckDatabaseURL(
 
 	// Check database URL.
 
-	reportErrors = append(reportErrors, checkDatabaseURL(ctx, option.DatabaseURL.Envar, checkself.DatabaseURL)...)
+	reportErrors = append(reportErrors, CheckDatabaseURL(ctx, option.DatabaseURL.Envar, checkself.DatabaseURL)...)
 
 	// Epilog.
 
@@ -52,7 +52,7 @@ func (checkself *BasicCheckSelf) CheckDatabaseURL(
 // Private functions
 // ----------------------------------------------------------------------------
 
-func checkDatabaseURL(ctx context.Context, variableName string, databaseURL string) []string {
+func CheckDatabaseURL(ctx context.Context, variableName string, databaseURL string) []string {
 	result := []string{}
 
 	// Parse the database URL.

@@ -45,7 +45,7 @@ func (checkself *BasicCheckSelf) CheckSettings(
 	}
 
 	for _, databaseURI := range databaseURIs {
-		errorList := checkDatabaseURL(ctx, option.EngineSettings.Envar, databaseURI)
+		errorList := CheckDatabaseURL(ctx, option.EngineSettings.Envar, databaseURI)
 		reportErrors = append(reportErrors, errorList...)
 	}
 
@@ -175,7 +175,7 @@ func checkDatabaseURIs(ctx context.Context, parsedSettings *settingsparser.Basic
 	}
 
 	for _, databaseURI := range databaseURIs {
-		result = append(result, checkDatabaseURL(ctx, connectionVariable, databaseURI)...)
+		result = append(result, CheckDatabaseURL(ctx, connectionVariable, databaseURI)...)
 	}
 
 	return result

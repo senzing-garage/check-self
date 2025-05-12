@@ -1,9 +1,10 @@
-package checkself
+package checkself_test
 
 import (
 	"context"
 	"testing"
 
+	"github.com/senzing-garage/check-self/checkself"
 	"github.com/senzing-garage/go-helpers/settings"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -236,94 +237,94 @@ func TestBasicCheckSelf_CheckSettings_badSettings(test *testing.T) {
 // Test private functions
 // ----------------------------------------------------------------------------
 
-func TestBasicCheckSelf_checkDatabaseURL_sqlite3(test *testing.T) {
+func TestBasicCheckSelf_CheckDatabaseURL_sqlite3(test *testing.T) {
 	_ = test
 	ctx := test.Context()
 	expected := expectedQuestionMarks
-	actual := checkDatabaseURL(ctx, variableName, sqlite3URL)
+	actual := checkself.CheckDatabaseURL(ctx, variableName, sqlite3URL)
 	sink(expected, actual)
 }
 
-func TestBasicCheckSelf_checkDatabaseURL_postgresql(test *testing.T) {
+func TestBasicCheckSelf_CheckDatabaseURL_postgresql(test *testing.T) {
 	_ = test
 	ctx := test.Context()
 	expected := expectedQuestionMarks
-	actual := checkDatabaseURL(ctx, variableName, postgresqlURL)
+	actual := checkself.CheckDatabaseURL(ctx, variableName, postgresqlURL)
 	sink(expected, actual)
 }
 
-func TestBasicCheckSelf_checkDatabaseURL_mysql(test *testing.T) {
+func TestBasicCheckSelf_CheckDatabaseURL_mysql(test *testing.T) {
 	_ = test
 	ctx := test.Context()
 	expected := expectedQuestionMarks
-	actual := checkDatabaseURL(ctx, variableName, mysqlURL)
+	actual := checkself.CheckDatabaseURL(ctx, variableName, mysqlURL)
 	sink(expected, actual)
 }
 
-func TestBasicCheckSelf_checkDatabaseURL_db2(test *testing.T) {
+func TestBasicCheckSelf_CheckDatabaseURL_db2(test *testing.T) {
 	_ = test
 	ctx := test.Context()
 	expected := expectedQuestionMarks
-	actual := checkDatabaseURL(ctx, variableName, db2URL)
+	actual := checkself.CheckDatabaseURL(ctx, variableName, db2URL)
 	sink(expected, actual)
 }
 
-func TestBasicCheckSelf_checkDatabaseURL_oci(test *testing.T) {
+func TestBasicCheckSelf_CheckDatabaseURL_oci(test *testing.T) {
 	_ = test
 	ctx := test.Context()
 	expected := expectedQuestionMarks
-	actual := checkDatabaseURL(ctx, variableName, ociURL)
+	actual := checkself.CheckDatabaseURL(ctx, variableName, ociURL)
 	sink(expected, actual)
 }
 
-func TestBasicCheckSelf_checkDatabaseURL_mssql(test *testing.T) {
+func TestBasicCheckSelf_CheckDatabaseURL_mssql(test *testing.T) {
 	_ = test
 	ctx := test.Context()
 	expected := expectedQuestionMarks
-	actual := checkDatabaseURL(ctx, variableName, mssqlURL)
+	actual := checkself.CheckDatabaseURL(ctx, variableName, mssqlURL)
 	sink(expected, actual)
 }
 
-func TestBasicCheckSelf_checkDatabaseURL_badURLParse(test *testing.T) {
+func TestBasicCheckSelf_CheckDatabaseURL_badURLParse(test *testing.T) {
 	_ = test
 	ctx := test.Context()
 	expected := "VariableName = \n\tnot-a-URL is misconfigured. Could not parse database URL. For more information, visit https://hub.senzing.com/...  Error: parse \"\\n\\tnot-a-URL\": net/url: invalid control character in URL"
 	badDatabaseURL := "\n\tnot-a-URL"
-	actual := checkDatabaseURL(ctx, variableName, badDatabaseURL)
+	actual := checkself.CheckDatabaseURL(ctx, variableName, badDatabaseURL)
 	assert.Equal(test, expected, actual[0])
 }
 
-func TestBasicCheckSelf_checkDatabaseURL_badURLParse_postgres(test *testing.T) {
+func TestBasicCheckSelf_CheckDatabaseURL_badURLParse_postgres(test *testing.T) {
 	_ = test
 	ctx := test.Context()
 	expected := expectedQuestionMarks
 	badDatabaseURL := "postgresql://username:password@hostname:5432:database/?schema=schemaname"
-	actual := checkDatabaseURL(ctx, variableName, badDatabaseURL)
+	actual := checkself.CheckDatabaseURL(ctx, variableName, badDatabaseURL)
 	sink(expected, actual)
 }
 
-func TestBasicCheckSelf_checkDatabaseURL_badSqliteURL(test *testing.T) {
+func TestBasicCheckSelf_CheckDatabaseURL_badSqliteURL(test *testing.T) {
 	_ = test
 	ctx := test.Context()
 	expected := expectedQuestionMarks
 	badDatabaseURL := "sqlite3://na:na@host.com:port//tmp/nodatabase.db"
-	actual := checkDatabaseURL(ctx, variableName, badDatabaseURL)
+	actual := checkself.CheckDatabaseURL(ctx, variableName, badDatabaseURL)
 	sink(expected, actual)
 }
 
-func TestBasicCheckSelf_checkDatabaseURL_badSchemaLength(test *testing.T) {
+func TestBasicCheckSelf_CheckDatabaseURL_badSchemaLength(test *testing.T) {
 	ctx := test.Context()
 	expected := "VariableName = not-a-URL is misconfigured. A database scheme is needed (e.g. postgresql://...). For more information, visit https://hub.senzing.com/..."
 	badDatabaseURL := "not-a-URL"
-	actual := checkDatabaseURL(ctx, variableName, badDatabaseURL)
+	actual := checkself.CheckDatabaseURL(ctx, variableName, badDatabaseURL)
 	assert.Equal(test, expected, actual[0])
 }
 
-func TestBasicCheckSelf_checkDatabaseURL_badSchema(test *testing.T) {
+func TestBasicCheckSelf_CheckDatabaseURL_badSchema(test *testing.T) {
 	ctx := test.Context()
 	expected := "VariableName = badScheme://xxx is misconfigured. Scheme 'badscheme://' is not recognized. For more information, visit https://hub.senzing.com/..."
 	badDatabaseURL := "badScheme://xxx"
-	actual := checkDatabaseURL(ctx, variableName, badDatabaseURL)
+	actual := checkself.CheckDatabaseURL(ctx, variableName, badDatabaseURL)
 	assert.Equal(test, expected, actual[0])
 }
 
@@ -331,14 +332,14 @@ func TestBasicCheckSelf_checkDatabaseURL_badSchema(test *testing.T) {
 // Internal functions
 // ----------------------------------------------------------------------------
 
-func getTestObject(ctx context.Context, t *testing.T) *BasicCheckSelf {
+func getTestObject(ctx context.Context, t *testing.T) *checkself.BasicCheckSelf {
 	t.Helper()
 
 	_ = ctx
 	settings, err := settings.BuildSimpleSettingsUsingEnvVars()
 	require.NoError(t, err)
 
-	result := &BasicCheckSelf{
+	result := &checkself.BasicCheckSelf{
 		Settings: settings,
 	}
 

@@ -1,10 +1,11 @@
 //go:build linux
 
-package checkself
+package checkself_test
 
 import (
 	"testing"
 
+	"github.com/senzing-garage/check-self/checkself"
 	"github.com/senzing-garage/go-helpers/settings"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -17,7 +18,7 @@ import (
 func TestBasicCheckSelf_CheckSelf_Paths(test *testing.T) {
 	ctx := test.Context()
 	senzingPath := settings.GetSenzingPath()
-	testObject := &BasicCheckSelf{
+	testObject := &checkself.BasicCheckSelf{
 		ConfigPath:   "/etc/opt/senzing",
 		DatabaseURL:  "sqlite3://na:na@/tmp/sqlite/G2C.db",
 		ResourcePath: senzingPath + "/er/resources",
@@ -107,10 +108,10 @@ func TestBasicCheckSelf_CheckSettings_badDatabaseURLs(test *testing.T) {
 	assert.Len(test, newReportErrors, 2)
 }
 
-func TestBasicCheckSelf_checkDatabaseURL_badSqliteURL_stat(test *testing.T) {
+func TestBasicCheckSelf_CheckDatabaseURL_badSqliteURL_stat(test *testing.T) {
 	ctx := test.Context()
 	expected := "VariableName = sqlite3://na:na@/tmp/nodatabase.db is misconfigured. Could not find /tmp/nodatabase.db. For more information, visit https://hub.senzing.com/..."
 	badDatabaseURL := "sqlite3://na:na@/tmp/nodatabase.db"
-	actual := checkDatabaseURL(ctx, variableName, badDatabaseURL)
+	actual := checkself.CheckDatabaseURL(ctx, variableName, badDatabaseURL)
 	assert.Equal(test, expected, actual[0])
 }
