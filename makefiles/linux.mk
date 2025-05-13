@@ -23,6 +23,7 @@ clean-osarch-specific:
 	@rm -f  $(MAKEFILE_DIRECTORY)/cover.out || true
 	@rm -fr $(TARGET_DIRECTORY) || true
 	@rm -fr /tmp/sqlite || true
+	@rm -f  /tmp/nodatabase.db || true
 	@pkill godoc || true
 	@docker-compose -f docker-compose.test.yaml down 2> /dev/null || true
 
@@ -37,7 +38,7 @@ coverage-osarch-specific:
 
 .PHONY: dependencies-for-development-osarch-specific
 dependencies-for-development-osarch-specific:
-	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin latest
+	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/main/install.sh | sh -s -- -b $(shell go env GOPATH)/bin latest
 
 
 .PHONY: documentation-osarch-specific

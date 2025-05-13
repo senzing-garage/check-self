@@ -9,7 +9,12 @@ import (
 // Interface methods
 // ----------------------------------------------------------------------------
 
-func (checkself *BasicCheckSelf) ListStructVariables(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+func (checkself *BasicCheckSelf) ListStructVariables(
+	ctx context.Context,
+	reportChecks []string,
+	reportInfo []string,
+	reportErrors []string,
+) ([]string, []string, []string, error) {
 	_ = ctx
 
 	structStrings := map[string]string{
@@ -28,6 +33,7 @@ func (checkself *BasicCheckSelf) ListStructVariables(ctx context.Context, report
 	}
 
 	count := 0
+
 	reportInfo = append(reportInfo, "\nCommand line variables:\n")
 
 	for key, value := range structStrings {
@@ -36,6 +42,7 @@ func (checkself *BasicCheckSelf) ListStructVariables(ctx context.Context, report
 			reportInfo = append(reportInfo, fmt.Sprintf("%6d. %s = %s", count, key, value))
 		}
 	}
+
 	reportInfo = append(reportInfo, "")
 
 	return reportChecks, reportInfo, reportErrors, nil

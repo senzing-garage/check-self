@@ -9,6 +9,7 @@ import (
 	"github.com/senzing-garage/check-self/checkself"
 	"github.com/senzing-garage/go-cmdhelping/cmdhelper"
 	"github.com/senzing-garage/go-cmdhelping/option"
+	"github.com/senzing-garage/go-helpers/wraperror"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -72,12 +73,12 @@ func Execute() {
 	}
 }
 
-// Used in construction of cobra.Command
+// Used in construction of cobra.Command.
 func PreRun(cobraCommand *cobra.Command, args []string) {
 	cmdhelper.PreRun(cobraCommand, args, Use, ContextVariables)
 }
 
-// Used in construction of cobra.Command
+// Used in construction of cobra.Command.
 func RunE(_ *cobra.Command, _ []string) error {
 	ctx := context.Background()
 
@@ -97,10 +98,13 @@ func RunE(_ *cobra.Command, _ []string) error {
 		SenzingDirectory:           viper.GetString(option.SenzingDirectory.Arg),
 		SupportPath:                viper.GetString(option.SupportPath.Arg),
 	}
-	return checkSelf.CheckSelf(ctx)
+
+	err := checkSelf.CheckSelf(ctx)
+
+	return wraperror.Errorf(err, "RunE error: %w", err)
 }
 
-// Used in construction of cobra.Command
+// Used in construction of cobra.Command.
 func Version() string {
 	return cmdhelper.Version(githubVersion, githubIteration)
 }

@@ -16,7 +16,12 @@ var RequiredConfigFiles = []string{
 // Interface methods
 // ----------------------------------------------------------------------------
 
-func (checkself *BasicCheckSelf) CheckConfigPath(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
+func (checkself *BasicCheckSelf) CheckConfigPath(
+	ctx context.Context,
+	reportChecks []string,
+	reportInfo []string,
+	reportErrors []string,
+) ([]string, []string, []string, error) {
 	_ = ctx
 
 	// Short-circuit exit.
@@ -27,7 +32,10 @@ func (checkself *BasicCheckSelf) CheckConfigPath(ctx context.Context, reportChec
 
 	// Prolog.
 
-	reportChecks = append(reportChecks, fmt.Sprintf("Check configuration path: %s = %s", option.ConfigPath.Envar, checkself.ConfigPath))
+	reportChecks = append(
+		reportChecks,
+		fmt.Sprintf("Check configuration path: %s = %s", option.ConfigPath.Envar, checkself.ConfigPath),
+	)
 
 	// Check Config path.
 

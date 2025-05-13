@@ -9,122 +9,258 @@ import (
 	"time"
 
 	"github.com/senzing-garage/go-databasing/checker"
-	"github.com/senzing-garage/go-databasing/connector"
+	"github.com/senzing-garage/go-helpers/wraperror"
+)
+
+const (
+	hoursPerDay = 24
 )
 
 // ----------------------------------------------------------------------------
 // Interface methods
 // ----------------------------------------------------------------------------
 
-func (checkself *BasicCheckSelf) CheckLicense(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
-
-	// Prolog.
+func (checkself *BasicCheckSelf) CheckLicense(
+	ctx context.Context,
+	reportChecks []string,
+	reportInfo []string,
+	reportErrors []string,
+) ([]string, []string, []string, error) {
+	var err error
 
 	reportChecks = append(reportChecks, "Check Senzing license")
 
-	// Connect to the database.
-
-	databaseURL, err := checkself.getDatabaseURL(ctx)
+	recordCount, err := checkself.getRecordCount(ctx)
 	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("Unable to locate Database URL For more information, visit https://hub.senzing.com/...  Error: %s", err.Error()))
-		return reportChecks, reportInfo, reportErrors, nil
-	}
-	databaseConnector, err := connector.NewConnector(ctx, databaseURL)
-	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("Database URL '%s' is misconfigured. Could not create a database connector. For more information, visit https://hub.senzing.com/...  Error: %s", databaseURL, err.Error()))
-		return reportChecks, reportInfo, reportErrors, nil
+		return returnValues(reportChecks, reportInfo, reportErrors, err)
 	}
 
-	// Get number of record in DSRC_RECORD.
+	license, err := checkself.getLicense(ctx)
+	if err != nil {
+		return returnValues(reportChecks, reportInfo, reportErrors, err)
+	}
+
+	productLicenseResponse, err := getProductLicenseResponse(license)
+	if err != nil {
+		return returnValues(reportChecks, reportInfo, reportErrors, err)
+	}
+
+	prettyJSON, err := getPrettyJSON(license)
+	if err != nil {
+		return returnValues(reportChecks, reportInfo, reportErrors, err)
+	}
+
+	expireInDays, err := getExpireInDays(productLicenseResponse)
+	if err != nil {
+		return returnValues(reportChecks, reportInfo, reportErrors, err)
+	}
+
+	expiryErrors, err := checkself.checkExpiry(expireInDays)
+	if err != nil {
+		return returnValues(reportChecks, reportInfo, reportErrors, err)
+	}
+
+	recordPercentErrors, err := checkself.checkRecordPercent(recordCount, productLicenseResponse)
+	if err != nil {
+		return returnValues(reportChecks, reportInfo, reportErrors, err)
+	}
+
+	reportInfo = append(reportInfo,
+		buildReportInfo(
+			recordCount,
+			productLicenseResponse,
+			expireInDays,
+			prettyJSON.String(),
+		)...)
+
+	reportErrors = append(reportErrors, expiryErrors...)
+	reportErrors = append(reportErrors, recordPercentErrors...)
+
+	// Epilog.
+
+	return reportChecks, reportInfo, reportErrors, nil
+}
+
+// ----------------------------------------------------------------------------
+// Private methods
+// ----------------------------------------------------------------------------
+
+func (checkself *BasicCheckSelf) checkExpiry(expireInDays int) ([]string, error) {
+	var result []string
+
+	if len(checkself.ErrorLicenseDaysLeft) == 0 {
+		checkself.ErrorLicenseDaysLeft = DefaultSenzingToolsLicenseDaysLeft
+	}
+
+	errorLicenseDaysLeft, err := strconv.Atoi(checkself.ErrorLicenseDaysLeft)
+	if err != nil {
+		return result, wraperror.Errorf(
+			err,
+			"Could not parse SENZING_TOOLS_LICENSE_DAYS_LEFT information: %s.  error: %w",
+			checkself.ErrorLicenseDaysLeft,
+			err,
+		)
+	}
+
+	if expireInDays < errorLicenseDaysLeft {
+		result = append(
+			result,
+			fmt.Sprintf(
+				"License expires in %d days. For more information, visit https://hub.senzing.com/... ",
+				expireInDays,
+			),
+		)
+	}
+
+	return result, wraperror.Errorf(err, "checkself.checkExpiry error: %w", err)
+}
+
+func (checkself *BasicCheckSelf) getLicense(ctx context.Context) (string, error) {
+	var (
+		err    error
+		result string
+	)
+
+	szProduct, err := checkself.getSzProduct(ctx)
+	if err != nil {
+		return result, wraperror.Errorf(err, "Could not create szProduct.  error: %w", err)
+	}
+
+	result, err = szProduct.GetLicense(ctx)
+	if err != nil {
+		return result, wraperror.Errorf(err, "Could not get license information.  error: %w", err)
+	}
+
+	return result, wraperror.Errorf(err, "checkself.getLicense error: %w", err)
+}
+
+func (checkself *BasicCheckSelf) checkRecordPercent(
+	recordCount int64,
+	productLicenseResponse *ProductLicenseResponse,
+) ([]string, error) {
+	var result []string
+
+	if len(checkself.ErrorLicenseRecordsPercent) == 0 {
+		checkself.ErrorLicenseRecordsPercent = DefaultSenzingToolsLicenseRecordsPercent
+	}
+
+	errorLicenseRecordsPercent, err := strconv.Atoi(checkself.ErrorLicenseRecordsPercent)
+	if err != nil {
+		return result, wraperror.Errorf(
+			err,
+			"Could not parse SENZING_TOOLS_LICENSE_RECORDS_PERCENT information: %s.  error: %w",
+			checkself.ErrorLicenseRecordsPercent,
+			err,
+		)
+	}
+
+	if (recordCount / productLicenseResponse.RecordLimit) > int64(errorLicenseRecordsPercent) {
+		result = append(
+			result,
+			fmt.Sprintf(
+				"Records above %d full limit. For more information, visit https://hub.senzing.com/... ",
+				errorLicenseRecordsPercent,
+			),
+		)
+	}
+
+	return result, wraperror.Errorf(err, "checkself.checkRecordPercent error: %w", err)
+}
+
+func (checkself *BasicCheckSelf) getRecordCount(
+	ctx context.Context,
+) (int64, error) {
+	var (
+		err    error
+		result int64
+	)
+
+	databaseConnector, err := checkself.getDatabaseConnector(ctx)
+	if err != nil {
+		return result, wraperror.Errorf(err, "Could not connect to database.  Error %w", err)
+	}
 
 	checker := &checker.BasicChecker{
 		DatabaseConnector: databaseConnector,
 	}
-	recordCount, err := checker.RecordCount(ctx)
+
+	result, err = checker.RecordCount(ctx)
 	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("Could not get count of records.  Error %s", err.Error()))
-		return reportChecks, reportInfo, reportErrors, nil
+		return result, wraperror.Errorf(err, "Could not get count of records.  Error %w", err)
 	}
 
-	// Get license
+	return result, wraperror.Errorf(err, "checkself.getRecordCount error: %w", err)
+}
 
-	szProduct, err := checkself.getSzProduct(ctx)
-	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("Could not create szProduct.  Error %s", err.Error()))
-		return reportChecks, reportInfo, reportErrors, nil
-	}
+// ----------------------------------------------------------------------------
+// Private functions
+// ----------------------------------------------------------------------------
 
-	license, err := szProduct.GetLicense(ctx)
-	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("Could not get license information.  Error %s", err.Error()))
-		return reportChecks, reportInfo, reportErrors, nil
-	}
-
-	// Marshal license into structure.
-
-	productLicenseResponse := &ProductLicenseResponse{}
-	err = json.Unmarshal([]byte(license), productLicenseResponse)
-	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("Could not parse license information into structure.  Error %s", err.Error()))
-		return reportChecks, reportInfo, reportErrors, nil
-	}
-
-	// Pretty-print JSON.
-
-	var prettyJSON bytes.Buffer
-	err = json.Indent(&prettyJSON, []byte(license), "", "\t")
-	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("Could not parse license information.  Error %s", err.Error()))
-		return reportChecks, reportInfo, reportErrors, nil
-	}
-
-	licenseExpireDate, err := time.Parse(time.DateOnly, productLicenseResponse.ExpireDate)
-	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("Could not parse expireDate information.  Error %s", err.Error()))
-		return reportChecks, reportInfo, reportErrors, nil
-	}
-	duration := time.Until(licenseExpireDate)
-	expireInDays := int(duration.Hours() / 24)
-
-	reportInfo = append(reportInfo, fmt.Sprintf(`
+func buildReportInfo(
+	recordCount int64,
+	productLicenseResponse *ProductLicenseResponse,
+	expireInDays int,
+	prettyJSON string,
+) []string {
+	result := []string{
+		fmt.Sprintf(`
 License:
 
 - Records used: %d of %d
 - Date license expires: %s
 - Days until license expires: %d
 
-%s`,
-		recordCount, productLicenseResponse.RecordLimit, productLicenseResponse.ExpireDate, expireInDays, prettyJSON.String()))
-
-	// Calculate License Days Left error.
-
-	if len(checkself.ErrorLicenseDaysLeft) == 0 {
-		checkself.ErrorLicenseDaysLeft = DefaultSenzingToolsLicenseDaysLeft
+%s`, recordCount, productLicenseResponse.RecordLimit, productLicenseResponse.ExpireDate, expireInDays, prettyJSON),
 	}
-	errorLicenseDaysLeft, err := strconv.Atoi(checkself.ErrorLicenseDaysLeft)
+
+	return result
+}
+
+func getExpireInDays(productLicenseResponse *ProductLicenseResponse) (int, error) {
+	var result int
+
+	licenseExpireDate, err := time.Parse(time.DateOnly, productLicenseResponse.ExpireDate)
 	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("Could not parse SENZING_TOOLS_LICENSE_DAYS_LEFT information: %s.  Error %s", checkself.ErrorLicenseDaysLeft, err.Error()))
-		return reportChecks, reportInfo, reportErrors, nil
-	}
-	if expireInDays < errorLicenseDaysLeft {
-		reportErrors = append(reportErrors, fmt.Sprintf("License expires in %d days. For more information, visit https://hub.senzing.com/... ", expireInDays))
+		return result, wraperror.Errorf(err, "Could not parse expireDate information. error %w", err)
 	}
 
-	// Calculate License Records Percent error.
+	duration := time.Until(licenseExpireDate)
+	result = int(duration.Hours() / hoursPerDay)
 
-	if len(checkself.ErrorLicenseRecordsPercent) == 0 {
-		checkself.ErrorLicenseRecordsPercent = DefaultSenzingToolsLicenseRecordsPercent
-	}
-	errorLicenseRecordsPercent, err := strconv.Atoi(checkself.ErrorLicenseRecordsPercent)
+	return result, wraperror.Errorf(err, "checkself.getExpireInDays error: %w", err)
+}
+
+func getPrettyJSON(license string) (bytes.Buffer, error) {
+	var result bytes.Buffer
+
+	err := json.Indent(&result, []byte(license), "", "\t")
 	if err != nil {
-		reportErrors = append(reportErrors, fmt.Sprintf("Could not parse SENZING_TOOLS_LICENSE_RECORDS_PERCENT information: %s.  Error %s", checkself.ErrorLicenseRecordsPercent, err.Error()))
-		return reportChecks, reportInfo, reportErrors, nil
-	}
-	if (recordCount / productLicenseResponse.RecordLimit) > int64(errorLicenseRecordsPercent) {
-		reportErrors = append(reportErrors, fmt.Sprintf("Records above %d full limit. For more information, visit https://hub.senzing.com/... ", errorLicenseRecordsPercent))
+		return result, wraperror.Errorf(err, "Could not parse license information.  Error %w", err)
 	}
 
-	// Epilog.
+	return result, wraperror.Errorf(err, "checkself.getPrettyJSON error: %w", err)
+}
+
+func getProductLicenseResponse(license string) (*ProductLicenseResponse, error) {
+	result := &ProductLicenseResponse{}
+
+	err := json.Unmarshal([]byte(license), result)
+	if err != nil {
+		return result, wraperror.Errorf(err, "Could not parse license information into structure.  Error %w", err)
+	}
+
+	return result, wraperror.Errorf(err, "checkself.getProductLicenseResponse error: %w", err)
+}
+
+func returnValues(
+	reportChecks []string,
+	reportInfo []string,
+	reportErrors []string,
+	err error,
+) ([]string, []string, []string, error) {
+	if err != nil {
+		reportErrors = append(reportErrors, err.Error())
+	}
 
 	return reportChecks, reportInfo, reportErrors, nil
 }

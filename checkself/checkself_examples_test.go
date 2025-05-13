@@ -1,10 +1,12 @@
 //go:build linux
 
-package checkself
+package checkself_test
 
 import (
 	"context"
 	"fmt"
+
+	"github.com/senzing-garage/check-self/checkself"
 )
 
 // ----------------------------------------------------------------------------
@@ -14,7 +16,8 @@ import (
 func ExampleBasicCheckSelf_CheckSelf() {
 	// For more information, visit https://github.com/senzing-garage/check-self/blob/main/checkself/checkself_examples_test.go
 	ctx := context.TODO()
-	examplePackage := &BasicCheckSelf{}
+	examplePackage := &checkself.BasicCheckSelf{}
+
 	err := examplePackage.CheckSelf(ctx)
 	if err != nil {
 		fmt.Print(err)
