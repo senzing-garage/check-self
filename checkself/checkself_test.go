@@ -187,8 +187,8 @@ func TestBasicCheckSelf_CheckSenzingConfiguration_badGetDefaultConfigID(test *te
 	)
 	require.NoError(test, err)
 	assert.Len(test, newReportChecks, 1)
-	assert.Empty(test, newReportInfo)
 	// assert.Len(test, newReportErrors, 1)
+	assert.Empty(test, newReportInfo)
 }
 
 func TestBasicCheckSelf_CheckSettings(test *testing.T) {
