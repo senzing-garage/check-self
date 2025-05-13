@@ -34,6 +34,7 @@ const (
 // }
 
 func TestBasicCheckSelf_Break(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	testObject := getTestObject(ctx, test)
 	newReportChecks, newReportInfo, newReportErrors, err := testObject.Break(
@@ -49,6 +50,7 @@ func TestBasicCheckSelf_Break(test *testing.T) {
 }
 
 func TestBasicCheckSelf_Break_badReportErrors(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	testObject := getTestObject(ctx, test)
 	badReportErrors := []string{"example error text"}
@@ -60,6 +62,7 @@ func TestBasicCheckSelf_Break_badReportErrors(test *testing.T) {
 }
 
 func TestBasicCheckSelf_CheckDatabaseSchema(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	testObject := getTestObject(ctx, test)
 	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckDatabaseSchema(
@@ -75,6 +78,7 @@ func TestBasicCheckSelf_CheckDatabaseSchema(test *testing.T) {
 }
 
 func TestBasicCheckSelf_CheckDatabaseSchema_badDatabaseURL(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	expected := "SENZING_TOOLS_DATABASE_URL = bad-database-URL is misconfigured. Could not create a database connector. For more information, visit https://hub.senzing.com/...  Error: connector.NewConnector error: unknown database scheme:  error: connector"
 	testObject := getTestObject(ctx, test)
@@ -94,6 +98,7 @@ func TestBasicCheckSelf_CheckDatabaseSchema_badDatabaseURL(test *testing.T) {
 }
 
 func TestBasicCheckSelf_CheckLicense(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	testObject := getTestObject(ctx, test)
 	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckLicense(
@@ -109,6 +114,7 @@ func TestBasicCheckSelf_CheckLicense(test *testing.T) {
 }
 
 func TestBasicCheckSelf_CheckLicense_badGetDatabaseURL(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	testObject := getTestObject(ctx, test)
 	testObject.Settings = `
@@ -137,6 +143,7 @@ func TestBasicCheckSelf_CheckLicense_badGetDatabaseURL(test *testing.T) {
 }
 
 func TestBasicCheckSelf_CheckSelf(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	testObject := getTestObject(ctx, test)
 	err := testObject.CheckSelf(ctx)
@@ -144,6 +151,7 @@ func TestBasicCheckSelf_CheckSelf(test *testing.T) {
 }
 
 func TestBasicCheckSelf_CheckSelf_badSettings(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	testObject := getTestObject(ctx, test)
 	testObject.Settings = `{}`
@@ -152,11 +160,18 @@ func TestBasicCheckSelf_CheckSelf_badSettings(test *testing.T) {
 }
 
 func TestBasicCheckSelf_CheckSenzingConfiguration_badGetDefaultConfigID(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	// expected := expectedQuestionMarks
 	testObject := getTestObject(ctx, test)
 	testObject.Settings = `
         {
+            "PIPELINE": {
+                "CONFIGPATH": "/etc/opt/senzing",
+                "LICENSESTRINGBASE64": "",
+                "RESOURCEPATH": "/opt/senzing/er/resources",
+                "SUPPORTPATH": "/opt/senzing/data"
+            },
             "SQL": {
                 "BACKEND": "SQL",
                 "CONNECTION": "sqlite3://na:na@/tmp/sqlite/G2C-empty.db"
@@ -173,11 +188,11 @@ func TestBasicCheckSelf_CheckSenzingConfiguration_badGetDefaultConfigID(test *te
 	require.NoError(test, err)
 	assert.Len(test, newReportChecks, 1)
 	assert.Empty(test, newReportInfo)
-	// IMPROVE: assert.Equal(test, expected, newReportErrors[0])
-	assert.Empty(test, newReportErrors)
+	assert.Len(test, newReportErrors, 1)
 }
 
 func TestBasicCheckSelf_CheckSettings(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	testObject := getTestObject(ctx, test)
 	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckSettings(
@@ -193,6 +208,7 @@ func TestBasicCheckSelf_CheckSettings(test *testing.T) {
 }
 
 func TestBasicCheckSelf_CheckSettings_badSettings(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	expected := "SENZING_TOOLS_ENGINE_SETTINGS - incorrect JSON syntax in }{"
 	testObject := getTestObject(ctx, test)
@@ -238,7 +254,7 @@ func TestBasicCheckSelf_CheckSettings_badSettings(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestBasicCheckSelf_CheckDatabaseURL_sqlite3(test *testing.T) {
-	_ = test
+	test.Parallel()
 	ctx := test.Context()
 	expected := expectedQuestionMarks
 	actual := checkself.CheckDatabaseURL(ctx, variableName, sqlite3URL)
@@ -246,7 +262,7 @@ func TestBasicCheckSelf_CheckDatabaseURL_sqlite3(test *testing.T) {
 }
 
 func TestBasicCheckSelf_CheckDatabaseURL_postgresql(test *testing.T) {
-	_ = test
+	test.Parallel()
 	ctx := test.Context()
 	expected := expectedQuestionMarks
 	actual := checkself.CheckDatabaseURL(ctx, variableName, postgresqlURL)
@@ -254,7 +270,7 @@ func TestBasicCheckSelf_CheckDatabaseURL_postgresql(test *testing.T) {
 }
 
 func TestBasicCheckSelf_CheckDatabaseURL_mysql(test *testing.T) {
-	_ = test
+	test.Parallel()
 	ctx := test.Context()
 	expected := expectedQuestionMarks
 	actual := checkself.CheckDatabaseURL(ctx, variableName, mysqlURL)
@@ -262,7 +278,7 @@ func TestBasicCheckSelf_CheckDatabaseURL_mysql(test *testing.T) {
 }
 
 func TestBasicCheckSelf_CheckDatabaseURL_db2(test *testing.T) {
-	_ = test
+	test.Parallel()
 	ctx := test.Context()
 	expected := expectedQuestionMarks
 	actual := checkself.CheckDatabaseURL(ctx, variableName, db2URL)
@@ -270,7 +286,7 @@ func TestBasicCheckSelf_CheckDatabaseURL_db2(test *testing.T) {
 }
 
 func TestBasicCheckSelf_CheckDatabaseURL_oci(test *testing.T) {
-	_ = test
+	test.Parallel()
 	ctx := test.Context()
 	expected := expectedQuestionMarks
 	actual := checkself.CheckDatabaseURL(ctx, variableName, ociURL)
@@ -278,7 +294,7 @@ func TestBasicCheckSelf_CheckDatabaseURL_oci(test *testing.T) {
 }
 
 func TestBasicCheckSelf_CheckDatabaseURL_mssql(test *testing.T) {
-	_ = test
+	test.Parallel()
 	ctx := test.Context()
 	expected := expectedQuestionMarks
 	actual := checkself.CheckDatabaseURL(ctx, variableName, mssqlURL)
@@ -286,7 +302,7 @@ func TestBasicCheckSelf_CheckDatabaseURL_mssql(test *testing.T) {
 }
 
 func TestBasicCheckSelf_CheckDatabaseURL_badURLParse(test *testing.T) {
-	_ = test
+	test.Parallel()
 	ctx := test.Context()
 	expected := "VariableName = \n\tnot-a-URL is misconfigured. Could not parse database URL. For more information, visit https://hub.senzing.com/...  Error: parse \"\\n\\tnot-a-URL\": net/url: invalid control character in URL"
 	badDatabaseURL := "\n\tnot-a-URL"
@@ -295,7 +311,7 @@ func TestBasicCheckSelf_CheckDatabaseURL_badURLParse(test *testing.T) {
 }
 
 func TestBasicCheckSelf_CheckDatabaseURL_badURLParse_postgres(test *testing.T) {
-	_ = test
+	test.Parallel()
 	ctx := test.Context()
 	expected := expectedQuestionMarks
 	badDatabaseURL := "postgresql://username:password@hostname:5432:database/?schema=schemaname"
@@ -304,7 +320,7 @@ func TestBasicCheckSelf_CheckDatabaseURL_badURLParse_postgres(test *testing.T) {
 }
 
 func TestBasicCheckSelf_CheckDatabaseURL_badSqliteURL(test *testing.T) {
-	_ = test
+	test.Parallel()
 	ctx := test.Context()
 	expected := expectedQuestionMarks
 	badDatabaseURL := "sqlite3://na:na@host.com:port//tmp/nodatabase.db"
@@ -313,6 +329,7 @@ func TestBasicCheckSelf_CheckDatabaseURL_badSqliteURL(test *testing.T) {
 }
 
 func TestBasicCheckSelf_CheckDatabaseURL_badSchemaLength(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	expected := "VariableName = not-a-URL is misconfigured. A database scheme is needed (e.g. postgresql://...). For more information, visit https://hub.senzing.com/..."
 	badDatabaseURL := "not-a-URL"
@@ -321,6 +338,7 @@ func TestBasicCheckSelf_CheckDatabaseURL_badSchemaLength(test *testing.T) {
 }
 
 func TestBasicCheckSelf_CheckDatabaseURL_badSchema(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	expected := "VariableName = badScheme://xxx is misconfigured. Scheme 'badscheme://' is not recognized. For more information, visit https://hub.senzing.com/..."
 	badDatabaseURL := "badScheme://xxx"

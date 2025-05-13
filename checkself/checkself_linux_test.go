@@ -16,6 +16,7 @@ import (
 // ----------------------------------------------------------------------------
 
 func TestBasicCheckSelf_CheckSelf_Paths(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	senzingPath := settings.GetSenzingPath()
 	testObject := &checkself.BasicCheckSelf{
@@ -29,6 +30,7 @@ func TestBasicCheckSelf_CheckSelf_Paths(test *testing.T) {
 }
 
 func TestBasicCheckSelf_CheckDatabaseSchema_noSchemaInstalled(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	expected := "Senzing database schema has not been installed in sqlite3://na:na@/tmp/sqlite/G2C-empty.db. For more information, visit https://hub.senzing.com/...  Error: checker.IsSchemaInstalled.row.Scan error: no such table: DSRC_RECORD"
 	testObject := getTestObject(ctx, test)
@@ -48,6 +50,7 @@ func TestBasicCheckSelf_CheckDatabaseSchema_noSchemaInstalled(test *testing.T) {
 }
 
 func TestBasicCheckSelf_CheckLicense_badGetLicense(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	expected := "Could not get count of records.  Error checker.RecordCount.row.Scan error: no such table: DSRC_RECORD"
 	testObject := getTestObject(ctx, test)
@@ -79,6 +82,7 @@ func TestBasicCheckSelf_CheckLicense_badGetLicense(test *testing.T) {
 }
 
 func TestBasicCheckSelf_CheckSettings_badDatabaseURLs(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	// expected := "????"
 	testObject := getTestObject(ctx, test)
@@ -109,6 +113,7 @@ func TestBasicCheckSelf_CheckSettings_badDatabaseURLs(test *testing.T) {
 }
 
 func TestBasicCheckSelf_CheckDatabaseURL_badSqliteURL_stat(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	expected := "VariableName = sqlite3://na:na@/tmp/nodatabase.db is misconfigured. Could not find /tmp/nodatabase.db. For more information, visit https://hub.senzing.com/..."
 	badDatabaseURL := "sqlite3://na:na@/tmp/nodatabase.db"

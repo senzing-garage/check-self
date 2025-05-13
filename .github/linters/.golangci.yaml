@@ -75,7 +75,7 @@ linters:
     - nolintlint
     - nonamedreturns
     - nosprintfhostport
-    # - paralleltest
+    - paralleltest
     - perfsprint
     - prealloc
     - predeclared
@@ -140,7 +140,6 @@ linters:
         - '.+/cobra\.Command$'
         - '.+/checkself\.BasicCheckSelf$'
         - '.+/checkself\.ProductLicenseResponse$'
-
     ireturn:
       allow:
         - error
@@ -151,6 +150,8 @@ linters:
     mnd:
       ignored-functions:
         - '^logger\.Log$'
+    paralleltest:
+      ignore-missing: true
 formatters:
   enable:
     - gci
