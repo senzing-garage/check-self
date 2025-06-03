@@ -142,7 +142,7 @@ func (checkself *BasicCheckSelf) CheckSelf(ctx context.Context) error {
 
 	outputf("%s\n\n\n\n\n", strings.Repeat("-", horizontalRuleLength))
 
-	return err
+	return wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 // ----------------------------------------------------------------------------
@@ -188,8 +188,7 @@ func (checkself *BasicCheckSelf) getDatabaseConnector(ctx context.Context) (driv
 	if err != nil {
 		return result, wraperror.Errorf(
 			err,
-			"Unable to locate Database URL For more information, visit https://hub.senzing.com/...  Error: %w",
-			err,
+			"Unable to locate Database URL For more information, visit https://hub.senzing.com/...",
 		)
 	}
 
@@ -197,13 +196,12 @@ func (checkself *BasicCheckSelf) getDatabaseConnector(ctx context.Context) (driv
 	if err != nil {
 		return result, wraperror.Errorf(
 			err,
-			"Database URL '%s' is misconfigured. Could not create a database connector. For more information, visit https://hub.senzing.com/...  Error: %w",
+			"Database URL '%s' is misconfigured. Could not create a database connector. For more information, visit https://hub.senzing.com/...",
 			databaseURL,
-			err,
 		)
 	}
 
-	return result, wraperror.Errorf(err, "checkself.getDatabaseURL error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 func (checkself *BasicCheckSelf) getInstanceName(ctx context.Context) string {
@@ -241,7 +239,7 @@ func (checkself *BasicCheckSelf) getSzConfigManager(ctx context.Context) (senzin
 		checkself.szConfigManagerSingleton, err = checkself.getSzFactory(ctx).CreateConfigManager(ctx)
 	})
 
-	return checkself.szConfigManagerSingleton, wraperror.Errorf(err, "checkself.getSzConfigManager error: %w", err)
+	return checkself.szConfigManagerSingleton, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 func (checkself *BasicCheckSelf) getSzFactory(ctx context.Context) senzing.SzAbstractFactory {
@@ -271,7 +269,7 @@ func (checkself *BasicCheckSelf) getSzProduct(ctx context.Context) (senzing.SzPr
 		checkself.szProductSingleton, err = checkself.getSzFactory(ctx).CreateProduct(ctx)
 	})
 
-	return checkself.szProductSingleton, wraperror.Errorf(err, "checkself.getSzProduct error: %w", err)
+	return checkself.szProductSingleton, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 func (checkself *BasicCheckSelf) getTestFunctions() []func(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {

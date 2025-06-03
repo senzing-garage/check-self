@@ -76,7 +76,9 @@ func Test_CompletionCmd(test *testing.T) {
 	require.NoError(test, err)
 }
 
-func Test_docsCmd(test *testing.T) {
+func Test_DocsCmd(test *testing.T) {
+	test.Parallel()
+
 	err := cmd.DocsCmd.Execute()
 	require.NoError(test, err)
 	err = cmd.DocsCmd.RunE(cmd.DocsCmd, []string{})
