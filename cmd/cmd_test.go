@@ -12,23 +12,7 @@ import (
 // Test public functions
 // ----------------------------------------------------------------------------
 
-func Test_CompletionCmd(test *testing.T) {
-	test.Parallel()
 
-	err := cmd.CompletionCmd.Execute()
-	require.NoError(test, err)
-	err = cmd.CompletionCmd.RunE(cmd.CompletionCmd, []string{})
-	require.NoError(test, err)
-}
-
-func Test_DocsCmd(test *testing.T) {
-	test.Parallel()
-
-	err := cmd.DocsCmd.Execute()
-	require.NoError(test, err)
-	err = cmd.DocsCmd.RunE(cmd.DocsCmd, []string{})
-	require.NoError(test, err)
-}
 
 func Test_Execute(test *testing.T) {
 	test.Parallel()
@@ -83,4 +67,22 @@ func Test_RootCmd(test *testing.T) {
 	require.NoError(test, err)
 	err = cmd.RootCmd.RunE(cmd.RootCmd, []string{})
 	require.NoError(test, err)
+}
+
+func Test_CompletionCmd(test *testing.T) {
+    test.Parallel()
+
+    err := cmd.CompletionCmd.Execute()
+    require.NoError(test, err)
+    err = cmd.CompletionCmd.RunE(cmd.CompletionCmd, []string{})
+    require.NoError(test, err)
+}
+
+func Test_DocsCmd(test *testing.T) {
+    test.Parallel()
+
+    err := cmd.DocsCmd.Execute()
+    require.NoError(test, err)
+    err = cmd.DocsCmd.RunE(cmd.DocsCmd, []string{})
+    require.NoError(test, err)
 }
