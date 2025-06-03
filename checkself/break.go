@@ -19,7 +19,7 @@ func (checkself *BasicCheckSelf) Break(
 	_ = ctx
 
 	if len(reportErrors) > 0 {
-		return reportChecks, reportInfo, reportErrors, wraperror.Errorf(errForPackage, "")
+		return reportChecks, reportInfo, reportErrors, wraperror.Errorf(errForPackage, wraperror.NoMessage)
 	}
 
 	return reportChecks, reportInfo, reportErrors, nil

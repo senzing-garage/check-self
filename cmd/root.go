@@ -101,7 +101,7 @@ func RunE(_ *cobra.Command, _ []string) error {
 
 	err := checkSelf.CheckSelf(ctx)
 
-	return wraperror.Errorf(err, "RunE error: %w", err)
+	return wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 // Used in construction of cobra.Command.

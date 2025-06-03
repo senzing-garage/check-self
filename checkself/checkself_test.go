@@ -80,7 +80,7 @@ func TestBasicCheckSelf_CheckDatabaseSchema(test *testing.T) {
 func TestBasicCheckSelf_CheckDatabaseSchema_badDatabaseURL(test *testing.T) {
 	test.Parallel()
 	ctx := test.Context()
-	expected := "SENZING_TOOLS_DATABASE_URL = bad-database-URL is misconfigured. Could not create a database connector. For more information, visit https://hub.senzing.com/...  Error: connector.NewConnector error: unknown database scheme:  error: connector"
+	expected := `SENZING_TOOLS_DATABASE_URL = bad-database-URL is misconfigured. Could not create a database connector. For more information, visit https://hub.senzing.com/...  Error: {"function": "connector.NewConnector", "error": {"function": "connector.NewConnector", "text": "unknown database scheme: ", "error": "connector"}}`
 	testObject := getTestObject(ctx, test)
 	badReportErrors := []string{}
 	testObject.DatabaseURL = "bad-database-URL"
@@ -210,7 +210,7 @@ func TestBasicCheckSelf_CheckSettings(test *testing.T) {
 func TestBasicCheckSelf_CheckSettings_badSettings(test *testing.T) {
 	test.Parallel()
 	ctx := test.Context()
-	expected := "SENZING_TOOLS_ENGINE_SETTINGS - incorrect JSON syntax in }{"
+	expected := `SENZING_TOOLS_ENGINE_SETTINGS - {"function": "settingsparser.New", "text": "incorrect JSON syntax in }{", "error": "settingsparser"}`
 	testObject := getTestObject(ctx, test)
 	testObject.Settings = badJSON
 	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckSettings(

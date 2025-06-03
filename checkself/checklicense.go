@@ -96,9 +96,8 @@ func (checkself *BasicCheckSelf) checkExpiry(expireInDays int) ([]string, error)
 	if err != nil {
 		return result, wraperror.Errorf(
 			err,
-			"Could not parse SENZING_TOOLS_LICENSE_DAYS_LEFT information: %s.  error: %w",
+			"Could not parse SENZING_TOOLS_LICENSE_DAYS_LEFT information: %s",
 			checkself.ErrorLicenseDaysLeft,
-			err,
 		)
 	}
 
@@ -112,7 +111,7 @@ func (checkself *BasicCheckSelf) checkExpiry(expireInDays int) ([]string, error)
 		)
 	}
 
-	return result, wraperror.Errorf(err, "checkself.checkExpiry error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 func (checkself *BasicCheckSelf) getLicense(ctx context.Context) (string, error) {
@@ -123,15 +122,15 @@ func (checkself *BasicCheckSelf) getLicense(ctx context.Context) (string, error)
 
 	szProduct, err := checkself.getSzProduct(ctx)
 	if err != nil {
-		return result, wraperror.Errorf(err, "Could not create szProduct.  error: %w", err)
+		return result, wraperror.Errorf(err, "Could not create szProduct")
 	}
 
 	result, err = szProduct.GetLicense(ctx)
 	if err != nil {
-		return result, wraperror.Errorf(err, "Could not get license information.  error: %w", err)
+		return result, wraperror.Errorf(err, "Could not get license information")
 	}
 
-	return result, wraperror.Errorf(err, "checkself.getLicense error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 func (checkself *BasicCheckSelf) checkRecordPercent(
@@ -148,9 +147,8 @@ func (checkself *BasicCheckSelf) checkRecordPercent(
 	if err != nil {
 		return result, wraperror.Errorf(
 			err,
-			"Could not parse SENZING_TOOLS_LICENSE_RECORDS_PERCENT information: %s.  error: %w",
+			"Could not parse SENZING_TOOLS_LICENSE_RECORDS_PERCENT information: %s.",
 			checkself.ErrorLicenseRecordsPercent,
-			err,
 		)
 	}
 
@@ -164,7 +162,7 @@ func (checkself *BasicCheckSelf) checkRecordPercent(
 		)
 	}
 
-	return result, wraperror.Errorf(err, "checkself.checkRecordPercent error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 func (checkself *BasicCheckSelf) getRecordCount(
@@ -177,7 +175,7 @@ func (checkself *BasicCheckSelf) getRecordCount(
 
 	databaseConnector, err := checkself.getDatabaseConnector(ctx)
 	if err != nil {
-		return result, wraperror.Errorf(err, "Could not connect to database.  Error %w", err)
+		return result, wraperror.Errorf(err, "Could not connect to database.")
 	}
 
 	checker := &checker.BasicChecker{
@@ -186,10 +184,10 @@ func (checkself *BasicCheckSelf) getRecordCount(
 
 	result, err = checker.RecordCount(ctx)
 	if err != nil {
-		return result, wraperror.Errorf(err, "Could not get count of records.  Error %w", err)
+		return result, wraperror.Errorf(err, "Could not get count of records.")
 	}
 
-	return result, wraperror.Errorf(err, "checkself.getRecordCount error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 // ----------------------------------------------------------------------------
@@ -221,13 +219,13 @@ func getExpireInDays(productLicenseResponse *ProductLicenseResponse) (int, error
 
 	licenseExpireDate, err := time.Parse(time.DateOnly, productLicenseResponse.ExpireDate)
 	if err != nil {
-		return result, wraperror.Errorf(err, "Could not parse expireDate information. error %w", err)
+		return result, wraperror.Errorf(err, "Could not parse expireDate information.")
 	}
 
 	duration := time.Until(licenseExpireDate)
 	result = int(duration.Hours() / hoursPerDay)
 
-	return result, wraperror.Errorf(err, "checkself.getExpireInDays error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 func getPrettyJSON(license string) (bytes.Buffer, error) {
@@ -235,10 +233,10 @@ func getPrettyJSON(license string) (bytes.Buffer, error) {
 
 	err := json.Indent(&result, []byte(license), "", "\t")
 	if err != nil {
-		return result, wraperror.Errorf(err, "Could not parse license information.  Error %w", err)
+		return result, wraperror.Errorf(err, "Could not parse license information.")
 	}
 
-	return result, wraperror.Errorf(err, "checkself.getPrettyJSON error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 func getProductLicenseResponse(license string) (*ProductLicenseResponse, error) {
@@ -246,10 +244,10 @@ func getProductLicenseResponse(license string) (*ProductLicenseResponse, error) 
 
 	err := json.Unmarshal([]byte(license), result)
 	if err != nil {
-		return result, wraperror.Errorf(err, "Could not parse license information into structure.  Error %w", err)
+		return result, wraperror.Errorf(err, "Could not parse license information into structure.")
 	}
 
-	return result, wraperror.Errorf(err, "checkself.getProductLicenseResponse error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 func returnValues(

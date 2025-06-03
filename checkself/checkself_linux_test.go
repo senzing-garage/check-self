@@ -32,7 +32,7 @@ func TestBasicCheckSelf_CheckSelf_Paths(test *testing.T) {
 func TestBasicCheckSelf_CheckDatabaseSchema_noSchemaInstalled(test *testing.T) {
 	test.Parallel()
 	ctx := test.Context()
-	expected := "Senzing database schema has not been installed in sqlite3://na:na@/tmp/sqlite/G2C-empty.db. For more information, visit https://hub.senzing.com/...  Error: checker.IsSchemaInstalled.row.Scan error: no such table: DSRC_RECORD"
+	expected := `Senzing database schema has not been installed in sqlite3://na:na@/tmp/sqlite/G2C-empty.db. For more information, visit https://hub.senzing.com/...  Error: {"function": "checker.(*BasicChecker).IsSchemaInstalled", "text": "row.Scan", "error": "no such table: DSRC_RECORD"}`
 	testObject := getTestObject(ctx, test)
 	badReportErrors := []string{}
 	testObject.DatabaseURL = "sqlite3://na:na@/tmp/sqlite/G2C-empty.db"
@@ -52,7 +52,7 @@ func TestBasicCheckSelf_CheckDatabaseSchema_noSchemaInstalled(test *testing.T) {
 func TestBasicCheckSelf_CheckLicense_badGetLicense(test *testing.T) {
 	test.Parallel()
 	ctx := test.Context()
-	expected := "Could not get count of records.  Error checker.RecordCount.row.Scan error: no such table: DSRC_RECORD"
+	expected := `{"function": "checkself.(*BasicCheckSelf).getRecordCount", "text": "Could not get count of records.", "error": {"function": "checker.(*BasicChecker).RecordCount", "text": "row.Scan", "error": "no such table: DSRC_RECORD"}}`
 	testObject := getTestObject(ctx, test)
 	testObject.Settings = `
         {
