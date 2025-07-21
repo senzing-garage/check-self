@@ -6,7 +6,6 @@ import (
 
 	"github.com/senzing-garage/check-self/checkself"
 	"github.com/senzing-garage/go-helpers/settings"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -44,9 +43,9 @@ func TestBasicCheckSelf_Break(test *testing.T) {
 		reportErrors(),
 	)
 	require.NoError(test, err)
-	assert.Empty(test, newReportChecks)
-	assert.Empty(test, newReportInfo)
-	assert.Empty(test, newReportErrors)
+	require.Empty(test, newReportChecks)
+	require.Empty(test, newReportInfo)
+	require.Empty(test, newReportErrors)
 }
 
 func TestBasicCheckSelf_Break_badReportErrors(test *testing.T) {
@@ -72,9 +71,9 @@ func TestBasicCheckSelf_CheckDatabaseSchema(test *testing.T) {
 		reportErrors(),
 	)
 	require.NoError(test, err)
-	assert.Empty(test, newReportChecks)
-	assert.Empty(test, newReportInfo)
-	assert.Empty(test, newReportErrors)
+	require.Empty(test, newReportChecks)
+	require.Empty(test, newReportInfo)
+	require.Empty(test, newReportErrors)
 }
 
 func TestBasicCheckSelf_CheckDatabaseSchema_badDatabaseURL(test *testing.T) {
@@ -91,10 +90,10 @@ func TestBasicCheckSelf_CheckDatabaseSchema_badDatabaseURL(test *testing.T) {
 		badReportErrors,
 	)
 	require.NoError(test, err)
-	assert.Len(test, newReportChecks, 1)
-	assert.Empty(test, newReportInfo)
-	assert.Len(test, newReportErrors, 1)
-	assert.Equal(test, expected, newReportErrors[0])
+	require.Len(test, newReportChecks, 1)
+	require.Empty(test, newReportInfo)
+	require.Len(test, newReportErrors, 1)
+	require.Equal(test, expected, newReportErrors[0])
 }
 
 func TestBasicCheckSelf_CheckLicense(test *testing.T) {
@@ -108,9 +107,9 @@ func TestBasicCheckSelf_CheckLicense(test *testing.T) {
 		reportErrors(),
 	)
 	require.NoError(test, err)
-	assert.Len(test, newReportChecks, 1)
-	assert.Len(test, newReportInfo, 1)
-	assert.Empty(test, newReportErrors)
+	require.Len(test, newReportChecks, 1)
+	require.Len(test, newReportInfo, 1)
+	require.Empty(test, newReportErrors)
 }
 
 func TestBasicCheckSelf_CheckLicense_badGetDatabaseURL(test *testing.T) {
@@ -137,9 +136,9 @@ func TestBasicCheckSelf_CheckLicense_badGetDatabaseURL(test *testing.T) {
 		reportErrors(),
 	)
 	require.NoError(test, err)
-	assert.Len(test, newReportChecks, 1)
-	assert.Empty(test, newReportInfo)
-	assert.Len(test, newReportErrors, 1)
+	require.Len(test, newReportChecks, 1)
+	require.Empty(test, newReportInfo)
+	require.Len(test, newReportErrors, 1)
 }
 
 func TestBasicCheckSelf_CheckSelf(test *testing.T) {
@@ -186,9 +185,9 @@ func TestBasicCheckSelf_CheckSenzingConfiguration_badGetDefaultConfigID(test *te
 		reportErrors(),
 	)
 	require.NoError(test, err)
-	assert.Len(test, newReportChecks, 1)
-	// assert.Len(test, newReportErrors, 1)
-	assert.Empty(test, newReportInfo)
+	require.Len(test, newReportChecks, 1)
+	// require.Len(test, newReportErrors, 1)
+	require.Empty(test, newReportInfo)
 }
 
 func TestBasicCheckSelf_CheckSettings(test *testing.T) {
@@ -202,9 +201,9 @@ func TestBasicCheckSelf_CheckSettings(test *testing.T) {
 		reportErrors(),
 	)
 	require.NoError(test, err)
-	assert.Len(test, newReportChecks, 1)
-	assert.Empty(test, newReportInfo)
-	assert.Empty(test, newReportErrors)
+	require.Len(test, newReportChecks, 1)
+	require.Empty(test, newReportInfo)
+	require.Empty(test, newReportErrors)
 }
 
 func TestBasicCheckSelf_CheckSettings_badSettings(test *testing.T) {
@@ -220,10 +219,10 @@ func TestBasicCheckSelf_CheckSettings_badSettings(test *testing.T) {
 		reportErrors(),
 	)
 	require.NoError(test, err)
-	assert.Len(test, newReportChecks, 1)
-	assert.Empty(test, newReportInfo)
-	assert.Len(test, newReportErrors, 1)
-	assert.Equal(test, expected, newReportErrors[0])
+	require.Len(test, newReportChecks, 1)
+	require.Empty(test, newReportInfo)
+	require.Len(test, newReportErrors, 1)
+	require.Equal(test, expected, newReportErrors[0])
 }
 
 // ----------------------------------------------------------------------------
@@ -244,9 +243,9 @@ func TestBasicCheckSelf_CheckSettings_badSettings(test *testing.T) {
 // 	testObject.Settings = ""
 // 	newReportChecks, newReportInfo, newReportErrors, err := testObject.Break(ctx, reportChecks(), reportInfo(), reportErrors())
 // 	require.NoError(test, err)
-// 	assert.Len(test, newReportChecks, 0)
-// 	assert.Len(test, newReportInfo, 0)
-// 	assert.Len(test, newReportErrors, 0)
+// 	require.Len(test, newReportChecks, 0)
+// 	require.Len(test, newReportInfo, 0)
+// 	require.Len(test, newReportErrors, 0)
 // }
 
 // ----------------------------------------------------------------------------
@@ -307,7 +306,7 @@ func TestBasicCheckSelf_CheckDatabaseURL_badURLParse(test *testing.T) {
 	expected := "VariableName = \n\tnot-a-URL is misconfigured. Could not parse database URL. For more information, visit https://hub.senzing.com/...  Error: parse \"\\n\\tnot-a-URL\": net/url: invalid control character in URL"
 	badDatabaseURL := "\n\tnot-a-URL"
 	actual := checkself.CheckDatabaseURL(ctx, variableName, badDatabaseURL)
-	assert.Equal(test, expected, actual[0])
+	require.Equal(test, expected, actual[0])
 }
 
 func TestBasicCheckSelf_CheckDatabaseURL_badURLParse_postgres(test *testing.T) {
@@ -334,7 +333,7 @@ func TestBasicCheckSelf_CheckDatabaseURL_badSchemaLength(test *testing.T) {
 	expected := "VariableName = not-a-URL is misconfigured. A database scheme is needed (e.g. postgresql://...). For more information, visit https://hub.senzing.com/..."
 	badDatabaseURL := "not-a-URL"
 	actual := checkself.CheckDatabaseURL(ctx, variableName, badDatabaseURL)
-	assert.Equal(test, expected, actual[0])
+	require.Equal(test, expected, actual[0])
 }
 
 func TestBasicCheckSelf_CheckDatabaseURL_badSchema(test *testing.T) {
@@ -343,7 +342,7 @@ func TestBasicCheckSelf_CheckDatabaseURL_badSchema(test *testing.T) {
 	expected := "VariableName = badScheme://xxx is misconfigured. Scheme 'badscheme://' is not recognized. For more information, visit https://hub.senzing.com/..."
 	badDatabaseURL := "badScheme://xxx"
 	actual := checkself.CheckDatabaseURL(ctx, variableName, badDatabaseURL)
-	assert.Equal(test, expected, actual[0])
+	require.Equal(test, expected, actual[0])
 }
 
 // ----------------------------------------------------------------------------

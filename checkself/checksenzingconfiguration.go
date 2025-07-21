@@ -18,12 +18,19 @@ func (checkself *BasicCheckSelf) CheckSenzingConfiguration(
 
 	// Create Senzing objects.
 
-	szConfigManager, err := checkself.getSzConfigManager(ctx)
+	szConfigManager, err := checkself.createSzConfigManager(ctx)
 	if err != nil {
 		reportErrors = append(reportErrors, "Could not create szConfigManager.  Error: "+err.Error())
 
-		return reportChecks, reportInfo, reportErrors, nil //nolint
+		return reportChecks, reportInfo, reportErrors, nil
 	}
+
+	defer func() {
+		err := szConfigManager.Destroy(ctx)
+		if err != nil {
+			panic(err)
+		}
+	}()
 
 	// Determine if Configuration exists.
 
@@ -34,7 +41,7 @@ func (checkself *BasicCheckSelf) CheckSenzingConfiguration(
 			"Could not get Senzing default configuration ID.  Error "+err.Error(),
 		)
 
-		return reportChecks, reportInfo, reportErrors, nil //nolint
+		return reportChecks, reportInfo, reportErrors, nil
 	}
 
 	if configID == 0 {

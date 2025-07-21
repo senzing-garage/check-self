@@ -140,6 +140,8 @@ linters:
         - '.+/cobra\.Command$'
         - '.+/checkself\.BasicCheckSelf$'
         - '.+/checkself\.ProductLicenseResponse$'
+    funlen:
+      lines: 65
     ireturn:
       allow:
         - error

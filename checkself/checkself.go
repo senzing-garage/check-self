@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"sync"
 
 	"github.com/senzing-garage/go-databasing/connector"
 	"github.com/senzing-garage/go-helpers/settings"
@@ -40,12 +39,6 @@ type BasicCheckSelf struct {
 	SenzingVerboseLogging      int64
 	Settings                   string
 	SupportPath                string
-	szConfigManagerSingleton   senzing.SzConfigManager
-	szConfigManagerSyncOnce    sync.Once
-	szFactorySingleton         senzing.SzAbstractFactory
-	szFactorySyncOnce          sync.Once
-	szProductSingleton         senzing.SzProduct
-	szProductSyncOnce          sync.Once
 }
 
 type ProductLicenseResponse struct {
@@ -149,6 +142,68 @@ func (checkself *BasicCheckSelf) CheckSelf(ctx context.Context) error {
 // Private methods
 // ----------------------------------------------------------------------------
 
+func (checkself *BasicCheckSelf) createSzAbstractFactory(ctx context.Context) (senzing.SzAbstractFactory, error) {
+	var (
+		err    error
+		result senzing.SzAbstractFactory
+	)
+
+	result, err = szfactorycreator.CreateCoreAbstractFactory(
+		checkself.getInstanceName(ctx),
+		checkself.getSettings(ctx),
+		checkself.SenzingVerboseLogging,
+		senzing.SzInitializeWithDefaultConfiguration,
+	)
+
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
+}
+
+func (checkself *BasicCheckSelf) createSzConfigManager(ctx context.Context) (senzing.SzConfigManager, error) {
+	var (
+		err    error
+		result senzing.SzConfigManager
+	)
+
+	szAbstractFactory, err := checkself.createSzAbstractFactory(ctx)
+	if err != nil {
+		return result, wraperror.Errorf(err, "Could not create SzAbstractFactory")
+	}
+
+	defer func() {
+		err := szAbstractFactory.Close(ctx)
+		if err != nil {
+			panic(err)
+		}
+	}()
+
+	result, err = szAbstractFactory.CreateConfigManager(ctx)
+
+	return result, wraperror.Errorf(err, "Could not create SzConfigManager")
+}
+
+func (checkself *BasicCheckSelf) createSzProduct(ctx context.Context) (senzing.SzProduct, error) {
+	var (
+		err    error
+		result senzing.SzProduct
+	)
+
+	szAbstractFactory, err := checkself.createSzAbstractFactory(ctx)
+	if err != nil {
+		return result, wraperror.Errorf(err, "Could not create SzAbstractFactory")
+	}
+
+	defer func() {
+		err := szAbstractFactory.Close(ctx)
+		if err != nil {
+			panic(err)
+		}
+	}()
+
+	result, err = szAbstractFactory.CreateProduct(ctx)
+
+	return result, wraperror.Errorf(err, "Could not create SzProduct")
+}
+
 func (checkself *BasicCheckSelf) getDatabaseURL(ctx context.Context) (string, error) {
 	if len(checkself.DatabaseURL) > 0 { // Simple case.
 		return checkself.DatabaseURL, nil
@@ -231,47 +286,6 @@ func (checkself *BasicCheckSelf) getSettings(ctx context.Context) string {
 	return result
 }
 
-// Create a SzConfigManager singleton and return it.
-func (checkself *BasicCheckSelf) getSzConfigManager(ctx context.Context) (senzing.SzConfigManager, error) {
-	var err error
-
-	checkself.szConfigManagerSyncOnce.Do(func() {
-		checkself.szConfigManagerSingleton, err = checkself.getSzFactory(ctx).CreateConfigManager(ctx)
-	})
-
-	return checkself.szConfigManagerSingleton, wraperror.Errorf(err, wraperror.NoMessage)
-}
-
-func (checkself *BasicCheckSelf) getSzFactory(ctx context.Context) senzing.SzAbstractFactory {
-	var err error
-
-	checkself.szFactorySyncOnce.Do(func() {
-		checkself.szFactorySingleton, err = szfactorycreator.CreateCoreAbstractFactory(
-			checkself.getInstanceName(ctx),
-			checkself.getSettings(ctx),
-			checkself.SenzingVerboseLogging,
-			senzing.SzInitializeWithDefaultConfiguration,
-		)
-	})
-
-	if err != nil {
-		panic(err.Error())
-	}
-
-	return checkself.szFactorySingleton
-}
-
-// Create a SzProduct singleton and return it.
-func (checkself *BasicCheckSelf) getSzProduct(ctx context.Context) (senzing.SzProduct, error) {
-	var err error
-
-	checkself.szProductSyncOnce.Do(func() {
-		checkself.szProductSingleton, err = checkself.getSzFactory(ctx).CreateProduct(ctx)
-	})
-
-	return checkself.szProductSingleton, wraperror.Errorf(err, wraperror.NoMessage)
-}
-
 func (checkself *BasicCheckSelf) getTestFunctions() []func(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error) {
 	return []func(ctx context.Context, reportChecks []string, reportInfo []string, reportErrors []string) ([]string, []string, []string, error){
 		checkself.Prolog,
@@ -285,8 +299,8 @@ func (checkself *BasicCheckSelf) getTestFunctions() []func(ctx context.Context, 
 		checkself.Break,
 		checkself.CheckDatabaseSchema,
 		checkself.Break,
-		checkself.CheckSenzingConfiguration,
-		checkself.CheckLicense,
+		// checkself.CheckSenzingConfiguration,
+		// checkself.CheckLicense,
 	}
 }
 

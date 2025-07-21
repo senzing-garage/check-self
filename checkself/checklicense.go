@@ -120,10 +120,17 @@ func (checkself *BasicCheckSelf) getLicense(ctx context.Context) (string, error)
 		result string
 	)
 
-	szProduct, err := checkself.getSzProduct(ctx)
+	szProduct, err := checkself.createSzProduct(ctx)
 	if err != nil {
 		return result, wraperror.Errorf(err, "Could not create szProduct")
 	}
+
+	defer func() {
+		err := szProduct.Destroy(ctx)
+		if err != nil {
+			panic(err)
+		}
+	}()
 
 	result, err = szProduct.GetLicense(ctx)
 	if err != nil {
