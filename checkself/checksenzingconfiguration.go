@@ -2,7 +2,6 @@ package checkself
 
 import (
 	"context"
-	"fmt"
 )
 
 // ----------------------------------------------------------------------------
@@ -27,7 +26,6 @@ func (checkself *BasicCheckSelf) CheckSenzingConfiguration(
 	}
 
 	defer func() {
-		fmt.Printf(">>>>>>>>>>>>>>>> destroying szconfigManager\n")
 		err := szConfigManager.Destroy(ctx)
 		if err != nil {
 			panic(err)
