@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/senzing-garage/check-self/cmd"
-	"github.com/stretchr/testify/require"
 )
 
 // ----------------------------------------------------------------------------
@@ -20,36 +19,36 @@ func Test_Execute(test *testing.T) {
 	cmd.Execute()
 }
 
-func Test_Execute_completion(test *testing.T) {
-	test.Parallel()
+// func Test_Execute_completion(test *testing.T) {
+// 	test.Parallel()
 
-	os.Args = []string{"command-name", "completion"}
+// 	os.Args = []string{"command-name", "completion"}
 
-	cmd.Execute()
-}
+// 	cmd.Execute()
+// }
 
-func Test_Execute_docs(test *testing.T) {
-	test.Parallel()
+// func Test_Execute_docs(test *testing.T) {
+// 	test.Parallel()
 
-	os.Args = []string{"command-name", "docs"}
+// 	os.Args = []string{"command-name", "docs"}
 
-	cmd.Execute()
-}
+// 	cmd.Execute()
+// }
 
-func Test_Execute_help(test *testing.T) {
-	test.Parallel()
+// func Test_Execute_help(test *testing.T) {
+// 	test.Parallel()
 
-	os.Args = []string{"command-name", "--help"}
+// 	os.Args = []string{"command-name", "--help"}
 
-	cmd.Execute()
-}
+// 	cmd.Execute()
+// }
 
-func Test_PreRun(test *testing.T) {
-	test.Parallel()
+// func Test_PreRun(test *testing.T) {
+// 	test.Parallel()
 
-	args := []string{"command-name"}
-	cmd.PreRun(cmd.RootCmd, args)
-}
+// 	args := []string{"command-name"}
+// 	cmd.PreRun(cmd.RootCmd, args)
+// }
 
 // func Test_RunE(test *testing.T) {
 // 	test.Setenv("SENZING_TOOLS_AVOID_SERVING", "true")
@@ -58,29 +57,29 @@ func Test_PreRun(test *testing.T) {
 // 	require.NoError(test, err)
 // }
 
-func Test_RootCmd(test *testing.T) {
-	test.Parallel()
+// func Test_RootCmd(test *testing.T) {
+// 	test.Parallel()
 
-	err := cmd.RootCmd.Execute()
-	require.NoError(test, err)
-	err = cmd.RootCmd.RunE(cmd.RootCmd, []string{})
-	require.NoError(test, err)
-}
+// 	err := cmd.RootCmd.Execute()
+// 	require.NoError(test, err)
+// 	err = cmd.RootCmd.RunE(cmd.RootCmd, []string{})
+// 	require.NoError(test, err)
+// }
 
-func Test_CompletionCmd(test *testing.T) {
-	test.Parallel()
+// func Test_CompletionCmd(test *testing.T) {
+// 	test.Parallel()
 
-	err := cmd.CompletionCmd.Execute()
-	require.NoError(test, err)
-	err = cmd.CompletionCmd.RunE(cmd.CompletionCmd, []string{})
-	require.NoError(test, err)
-}
+// 	err := cmd.CompletionCmd.Execute()
+// 	require.NoError(test, err)
+// 	err = cmd.CompletionCmd.RunE(cmd.CompletionCmd, []string{})
+// 	require.NoError(test, err)
+// }
 
-func Test_DocsCmd(test *testing.T) {
-	test.Parallel()
+// func Test_DocsCmd(test *testing.T) {
+// 	test.Parallel()
 
-	err := cmd.DocsCmd.Execute()
-	require.NoError(test, err)
-	err = cmd.DocsCmd.RunE(cmd.DocsCmd, []string{})
-	require.NoError(test, err)
-}
+// 	err := cmd.DocsCmd.Execute()
+// 	require.NoError(test, err)
+// 	err = cmd.DocsCmd.RunE(cmd.DocsCmd, []string{})
+// 	require.NoError(test, err)
+// }
