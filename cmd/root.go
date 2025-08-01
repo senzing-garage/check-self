@@ -29,9 +29,9 @@ check-self long description.
 var ContextVariablesForMultiPlatform = []option.ContextVariable{
 	option.ConfigPath,
 	option.Configuration,
+	option.CoreLogLevel,
+	option.CoreSettings,
 	option.DatabaseURL,
-	option.EngineSettings,
-	option.EngineLogLevel,
 	option.GrpcURL,
 	option.InputURL,
 	option.LicenseDaysLeft,
@@ -85,8 +85,8 @@ func RunE(_ *cobra.Command, _ []string) error {
 	checkSelf := &checkself.BasicCheckSelf{
 		ConfigPath:                 viper.GetString(option.ConfigPath.Arg),
 		DatabaseURL:                viper.GetString(option.DatabaseURL.Arg),
-		Settings:                   viper.GetString(option.EngineSettings.Arg),
-		EngineLogLevel:             viper.GetString(option.EngineLogLevel.Arg),
+		Settings:                   viper.GetString(option.CoreSettings.Arg),
+		EngineLogLevel:             viper.GetString(option.CoreLogLevel.Arg),
 		ErrorLicenseDaysLeft:       viper.GetString(option.LicenseDaysLeft.Arg),
 		ErrorLicenseRecordsPercent: viper.GetString(option.LicenseRecordsPercent.Arg),
 		GrpcURL:                    viper.GetString(option.GrpcPort.Arg),
