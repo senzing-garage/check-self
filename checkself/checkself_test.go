@@ -209,7 +209,7 @@ func TestBasicCheckSelf_CheckSettings(test *testing.T) {
 func TestBasicCheckSelf_CheckSettings_badSettings(test *testing.T) {
 	test.Parallel()
 	ctx := test.Context()
-	expected := `SENZING_TOOLS_ENGINE_SETTINGS - {"function": "settingsparser.New", "text": "incorrect JSON syntax in }{", "error": "settingsparser"}`
+	expected := `SENZING_TOOLS_CORE_SETTINGS - {"function": "settingsparser.New", "text": "incorrect JSON syntax in }{", "error": "settingsparser"}`
 	testObject := getTestObject(ctx, test)
 	testObject.Settings = badJSON
 	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckSettings(
