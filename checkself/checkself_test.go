@@ -184,12 +184,13 @@ func TestBasicCheckSelf_CheckSenzingConfiguration_badGetDefaultConfigID(test *te
         }
         `
 	testObject.DatabaseURL = "sqlite3://na:na@/tmp/sqlite/G2C-empty.db"
-	reportChecks, reportInfo, _, err := testObject.CheckSenzingConfiguration(
+	reportChecks, reportInfo, reportErrors, err := testObject.CheckSenzingConfiguration(
 		ctx,
 		reportChecks(),
 		reportInfo(),
 		reportErrors(),
 	)
+	printReportErrors(test, reportErrors)
 	require.NoError(test, err)
 	require.Len(test, reportChecks, 1)
 	// require.Len(test, newReportErrors, 1)
