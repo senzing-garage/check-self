@@ -32,37 +32,37 @@ func (checkself *BasicCheckSelf) CheckLicense(
 
 	recordCount, err := checkself.getRecordCount(ctx)
 	if err != nil {
-		return returnValues(reportChecks, reportInfo, reportErrors, err)
+		return returnValues(reportChecks, reportInfo, reportErrors, err, "getRecordCount")
 	}
 
 	license, err := checkself.getLicense(ctx)
 	if err != nil {
-		return returnValues(reportChecks, reportInfo, reportErrors, err)
+		return returnValues(reportChecks, reportInfo, reportErrors, err, "getLicense")
 	}
 
 	productLicenseResponse, err := getProductLicenseResponse(license)
 	if err != nil {
-		return returnValues(reportChecks, reportInfo, reportErrors, err)
+		return returnValues(reportChecks, reportInfo, reportErrors, err, "getProductLicenseResponse")
 	}
 
 	prettyJSON, err := getPrettyJSON(license)
 	if err != nil {
-		return returnValues(reportChecks, reportInfo, reportErrors, err)
+		return returnValues(reportChecks, reportInfo, reportErrors, err, "getPrettyJSON")
 	}
 
 	expireInDays, err := getExpireInDays(productLicenseResponse)
 	if err != nil {
-		return returnValues(reportChecks, reportInfo, reportErrors, err)
+		return returnValues(reportChecks, reportInfo, reportErrors, err, "getExpireInDays")
 	}
 
 	expiryErrors, err := checkself.checkExpiry(expireInDays)
 	if err != nil {
-		return returnValues(reportChecks, reportInfo, reportErrors, err)
+		return returnValues(reportChecks, reportInfo, reportErrors, err, "checkExpiry")
 	}
 
 	recordPercentErrors, err := checkself.checkRecordPercent(recordCount, productLicenseResponse)
 	if err != nil {
-		return returnValues(reportChecks, reportInfo, reportErrors, err)
+		return returnValues(reportChecks, reportInfo, reportErrors, err, "checkRecordPercent")
 	}
 
 	reportInfo = append(reportInfo,
@@ -262,9 +262,11 @@ func returnValues(
 	reportInfo []string,
 	reportErrors []string,
 	err error,
+	message string,
 ) ([]string, []string, []string, error) {
 	if err != nil {
-		reportErrors = append(reportErrors, err.Error())
+		errorMessage := fmt.Sprintf("%s: %s", message, err.Error())
+		reportErrors = append(reportErrors, errorMessage)
 	}
 
 	return reportChecks, reportInfo, reportErrors, nil

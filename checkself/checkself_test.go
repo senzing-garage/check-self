@@ -36,16 +36,17 @@ func TestBasicCheckSelf_Break(test *testing.T) {
 	test.Parallel()
 	ctx := test.Context()
 	testObject := getTestObject(ctx, test)
-	newReportChecks, newReportInfo, newReportErrors, err := testObject.Break(
+	reportChecks, reportInfo, reportErrors, err := testObject.Break(
 		ctx,
 		reportChecks(),
 		reportInfo(),
 		reportErrors(),
 	)
+	printReportErrors(test, reportErrors)
 	require.NoError(test, err)
-	require.Empty(test, newReportChecks)
-	require.Empty(test, newReportInfo)
-	require.Empty(test, newReportErrors)
+	require.Empty(test, reportChecks)
+	require.Empty(test, reportInfo)
+	require.Empty(test, reportErrors)
 }
 
 func TestBasicCheckSelf_Break_badReportErrors(test *testing.T) {
@@ -54,6 +55,7 @@ func TestBasicCheckSelf_Break_badReportErrors(test *testing.T) {
 	testObject := getTestObject(ctx, test)
 	badReportErrors := []string{"example error text"}
 	reportChecks, reportInfo, reportErrors, err := testObject.Break(ctx, reportChecks(), reportInfo(), badReportErrors)
+	printReportErrors(test, reportErrors)
 	require.Error(test, err)
 	require.Empty(test, reportChecks, "reportChecks")
 	require.Empty(test, reportInfo, "reportInfo")
@@ -64,16 +66,17 @@ func TestBasicCheckSelf_CheckDatabaseSchema(test *testing.T) {
 	test.Parallel()
 	ctx := test.Context()
 	testObject := getTestObject(ctx, test)
-	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckDatabaseSchema(
+	reportChecks, reportInfo, reportErrors, err := testObject.CheckDatabaseSchema(
 		ctx,
 		reportChecks(),
 		reportInfo(),
 		reportErrors(),
 	)
+	printReportErrors(test, reportErrors)
 	require.NoError(test, err)
-	require.Empty(test, newReportChecks)
-	require.Empty(test, newReportInfo)
-	require.Empty(test, newReportErrors)
+	require.Empty(test, reportChecks)
+	require.Empty(test, reportInfo)
+	require.Empty(test, reportErrors)
 }
 
 func TestBasicCheckSelf_CheckDatabaseSchema_badDatabaseURL(test *testing.T) {
@@ -83,33 +86,35 @@ func TestBasicCheckSelf_CheckDatabaseSchema_badDatabaseURL(test *testing.T) {
 	testObject := getTestObject(ctx, test)
 	badReportErrors := []string{}
 	testObject.DatabaseURL = "bad-database-URL"
-	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckDatabaseSchema(
+	reportChecks, reportInfo, reportErrors, err := testObject.CheckDatabaseSchema(
 		ctx,
 		reportChecks(),
 		reportInfo(),
 		badReportErrors,
 	)
+	printReportErrors(test, reportErrors)
 	require.NoError(test, err)
-	require.Len(test, newReportChecks, 1)
-	require.Empty(test, newReportInfo)
-	require.Len(test, newReportErrors, 1)
-	require.Equal(test, expected, newReportErrors[0])
+	require.Len(test, reportChecks, 1)
+	require.Empty(test, reportInfo)
+	require.Len(test, reportErrors, 1)
+	require.Equal(test, expected, reportErrors[0])
 }
 
 func TestBasicCheckSelf_CheckLicense(test *testing.T) {
 	test.Parallel()
 	ctx := test.Context()
 	testObject := getTestObject(ctx, test)
-	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckLicense(
+	reportChecks, reportInfo, reportErrors, err := testObject.CheckLicense(
 		ctx,
 		reportChecks(),
 		reportInfo(),
 		reportErrors(),
 	)
+	printReportErrors(test, reportErrors)
 	require.NoError(test, err)
-	require.Len(test, newReportChecks, 1)
-	require.Len(test, newReportInfo, 1)
-	require.Empty(test, newReportErrors)
+	require.Len(test, reportChecks, 1)
+	require.Len(test, reportInfo, 1)
+	require.Empty(test, reportErrors)
 }
 
 func TestBasicCheckSelf_CheckLicense_badGetDatabaseURL(test *testing.T) {
@@ -129,16 +134,17 @@ func TestBasicCheckSelf_CheckLicense_badGetDatabaseURL(test *testing.T) {
             }
         }
         `
-	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckLicense(
+	reportChecks, reportInfo, reportErrors, err := testObject.CheckLicense(
 		ctx,
 		reportChecks(),
 		reportInfo(),
 		reportErrors(),
 	)
+	printReportErrors(test, reportErrors)
 	require.NoError(test, err)
-	require.Len(test, newReportChecks, 1)
-	require.Empty(test, newReportInfo)
-	require.Len(test, newReportErrors, 1)
+	require.Len(test, reportChecks, 1)
+	require.Empty(test, reportInfo)
+	require.Len(test, reportErrors, 1)
 }
 
 func TestBasicCheckSelf_CheckSelf(test *testing.T) {
@@ -178,32 +184,34 @@ func TestBasicCheckSelf_CheckSenzingConfiguration_badGetDefaultConfigID(test *te
         }
         `
 	testObject.DatabaseURL = "sqlite3://na:na@/tmp/sqlite/G2C-empty.db"
-	newReportChecks, newReportInfo, _, err := testObject.CheckSenzingConfiguration(
+	reportChecks, reportInfo, reportErrors, err := testObject.CheckSenzingConfiguration(
 		ctx,
 		reportChecks(),
 		reportInfo(),
 		reportErrors(),
 	)
+	printReportErrors(test, reportErrors)
 	require.NoError(test, err)
-	require.Len(test, newReportChecks, 1)
+	require.Len(test, reportChecks, 1)
 	// require.Len(test, newReportErrors, 1)
-	require.Empty(test, newReportInfo)
+	require.Empty(test, reportInfo)
 }
 
 func TestBasicCheckSelf_CheckSettings(test *testing.T) {
 	test.Parallel()
 	ctx := test.Context()
 	testObject := getTestObject(ctx, test)
-	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckSettings(
+	reportChecks, reportInfo, reportErrors, err := testObject.CheckSettings(
 		ctx,
 		reportChecks(),
 		reportInfo(),
 		reportErrors(),
 	)
+	printReportErrors(test, reportErrors)
 	require.NoError(test, err)
-	require.Len(test, newReportChecks, 1)
-	require.Empty(test, newReportInfo)
-	require.Empty(test, newReportErrors)
+	require.Len(test, reportChecks, 1)
+	require.Empty(test, reportInfo)
+	require.Empty(test, reportErrors)
 }
 
 func TestBasicCheckSelf_CheckSettings_badSettings(test *testing.T) {
@@ -212,17 +220,18 @@ func TestBasicCheckSelf_CheckSettings_badSettings(test *testing.T) {
 	expected := `SENZING_TOOLS_CORE_SETTINGS - {"function": "settingsparser.New", "text": "incorrect JSON syntax in }{", "error": "settingsparser"}`
 	testObject := getTestObject(ctx, test)
 	testObject.Settings = badJSON
-	newReportChecks, newReportInfo, newReportErrors, err := testObject.CheckSettings(
+	reportChecks, reportInfo, reportErrors, err := testObject.CheckSettings(
 		ctx,
 		reportChecks(),
 		reportInfo(),
 		reportErrors(),
 	)
+	printReportErrors(test, reportErrors)
 	require.NoError(test, err)
-	require.Len(test, newReportChecks, 1)
-	require.Empty(test, newReportInfo)
-	require.Len(test, newReportErrors, 1)
-	require.Equal(test, expected, newReportErrors[0])
+	require.Len(test, reportChecks, 1)
+	require.Empty(test, reportInfo)
+	require.Len(test, reportErrors, 1)
+	require.Equal(test, expected, reportErrors[0])
 }
 
 // ----------------------------------------------------------------------------
@@ -361,6 +370,16 @@ func getTestObject(ctx context.Context, t *testing.T) *checkself.BasicCheckSelf 
 	}
 
 	return result
+}
+
+func printReportErrors(t *testing.T, reportErrors []string) {
+	t.Helper()
+
+	if len(reportErrors) > 0 {
+		for reportError := range reportErrors {
+			t.Log(reportError)
+		}
+	}
 }
 
 func reportChecks() []string {

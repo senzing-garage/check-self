@@ -52,7 +52,7 @@ func TestBasicCheckSelf_CheckDatabaseSchema_noSchemaInstalled(test *testing.T) {
 func TestBasicCheckSelf_CheckLicense_badGetLicense(test *testing.T) {
 	test.Parallel()
 	ctx := test.Context()
-	expected := `{"function": "checkself.(*BasicCheckSelf).getRecordCount", "text": "Could not get count of records.", "error": {"function": "checker.(*BasicChecker).RecordCount", "text": "row.Scan", "error": "no such table: DSRC_RECORD"}}`
+	expected := `getRecordCount: {"function": "checkself.(*BasicCheckSelf).getRecordCount", "text": "Could not get count of records.", "error": {"function": "checker.(*BasicChecker).RecordCount", "text": "row.Scan", "error": "no such table: DSRC_RECORD"}}`
 	testObject := getTestObject(ctx, test)
 	testObject.Settings = `
         {
