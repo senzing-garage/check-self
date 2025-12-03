@@ -40,6 +40,7 @@ make check-coverage
 ```
 
 Running a single test:
+
 ```bash
 go test -v -run TestFunctionName ./checkself/...
 ```
@@ -82,6 +83,7 @@ Linter config: `.github/linters/.golangci.yaml`
 ## Environment Requirements
 
 Senzing C library must be installed:
+
 - `/opt/senzing/er/lib` - Shared objects
 - `/opt/senzing/er/sdk/c` - SDK header files
 - `/etc/opt/senzing` - Configuration
