@@ -42,7 +42,7 @@ This command reviews the environment in which the command is run and returns a r
 1. [Examples]
 1. [Package reference]
 1. Related artifacts:
-    1. [DockerHub]
+   1. [DockerHub]
 
 [SDK documentation]: https://pkg.go.dev/github.com/senzing-garage/check-self
 [Development]: docs/development.md
