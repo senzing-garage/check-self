@@ -8,7 +8,6 @@ import (
 )
 
 var RequiredSupportFiles = []string{
-	"anyTransRule.ibm",
 	"g2SifterRules.ibm",
 }
 
