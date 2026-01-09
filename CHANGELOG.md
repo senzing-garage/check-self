@@ -2,12 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog], [markdownlint],
-and this project adheres to [Semantic Versioning].
+The changelog format is based on [Keep a Changelog] and [CommonMark].
+This project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
 -
+
+## [0.3.12] - 2026-01-08
+
+### Added in 0.3.12
+
+- SECURITY.md with vulnerability reporting guidelines
+
+### Changed in 0.3.12
+
+- Update CODE_OF_CONDUCT.md to Contributor Covenant 3.0
+- Update CONTRIBUTING.md with support contact and Discussions link
+- Update package.Dockerfile to golang:1.25.5-bookworm
+- Update makefiles/darwin.mk to use `/opt/senzing/er` as default SENZING_DIR
+
+### Fixed in 0.3.12
+
+- Fix Windows ARM64 architecture detection in makefiles/osdetect.mk (`arm4` → `arm64`)
 
 ## [0.3.11] - 2025-10-24
 
@@ -128,6 +145,6 @@ and this project adheres to [Semantic Versioning].
 
 - Initial checks
 
-[Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
-[markdownlint]: https://dlaa.me/markdownlint/
-[Semantic Versioning]: https://semver.org/spec/v2.0.0.html
+[CommonMark]: https://commonmark.org/
+[Keep a Changelog]: https://keepachangelog.com/
+[Semantic Versioning]: https://semver.org/
