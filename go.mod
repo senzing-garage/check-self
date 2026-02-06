@@ -7,7 +7,7 @@ require (
 	github.com/senzing-garage/go-databasing v0.5.9
 	github.com/senzing-garage/go-helpers v0.6.15
 	github.com/senzing-garage/go-sdk-abstract-factory v0.9.17
-	github.com/senzing-garage/sz-sdk-go v0.15.11
+	github.com/senzing-garage/sz-sdk-go v0.15.12
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.11.1
