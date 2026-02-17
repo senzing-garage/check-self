@@ -15,7 +15,7 @@ const (
 	expectedQuestionMarks = "????"
 	mssqlURL              = "mssql://username:password@server:port:database/?driver=mssqldriver"
 	mysqlURL              = "mysql://username:password@hostname:3306/?schema=schemaname"
-	ociURL                = "oci://username:password@database"
+	ociURL                = "oci://username:password@database" // #nosec G101 -- test data with dummy credentials
 	postgresqlURL         = "postgresql://username:password@hostname:5432:database/?schema=schemaname:"
 	sqlite3URL            = "sqlite3://na:na@/tmp/sqlite/G2C.db"
 	variableName          = "VariableName"
