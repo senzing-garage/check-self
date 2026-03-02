@@ -185,7 +185,6 @@ func TestBasicCheckSelf_CheckSenzingConfiguration_badGetDefaultConfigID(test *te
 	require.Len(test, reportChecks, 1)
 	// require.Len(test, newReportErrors, 1)
 	require.Empty(test, reportInfo)
-
 }
 
 func TestBasicCheckSelf_CheckSettings(test *testing.T) {
