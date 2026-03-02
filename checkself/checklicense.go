@@ -137,8 +137,6 @@ func (checkself *BasicCheckSelf) getLicense(ctx context.Context) (string, error)
 		return result, wraperror.Errorf(err, "Could not get license information")
 	}
 
-	fmt.Printf(">>>>>> License: %s\n", result)
-
 	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 

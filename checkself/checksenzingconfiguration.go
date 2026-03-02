@@ -2,7 +2,6 @@ package checkself
 
 import (
 	"context"
-	"fmt"
 )
 
 // ----------------------------------------------------------------------------
@@ -19,15 +18,12 @@ func (checkself *BasicCheckSelf) CheckSenzingConfiguration(
 
 	// Create Senzing objects.
 
-	fmt.Println(">>>>>>> 2.1")
-
 	szConfigManager, err := checkself.createSzConfigManager(ctx)
 	if err != nil {
 		reportErrors = append(reportErrors, "Could not create szConfigManager.  Error: "+err.Error())
 
 		return reportChecks, reportInfo, reportErrors, nil
 	}
-	fmt.Println(">>>>>>> 2.2")
 
 	defer func() {
 		err := szConfigManager.Destroy(ctx)
@@ -37,7 +33,6 @@ func (checkself *BasicCheckSelf) CheckSenzingConfiguration(
 	}()
 
 	// Determine if Configuration exists.
-	fmt.Println(">>>>>>> 2.3")
 	configID, err := szConfigManager.GetDefaultConfigID(ctx)
 	if err != nil {
 		reportErrors = append(
@@ -48,14 +43,12 @@ func (checkself *BasicCheckSelf) CheckSenzingConfiguration(
 		return reportChecks, reportInfo, reportErrors, nil
 	}
 
-	fmt.Println(">>>>>>> 2.5")
 	if configID == 0 {
 		reportErrors = append(
 			reportErrors,
 			"Senzing configuration doesn't exist. For more information, visit https://hub.senzing.com/...",
 		)
 	}
-	fmt.Println(">>>>>>> 2.5")
 	// Epilog.
 
 	return reportChecks, reportInfo, reportErrors, nil

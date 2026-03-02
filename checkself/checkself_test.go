@@ -2,7 +2,6 @@ package checkself_test
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/senzing-garage/check-self/checkself"
@@ -168,7 +167,6 @@ func TestBasicCheckSelf_CheckSelf_badSettings(test *testing.T) {
 func TestBasicCheckSelf_CheckSenzingConfiguration_badGetDefaultConfigID(test *testing.T) {
 	test.Parallel()
 	ctx := test.Context()
-	fmt.Println(">>>>>>> 1")
 	// expected := expectedQuestionMarks
 	testObject := getTestObject(ctx, test)
 	emptyDatabaseURL := "sqlite3://na:na@/tmp/sqlite/G2C-empty.db"
@@ -176,7 +174,6 @@ func TestBasicCheckSelf_CheckSenzingConfiguration_badGetDefaultConfigID(test *te
 	require.NoError(test, err)
 	testObject.Settings = platformSettings
 	testObject.DatabaseURL = emptyDatabaseURL
-	fmt.Println(">>>>>>> 2")
 
 	reportChecks, reportInfo, reportErrors, err := testObject.CheckSenzingConfiguration(
 		ctx,
@@ -184,20 +181,15 @@ func TestBasicCheckSelf_CheckSenzingConfiguration_badGetDefaultConfigID(test *te
 		reportInfo(),
 		reportErrors(),
 	)
-	fmt.Println(">>>>>>> 3")
 
 	printReportErrors(test, reportErrors)
-	fmt.Println(">>>>>>> 4")
 
 	require.NoError(test, err)
-	fmt.Println(">>>>>>> 5")
 
 	require.Len(test, reportChecks, 1)
-	fmt.Println(">>>>>>> 6")
 
 	// require.Len(test, newReportErrors, 1)
 	require.Empty(test, reportInfo)
-	fmt.Println(">>>>>>> 7")
 
 }
 
