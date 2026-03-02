@@ -174,20 +174,15 @@ func TestBasicCheckSelf_CheckSenzingConfiguration_badGetDefaultConfigID(test *te
 	require.NoError(test, err)
 	testObject.Settings = platformSettings
 	testObject.DatabaseURL = emptyDatabaseURL
-
 	reportChecks, reportInfo, reportErrors, err := testObject.CheckSenzingConfiguration(
 		ctx,
 		reportChecks(),
 		reportInfo(),
 		reportErrors(),
 	)
-
 	printReportErrors(test, reportErrors)
-
 	require.NoError(test, err)
-
 	require.Len(test, reportChecks, 1)
-
 	// require.Len(test, newReportErrors, 1)
 	require.Empty(test, reportInfo)
 

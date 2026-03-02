@@ -33,6 +33,7 @@ func (checkself *BasicCheckSelf) CheckSenzingConfiguration(
 	}()
 
 	// Determine if Configuration exists.
+
 	configID, err := szConfigManager.GetDefaultConfigID(ctx)
 	if err != nil {
 		reportErrors = append(
@@ -49,6 +50,7 @@ func (checkself *BasicCheckSelf) CheckSenzingConfiguration(
 			"Senzing configuration doesn't exist. For more information, visit https://hub.senzing.com/...",
 		)
 	}
+
 	// Epilog.
 
 	return reportChecks, reportInfo, reportErrors, nil
