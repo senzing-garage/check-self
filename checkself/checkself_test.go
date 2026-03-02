@@ -171,21 +171,11 @@ func TestBasicCheckSelf_CheckSenzingConfiguration_badGetDefaultConfigID(test *te
 	fmt.Println(">>>>>>> 1")
 	// expected := expectedQuestionMarks
 	testObject := getTestObject(ctx, test)
-	testObject.Settings = `
-        {
-            "PIPELINE": {
-                "CONFIGPATH": "/etc/opt/senzing",
-                "LICENSESTRINGBASE64": "",
-                "RESOURCEPATH": "/opt/senzing/er/resources",
-                "SUPPORTPATH": "/opt/senzing/data"
-            },
-            "SQL": {
-                "BACKEND": "SQL",
-                "CONNECTION": "sqlite3://na:na@/tmp/sqlite/G2C-empty.db"
-            }
-        }
-        `
-	testObject.DatabaseURL = "sqlite3://na:na@/tmp/sqlite/G2C-empty.db"
+	emptyDatabaseURL := "sqlite3://na:na@/tmp/sqlite/G2C-empty.db"
+	platformSettings, err := settings.BuildSimpleSettingsUsingMap(map[string]string{"databaseURL": emptyDatabaseURL})
+	require.NoError(test, err)
+	testObject.Settings = platformSettings
+	testObject.DatabaseURL = emptyDatabaseURL
 	fmt.Println(">>>>>>> 2")
 
 	reportChecks, reportInfo, reportErrors, err := testObject.CheckSenzingConfiguration(
