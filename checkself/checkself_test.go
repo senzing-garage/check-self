@@ -172,6 +172,7 @@ func TestBasicCheckSelf_CheckSenzingConfiguration_badGetDefaultConfigID(test *te
 	emptyDatabaseURL := "sqlite3://na:na@/tmp/sqlite/G2C-empty.db"
 	platformSettings, err := settings.BuildSimpleSettingsUsingMap(map[string]string{"databaseURL": emptyDatabaseURL})
 	require.NoError(test, err)
+
 	testObject.Settings = platformSettings
 	testObject.DatabaseURL = emptyDatabaseURL
 	reportChecks, reportInfo, reportErrors, err := testObject.CheckSenzingConfiguration(
