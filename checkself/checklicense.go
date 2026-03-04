@@ -159,14 +159,16 @@ func (checkself *BasicCheckSelf) checkRecordPercent(
 		)
 	}
 
-	if (recordCount / productLicenseResponse.RecordLimit) > int64(errorLicenseRecordsPercent) {
-		result = append(
-			result,
-			fmt.Sprintf(
-				"Records above %d full limit. For more information, visit https://hub.senzing.com/... ",
-				errorLicenseRecordsPercent,
-			),
-		)
+	if productLicenseResponse.RecordLimit != 0 {
+		if (recordCount / productLicenseResponse.RecordLimit) > int64(errorLicenseRecordsPercent) {
+			result = append(
+				result,
+				fmt.Sprintf(
+					"Records above %d full limit. For more information, visit https://hub.senzing.com/... ",
+					errorLicenseRecordsPercent,
+				),
+			)
+		}
 	}
 
 	return result, wraperror.Errorf(err, wraperror.NoMessage)
