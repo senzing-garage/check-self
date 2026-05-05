@@ -80,10 +80,13 @@ jobs:
 
     steps:
       - name: Verify per-platform builds succeeded
+        env:
+          AMD64_RESULT: ${{ needs.build-amd64.result }}
+          ARM64_RESULT: ${{ needs.build-arm64.result }}
         run: |
-          if [[ "${{ needs.build-amd64.result }}" != "success" || "${{ needs.build-arm64.result }}" != "success" ]]; then
-            echo "build-amd64: ${{ needs.build-amd64.result }}"
-            echo "build-arm64: ${{ needs.build-arm64.result }}"
+          if [[ "$AMD64_RESULT" != "success" || "$ARM64_RESULT" != "success" ]]; then
+            echo "build-amd64: $AMD64_RESULT"
+            echo "build-arm64: $ARM64_RESULT"
             exit 1
           fi
           echo "All per-platform builds succeeded."
