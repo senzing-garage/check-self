@@ -13,7 +13,7 @@ concurrency:
 permissions: {}
 
 jobs:
-  docker-build-container:
+  build-amd64:
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -42,4 +42,52 @@ jobs:
         with:
           image-repository: senzing/${{ steps.repo-basename.outputs.repo }}
           password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }} # zizmor: ignore[secrets-outside-env]
+          platforms: "linux/amd64"
           username: ${{ secrets.DOCKERHUB_USERNAME }} # zizmor: ignore[secrets-outside-env]
+
+  build-arm64:
+    permissions:
+      contents: read
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 30
+
+    steps:
+      - name: Get repository name
+        id: repo-basename
+        run: |
+          echo "repo=$(basename ${{ github.repository }})" >> "$GITHUB_OUTPUT"
+        shell: bash
+
+      - name: Free disk space
+        run: |
+          rm -rf /opt/hostedtoolcache
+        shell: bash
+
+      - name: Build docker image
+        uses: senzing-factory/github-action-docker-buildx-build@v2
+        with:
+          image-repository: senzing/${{ steps.repo-basename.outputs.repo }}
+          password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }} # zizmor: ignore[secrets-outside-env]
+          platforms: "linux/arm64"
+          username: ${{ secrets.DOCKERHUB_USERNAME }} # zizmor: ignore[secrets-outside-env]
+
+  docker-build-container:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    needs: [build-amd64, build-arm64]
+    if: always()
+
+    steps:
+      - name: Verify per-platform builds succeeded
+        env:
+          AMD64_RESULT: ${{ needs.build-amd64.result }}
+          ARM64_RESULT: ${{ needs.build-arm64.result }}
+        run: |
+          if [[ "$AMD64_RESULT" != "success" || "$ARM64_RESULT" != "success" ]]; then
+            echo "build-amd64: $AMD64_RESULT"
+            echo "build-arm64: $ARM64_RESULT"
+            exit 1
+          fi
+          echo "All per-platform builds succeeded."
+        shell: bash
