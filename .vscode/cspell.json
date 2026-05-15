@@ -86,7 +86,8 @@
     "toplevel",
     "USERPROFILE",
     "vladopajic",
-    "wraperror"
+    "wraperror",
+    "zizmor"
   ],
   "ignorePaths": [
     ".dockerignore",
