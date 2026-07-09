@@ -1,0 +1,4 @@
+# golang.org/x/crypto/openpgp is unmaintained and "unsafe by design" (no fix available).
+# It is only an indirect dependency here and is not reachable from this module's code
+# (confirmed by govulncheck, which does not report GO-2026-5932). Suppress the Trivy finding.
+GO-2026-5932
