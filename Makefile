@@ -264,7 +264,7 @@ golangci-lint:
 
 .PHONY: govulncheck
 govulncheck:
-	@${GOBIN}/govulncheck ./...
+	@PATH="${GOBIN}:$${PATH}" .github/scripts/govulncheck.sh
 
 # -----------------------------------------------------------------------------
 # Fixers
