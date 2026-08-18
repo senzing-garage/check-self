@@ -47,6 +47,15 @@ jobs:
         with:
           senzingsdk-version: ${{ matrix.senzingsdk-version }}
 
-      - uses: golang/govulncheck-action@v1.1.0
-        with:
-          go-version-input: ${{ matrix.go }}
+      # Pinned because govulncheck.sh parses the -format json output. The
+      # vulnerability database is fetched live regardless of scanner version,
+      # so pinning does not delay detection of new advisories.
+      - name: Install govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@v1.7.0
+
+      # Not golang/govulncheck-action: that action fails on any called
+      # vulnerability, and it emits no machine-readable output to filter. This
+      # script fails on called vulnerabilities except those accepted in
+      # .github/govulncheck-ignore.txt.
+      - name: Run govulncheck
+        run: .github/scripts/govulncheck.sh
