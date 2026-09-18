@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
--
+- Replaced `g2SifterRules.ibm` with `szBuildVersion.json` in required support files
 
 ## [0.3.12] - 2026-01-08
 
