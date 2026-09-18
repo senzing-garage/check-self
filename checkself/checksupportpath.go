@@ -8,7 +8,7 @@ import (
 )
 
 var RequiredSupportFiles = []string{
-	"g2SifterRules.ibm",
+	"szBuildVersion.json",
 }
 
 // ----------------------------------------------------------------------------
