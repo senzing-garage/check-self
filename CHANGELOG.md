@@ -7,7 +7,21 @@ This project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+-
+
+## [0.4.0] - 2026-10-12
+
+### Changed in 0.4.0
+
+- Update to Go 1.27.1
+- Sync repository setup files with template-go v0.5.0
 - Replaced `g2SifterRules.ibm` with `szBuildVersion.json` in required support files
+- Update dependencies
+  - github.com/senzing-garage/go-cmdhelping v0.4.0
+  - github.com/senzing-garage/go-databasing v0.6.0
+  - github.com/senzing-garage/go-helpers v0.7.0
+  - github.com/senzing-garage/go-sdk-abstract-factory v0.10.0
+  - github.com/senzing-garage/sz-sdk-go v0.16.0
 
 ## [0.3.12] - 2026-01-08
 
