@@ -7,10 +7,9 @@ import (
 	"github.com/senzing-garage/go-cmdhelping/option"
 )
 
-var RequiredConfigFiles = []string{
-	"cfgVariant.json",
-	"defaultGNRCP.config",
-}
+// RequiredConfigFiles is empty: Senzing builds no longer install cfgVariant.json
+// or defaultGNRCP.config in the configuration path, and the engine does not need them.
+var RequiredConfigFiles = []string{}
 
 // ----------------------------------------------------------------------------
 // Interface methods

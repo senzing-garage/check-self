@@ -7,10 +7,18 @@ This project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
-### Changed in Unreleased
+-
 
+## [0.4.1] - 2026-11-10
+
+### Changed in 0.4.1
+
+- Removed `cfgVariant.json` and `defaultGNRCP.config` from required configuration path files;
+  Senzing builds no longer install them there
 - Update dependencies
+  - github.com/senzing-garage/go-helpers v0.8.0
   - golang.org/x/net v0.62.0 (fixes CVE-2026-78661, CVE-2026-97045)
+  - google.golang.org/grpc v1.85.0
 
 ## [0.4.0] - 2026-10-12
 
