@@ -62,6 +62,24 @@ func TestBasicCheckSelf_Break_badReportErrors(test *testing.T) {
 	require.NotEmpty(test, reportErrors, "reportErrors")
 }
 
+func TestBasicCheckSelf_CheckConfigPath_emptyDirectory(test *testing.T) {
+	test.Parallel()
+	ctx := test.Context()
+	testObject := &checkself.BasicCheckSelf{
+		ConfigPath: test.TempDir(),
+	}
+	reportChecks, reportInfo, reportErrors, err := testObject.CheckConfigPath(
+		ctx,
+		reportChecks(),
+		reportInfo(),
+		reportErrors(),
+	)
+	require.NoError(test, err)
+	require.Len(test, reportChecks, 1)
+	require.Empty(test, reportInfo)
+	require.Empty(test, reportErrors)
+}
+
 func TestBasicCheckSelf_CheckDatabaseSchema(test *testing.T) {
 	test.Parallel()
 	ctx := test.Context()
